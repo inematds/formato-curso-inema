@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="demo">
+  <script type="application/json" data-inema-manifest>
+{
+  "course": "demo",
+  "tracks": [
+    { "n": "1", "title": "Trilha 1", "modules": [
+      { "id": "1-1", "title": "Modulo 1.1", "topics": 7, "href": "curso/trilha1/modulo-1-1.html" },
+      { "id": "1-2", "title": "Modulo 1.2", "topics": 7, "href": "curso/trilha1/modulo-1-2.html" }
+    ] }
+  ]
+}
+</script>
+  <title>Trilha 1 - Fundamentos | Curso Demo</title>
+
+  <!-- ===================================================================
+       1) ANTI-FOUC: script BLOQUEANTE, PRIMEIRO no <head>, ANTES do Tailwind
+          e de qualquer <style>/<link>. Le inema.prefs (global) e aplica
+          .dark + data-theme + CSS vars de leitura ANTES do primeiro paint.
+          try/catch total => default dark no erro (preserva a marca INEMA).
+          (REL = "../.." — caminho ate a pasta com assets/.)
+       =================================================================== -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k];
+          }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+
+      var THEMES = {
+        'inema-dark': { dark: true,  attr: null,        cs: 'dark'  },
+        'claro':      { dark: false, attr: null,        cs: 'light' },
+        'sepia':      { dark: false, attr: 'sepia',     cs: 'light' },
+        'foco':       { dark: null,  attr: 'foco',      cs: null    },
+        'contraste':  { dark: true,  attr: 'contraste', cs: 'dark'  }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+
+      if (t.attr) html.setAttribute('data-theme', t.attr);
+      else html.removeAttribute('data-theme');
+
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system'
+        ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura'
+          ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif'
+          : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+
+      var ACC = {
+        emerald: [152, 76, 45], blue: [217, 91, 60], purple: [258, 90, 66],
+        amber: [38, 92, 50], teal: [174, 72, 41], rose: [350, 89, 60]
+      };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + '');
+      s.setProperty('--accent-s', a[1] + '%');
+      s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+
+      html.setAttribute('data-line-width', String(+p.lineWidth || 68));
+      html.setAttribute('data-leading', (+p.leading === 1.45 ? 'compacto' : 'confortavel'));
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <!-- 2) Tailwind via CDN (DEPOIS do anti-FOUC) + config v1 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' },
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+            blue:    { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' },
+            purple:  { 400: '#c084fc', 500: '#a855f7', 600: '#9333ea' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- 3) CSS base/dark/light do v1 (MASTER §1.5 / §8.1 / §10) -->
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (Parte 1 - Base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Parte 2 - Cores de acento da trilha (T1 Emerald) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:border-emerald-500\/30:hover { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    /* Cores das demais trilhas para o nav (inativas) */
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+
+    /* Parte 3 - Remove gradientes + cores especiais */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Parte 4 - Navbar */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Parte 5 - Bordas suavizadas no DARK MODE */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG futurista: suaviza no tema claro (MASTER #1.10) */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* altura real do nav -> usada pelo scroll-margin da learn.css */
+    :root { --inema-nav-h: 3.5rem; }
+
+    /* Modal iframe (v1) */
+    .modal.hidden { display: none; }
+
+    /* scroll-margin nos cards de modulo (nav sticky obscurece a ancora) */
+    [id^="modulo-"] { scroll-margin-top: 5rem; }
+
+    /* Anel de progresso por modulo (SVG stroke-based; pintado por paintMeter).
+       Distinto da .inema-ring conic da learn.css — aqui e contorno desenhado. */
+    .inema-progress-ring [data-inema-ring] {
+      transition: stroke-dashoffset 480ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .inema-progress-ring [data-inema-ring] { transition: none; }
+    }
+  </style>
+
+  <!-- 4) Folha de estilos da camada de aprendizagem (caminho RELATIVO) -->
+  <link rel="stylesheet" href="../../assets/learn.css">
+</head>
+
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- SKIP LINK (PRIMEIRO FOCAVEL) -->
+  <a class="skip" href="#conteudo">Pular para o conteudo</a>
+
+  <!-- ===================================================================
+       NAVIGATION GLOBAL (v1 completo, IDENTICO ao modulo) — MASTER §1.6 / §5.2
+       Logo + INEMA.CLUB (sky-400) + botoes de trilha + minha jornada +
+       aparencia + theme toggle. Trilha 1 (emerald) = ativa.
+       =================================================================== -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+
+        <!-- Logo + INEMA.CLUB -->
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl" aria-hidden="true">&#129504;</span>
+            <span class="font-bold text-lg hidden sm:inline">Curso Demo</span>
+          </a>
+          <span class="text-neutral-600" aria-hidden="true">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+
+        <!-- Trilhas + Jornada + Aparencia + Theme Toggle -->
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <!-- Trilha 1 (ATIVA - emerald) -->
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" aria-current="page">
+            <span class="sm:hidden">T1</span>
+            <span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <!-- Trilha 2 (inativa - blue) -->
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span>
+            <span class="hidden sm:inline">Aplicacao</span>
+          </a>
+          <!-- Trilha 3 (inativa - purple) -->
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span>
+            <span class="hidden sm:inline">Avancado</span>
+          </a>
+
+          <!-- Minha jornada -->
+          <button type="button" data-inema-journey-open
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors ml-1">
+            <span aria-hidden="true">&#9719;</span>
+            <span class="hidden sm:inline">Minha jornada</span>
+            <span class="inema-journey-badge" data-inema-journey-badge data-count="0">0%</span>
+          </button>
+
+          <!-- Seletor de aparencia (button-based; absorve o sol/lua) -->
+          <div class="relative">
+            <button type="button"
+                    data-inema-appearance-toggle="[data-inema-appearance]"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    class="inema-appearance-trigger"
+                    title="Aparencia e leitura">
+              <span aria-hidden="true">&#9681;</span>
+              <span class="hidden sm:inline">Aparencia</span>
+            </button>
+
+            <div data-inema-appearance class="inema-appearance-pop" role="dialog" aria-label="Preferencias de aparencia e leitura">
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-tema">Tema</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-tema">
+                  <button type="button" data-inema-set-theme="inema-dark" aria-pressed="false">Escuro</button>
+                  <button type="button" data-inema-set-theme="claro" aria-pressed="false">Claro</button>
+                  <button type="button" data-inema-set-theme="sepia" aria-pressed="false">Sepia</button>
+                </div>
+                <div class="inema-segment" role="group" aria-label="Mais temas">
+                  <button type="button" data-inema-set-theme="foco" aria-pressed="false">Foco</button>
+                  <button type="button" data-inema-set-theme="contraste" aria-pressed="false">Alto contraste</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-fonte">Fonte</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-fonte">
+                  <button type="button" data-inema-set-font="inter" aria-pressed="false">Inter</button>
+                  <button type="button" data-inema-set-font="system" aria-pressed="false">Sistema</button>
+                  <button type="button" data-inema-set-font="leitura" aria-pressed="false">Leitura</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-tamanho">Tamanho</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-tamanho">
+                  <button type="button" data-inema-set-fontscale="100" aria-pressed="false">A</button>
+                  <button type="button" data-inema-set-fontscale="112" aria-pressed="false">A+</button>
+                  <button type="button" data-inema-set-fontscale="125" aria-pressed="false">A++</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-medida">Largura da linha</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-medida">
+                  <button type="button" data-inema-set-linewidth="60" aria-pressed="false">Estreito</button>
+                  <button type="button" data-inema-set-linewidth="68" aria-pressed="false">Medio</button>
+                  <button type="button" data-inema-set-linewidth="75" aria-pressed="false">Largo</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-entrelinha">Entrelinha</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-entrelinha">
+                  <button type="button" data-inema-set-leading="1.45" aria-pressed="false">Compacto</button>
+                  <button type="button" data-inema-set-leading="1.7" aria-pressed="false">Confortavel</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-acento">Acento</span>
+                <div class="inema-accent-grid" role="group" aria-labelledby="pref-acento">
+                  <button type="button" data-inema-set-accent="emerald" aria-pressed="false" aria-label="Acento esmeralda"></button>
+                  <button type="button" data-inema-set-accent="blue" aria-pressed="false" aria-label="Acento azul"></button>
+                  <button type="button" data-inema-set-accent="purple" aria-pressed="false" aria-label="Acento roxo"></button>
+                  <button type="button" data-inema-set-accent="amber" aria-pressed="false" aria-label="Acento ambar"></button>
+                  <button type="button" data-inema-set-accent="teal" aria-pressed="false" aria-label="Acento turquesa"></button>
+                  <button type="button" data-inema-set-accent="rose" aria-pressed="false" aria-label="Acento rosa"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Theme Toggle legado (absorvido; o JS mantem os icones coerentes) -->
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" aria-label="Alternar tema claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Trilha de navegacao">
+    <ol class="flex items-center space-x-2 text-sm text-neutral-400">
+      <li><a href="../../index.html" class="hover:text-emerald-400">Inicio</a></li>
+      <li aria-hidden="true">/</li>
+      <li><span class="text-emerald-400" aria-current="page">Trilha 1</span></li>
+    </ol>
+  </nav>
+
+  <!-- ===================================================================
+       HEADER DA TRILHA (tema da trilha: data-inema-track) + HERO SVG
+       MASTER §7.4 / #1.10 (hero SVG obrigatorio no index de trilha)
+       =================================================================== -->
+  <header data-inema-track="1"
+          class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10 lg:items-center">
+
+        <!-- Coluna de texto -->
+        <div>
+          <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+            TRILHA 1
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-bold mb-4">&#129504; Fundamentos de Engenharia de Prompts</h1>
+          <p class="text-lg text-neutral-400 max-w-3xl">
+            A base pratica para falar com modelos de linguagem: as cinco pecas de um prompt, padroes prontos
+            para tarefas comuns e o ciclo de iteracao que transforma um primeiro rascunho num resultado confiavel.
+            Dois modulos curtos, cada um com diagramas, exemplos e um proximo passo claro.
+          </p>
+
+          <!-- Stats Grid (4 colunas: Modulos, Topicos, Duracao, Nivel) -->
+          <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+            <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+              <div class="text-xl font-bold text-emerald-400">2</div>
+              <div class="text-xs text-neutral-400">Modulos</div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+              <div class="text-xl font-bold text-emerald-400">13</div>
+              <div class="text-xs text-neutral-400">Topicos</div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+              <div class="text-xl font-bold text-emerald-400">~65 min</div>
+              <div class="text-xs text-neutral-400">Duracao</div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+              <div class="text-xl font-bold text-emerald-400">Basico</div>
+              <div class="text-xs text-neutral-400">Nivel</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HERO SVG (futurista, emerald + ciano) — MASTER #1.10 -->
+        <figure class="mt-8 lg:mt-0 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 360 260" class="w-full h-auto" role="img"
+               aria-label="Mapa da trilha 1: do prompt cru, passando por fundamentos e padroes, ate um resultado confiavel; o ramo em ciano e o ciclo de iteracao que realimenta o processo.">
+            <defs>
+              <linearGradient id="t1hero-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#10b981" stop-opacity="0.25"/>
+                <stop offset="1" stop-color="#0b1220" stop-opacity="0.1"/>
+              </linearGradient>
+              <filter id="t1hero-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="t1hero-arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                <path d="M0 0 L7 3 L0 6 Z" fill="#34d399"/>
+              </marker>
+              <marker id="t1hero-arrow2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                <path d="M0 0 L7 3 L0 6 Z" fill="#38bdf8"/>
+              </marker>
+            </defs>
+            <rect x="1" y="1" width="358" height="258" rx="16" fill="url(#t1hero-grad)" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="13">
+              <!-- entrada -->
+              <rect x="28" y="28" width="116" height="38" rx="9" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="86" y="52" fill="#38bdf8" text-anchor="middle">Prompt cru</text>
+
+              <!-- modulo 1.1 -->
+              <rect x="28" y="96" width="150" height="44" rx="10" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="103" y="116" fill="#34d399" font-weight="600" text-anchor="middle">1.1 Fundamentos</text>
+              <text x="103" y="132" fill="#a8a8b3" font-size="11" text-anchor="middle">as cinco pecas</text>
+
+              <!-- modulo 1.2 -->
+              <rect x="200" y="96" width="132" height="44" rx="10" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="266" y="116" fill="#34d399" font-weight="600" text-anchor="middle">1.2 Padroes</text>
+              <text x="266" y="132" fill="#a8a8b3" font-size="11" text-anchor="middle">prontos para usar</text>
+
+              <!-- resultado (caixa-foco com glow leve) -->
+              <g filter="url(#t1hero-glow)">
+                <rect x="110" y="194" width="140" height="44" rx="12" fill="#10b981" fill-opacity="0.15" stroke="#34d399" stroke-width="2"/>
+                <text x="180" y="221" fill="#e6e6e6" font-weight="600" text-anchor="middle">Resultado confiavel</text>
+              </g>
+
+              <!-- fluxo principal -->
+              <path d="M86 66 V 92" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#t1hero-arrow)"/>
+              <path d="M178 118 H 196" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#t1hero-arrow)"/>
+              <path d="M266 140 C 266 175, 210 185, 196 198" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#t1hero-arrow)"/>
+              <path d="M103 140 C 103 172, 150 184, 162 196" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#t1hero-arrow)"/>
+
+              <!-- ciclo de iteracao (ramo ciano de volta) -->
+              <path d="M110 216 C 40 210, 40 130, 28 118" stroke="#38bdf8" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#t1hero-arrow2)"/>
+              <text x="40" y="172" fill="#7a8aa0" font-size="10" transform="rotate(-90 40 172)">iterar</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">
+            A trilha leva do prompt cru ao resultado confiavel; o ramo em ciano e o ciclo de iteracao que realimenta tudo.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- PROGRESSO DA TRILHA (derivado do DOM; "N de M" + %) -->
+      <div class="mt-10 max-w-md">
+        <div class="bg-dark-800/50 rounded-lg p-4 border border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-neutral-400">Progresso da trilha</span>
+            <span class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</span>
+          </div>
+          <div data-inema-meter="trilha:1" aria-label="Progresso da trilha 1">
+            <div class="inema-bar"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="inema-meter-label mt-2 inline-block" data-inema-meter-frac>0 de 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       CONTEUDO PRINCIPAL
+       =================================================================== -->
+  <main id="conteudo" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- ===================================================================
+         MAPA DA TRILHA (OBRIGATORIO — MASTER §7.4b)
+         Nome OFICIAL "Mapa da trilha". Grid de cards-ancora, 1 por modulo,
+         linkando para #modulo-X-Y abaixo.
+         =================================================================== -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <a href="#modulo-1-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold text-sm">1.1</span>
+            <span class="text-xs text-neutral-500">~35 min</span>
+          </div>
+          <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">&#129504; Fundamentos de prompts</h3>
+          <p class="text-xs text-neutral-400">Cinco pecas, um pedido</p>
+        </a>
+
+        <a href="#modulo-1-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold text-sm">1.2</span>
+            <span class="text-xs text-neutral-500">~30 min</span>
+          </div>
+          <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">&#129513; Padroes de prompt</h3>
+          <p class="text-xs text-neutral-400">Receitas que ja funcionam</p>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- DIVISOR "Conteudo detalhado" — H2 SIMPLES (MASTER §1.7) -->
+    <h2 class="text-2xl font-bold mb-6">Conteudo detalhado</h2>
+
+    <!-- ===================================================================
+         CARD DE MODULO 1.1
+         id="modulo-1-1" (ancora do mapa) + data-inema-module/track (meter)
+         =================================================================== -->
+    <div id="modulo-1-1" data-inema-module="1-1" data-inema-track="1"
+         class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <!-- Header do modulo + anel de progresso por modulo -->
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-start justify-between gap-4 mb-2 flex-wrap">
+          <div class="flex items-center space-x-3">
+            <span class="text-emerald-400 font-bold">1.1</span>
+            <span class="text-xs text-neutral-500">~35 min</span>
+          </div>
+          <!-- ANEL DE PROGRESSO DO MODULO (data-inema-meter="modulo:1-1") -->
+          <div class="flex items-center gap-3" data-inema-meter="modulo:1-1" aria-label="Progresso do modulo 1.1">
+            <svg width="44" height="44" viewBox="0 0 44 44" class="inema-progress-ring" aria-hidden="true">
+              <circle cx="22" cy="22" r="18" fill="none" stroke="#374151" stroke-width="4"/>
+              <circle cx="22" cy="22" r="18" fill="none" stroke="#34d399" stroke-width="4"
+                      stroke-linecap="round" transform="rotate(-90 22 22)" data-inema-ring></circle>
+            </svg>
+            <div class="leading-tight">
+              <div class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</div>
+              <div class="text-xs text-neutral-500" data-inema-meter-frac>0 de 0</div>
+            </div>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">&#129504; Fundamentos de Engenharia de Prompts</h3>
+        <p class="text-neutral-400 text-sm">
+          As cinco pecas de um prompt, o verbo de acao, o formato da resposta e o ciclo de iteracao.
+        </p>
+      </div>
+
+      <!-- Topicos expansiveis (cada um e um data-inema-topic p/ alimentar o meter) -->
+      <div class="divide-y divide-dark-600">
+
+        <!-- Topico 1 -->
+        <div class="topic-item" id="modulo-1-1#topico-1" data-inema-topic="modulo-1-1#topico-1">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t1-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg" aria-hidden="true">&#129518;</span>
+            <div>
+              <span class="font-medium">Anatomia de um prompt</span>
+              <span class="text-neutral-500 text-sm ml-2">- As cinco pecas</span>
+            </div>
+          </button>
+          <div id="m11-t1-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Um prompt e um pequeno briefing com cinco pecas possiveis: papel, contexto, tarefa, formato e exemplos.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Quando a saida vem errada, quase sempre falta uma dessas pecas; percorrer a lista revela o buraco rapido.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Modelo mental das partes; tarefas simples vivem so com tarefa + formato.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 2 -->
+        <div class="topic-item" id="modulo-1-1#topico-2" data-inema-topic="modulo-1-1#topico-2">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t2-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg" aria-hidden="true">&#127917;</span>
+            <div>
+              <span class="font-medium">Papel e contexto</span>
+              <span class="text-neutral-500 text-sm ml-2">- O funil da resposta</span>
+            </div>
+          </button>
+          <div id="m11-t2-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Dar um papel ("voce e um revisor tecnico") e descrever o contexto restringe o espaco de respostas.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O modelo nao adivinha seu publico; ou voce diz, ou ele assume um padrao generico.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Papel funcional rende mais que persona; coloque papel e contexto no inicio do prompt.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 3 -->
+        <div class="topic-item" id="modulo-1-1#topico-3" data-inema-topic="modulo-1-1#topico-3">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t3-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg" aria-hidden="true">&#127919;</span>
+            <div>
+              <span class="font-medium">A tarefa como pedido unico</span>
+              <span class="text-neutral-500 text-sm ml-2">- Um verbo de acao</span>
+            </div>
+          </button>
+          <div id="m11-t3-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">O coracao do prompt e o verbo de acao: resuma, classifique, extraia, reescreva, compare.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Quanto mais especifico o verbo, menor a chance de o modelo escolher uma tarefa diferente.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">"Fale sobre X" abre demais; "liste tres riscos de X" fecha. Quantifique quando der.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 4 -->
+        <div class="topic-item" id="modulo-1-1#topico-4" data-inema-topic="modulo-1-1#topico-4">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t4-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg" aria-hidden="true">&#128221;</span>
+            <div>
+              <span class="font-medium">Formato da resposta</span>
+              <span class="text-neutral-500 text-sm ml-2">- Prosa ou JSON</span>
+            </div>
+          </button>
+          <div id="m11-t4-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Definir o formato da saida: prosa curta para pessoas, JSON com chaves fixas para sistemas.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">E a alavanca mais barata para tornar a saida util de imediato, sem retrabalho.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">O destino define a escolha: lista, tabela markdown ou JSON estruturado.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 5 -->
+        <div class="topic-item" id="modulo-1-1#topico-5" data-inema-topic="modulo-1-1#topico-5">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t5-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg" aria-hidden="true">&#129534;</span>
+            <div>
+              <span class="font-medium">Poucos exemplos (few-shot)</span>
+              <span class="text-neutral-500 text-sm ml-2">- Ensinar pelo molde</span>
+            </div>
+          </button>
+          <div id="m11-t5-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Mostrar um ou dois exemplos resolvidos ensina o padrao melhor do que paragrafos de instrucao.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O modelo imita o formato, o tom e o nivel de detalhe — e exemplos sao mais curtos que descrever regras.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">2 a 5 exemplos costumam capturar o padrao; comece pequeno para poupar contexto.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 6 -->
+        <div class="topic-item" id="modulo-1-1#topico-6" data-inema-topic="modulo-1-1#topico-6">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t6-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg" aria-hidden="true">&#129518;</span>
+            <div>
+              <span class="font-medium">Raciocinio passo a passo</span>
+              <span class="text-neutral-500 text-sm ml-2">- Pensar antes de concluir</span>
+            </div>
+          </button>
+          <div id="m11-t6-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Pedir que o modelo pense em voz alta antes de concluir, em tarefas com varias etapas.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O passo a passo da ao modelo espaco para corrigir a propria rota e reduz erros.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Deixa a resposta mais longa e cara; use so em tarefas que realmente tem etapas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 7 -->
+        <div class="topic-item" id="modulo-1-1#topico-7" data-inema-topic="modulo-1-1#topico-7">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m11-t7-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+            <span class="text-lg" aria-hidden="true">&#128260;</span>
+            <div>
+              <span class="font-medium">Iterar medindo o resultado</span>
+              <span class="text-neutral-500 text-sm ml-2">- Uma variavel por volta</span>
+            </div>
+          </button>
+          <div id="m11-t7-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Engenharia de prompt e um ciclo: escrever, rodar, comparar com o que voce queria, ajustar.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">O primeiro prompt raramente e o melhor; iterar com metodo torna o resultado confiavel.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Mudar tudo de uma vez esconde qual alteracao ajudou; troque um elemento, observe, repita.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botoes (ESQUERDA — justify-start; MASTER #1.1) -->
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button type="button" onclick="openModal('modal-1-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">
+          Ver em Modal
+        </button>
+        <a href="modulo-1-1.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">
+          Ver Completo
+        </a>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         CARD DE MODULO 1.2
+         =================================================================== -->
+    <div id="modulo-1-2" data-inema-module="1-2" data-inema-track="1"
+         class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+      <!-- Header do modulo + anel de progresso por modulo -->
+      <div class="p-6 border-b border-dark-600">
+        <div class="flex items-start justify-between gap-4 mb-2 flex-wrap">
+          <div class="flex items-center space-x-3">
+            <span class="text-emerald-400 font-bold">1.2</span>
+            <span class="text-xs text-neutral-500">~30 min</span>
+          </div>
+          <!-- ANEL DE PROGRESSO DO MODULO (data-inema-meter="modulo:1-2") -->
+          <div class="flex items-center gap-3" data-inema-meter="modulo:1-2" aria-label="Progresso do modulo 1.2">
+            <svg width="44" height="44" viewBox="0 0 44 44" class="inema-progress-ring" aria-hidden="true">
+              <circle cx="22" cy="22" r="18" fill="none" stroke="#374151" stroke-width="4"/>
+              <circle cx="22" cy="22" r="18" fill="none" stroke="#34d399" stroke-width="4"
+                      stroke-linecap="round" transform="rotate(-90 22 22)" data-inema-ring></circle>
+            </svg>
+            <div class="leading-tight">
+              <div class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</div>
+              <div class="text-xs text-neutral-500" data-inema-meter-frac>0 de 0</div>
+            </div>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold mb-2">&#129513; Padroes de Prompt para Tarefas Comuns</h3>
+        <p class="text-neutral-400 text-sm">
+          Receitas prontas — classificar, extrair, resumir, reescrever — que aplicam os fundamentos do 1.1.
+        </p>
+      </div>
+
+      <!-- Topicos expansiveis -->
+      <div class="divide-y divide-dark-600">
+
+        <!-- Topico 1 -->
+        <div class="topic-item" id="modulo-1-2#topico-1" data-inema-topic="modulo-1-2#topico-1">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t1-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+            <span class="text-lg" aria-hidden="true">&#127991;</span>
+            <div>
+              <span class="font-medium">Classificar com rotulos fixos</span>
+              <span class="text-neutral-500 text-sm ml-2">- Categorias fechadas</span>
+            </div>
+          </button>
+          <div id="m12-t1-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Pedir ao modelo que escolha uma categoria de uma lista fechada que voce define.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Rotulos fixos tornam a saida previsivel e facil de processar por outro sistema.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Liste as classes explicitamente; preveja um rotulo "outro" para casos fora da lista.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 2 -->
+        <div class="topic-item" id="modulo-1-2#topico-2" data-inema-topic="modulo-1-2#topico-2">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t2-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+            <span class="text-lg" aria-hidden="true">&#128270;</span>
+            <div>
+              <span class="font-medium">Extrair dados estruturados</span>
+              <span class="text-neutral-500 text-sm ml-2">- Do texto para campos</span>
+            </div>
+          </button>
+          <div id="m12-t2-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Transformar texto livre em campos nomeados (nome, data, valor) num objeto JSON.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">E o padrao que conecta linguagem natural a planilhas, bancos e automacoes.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Defina o schema antes; diga o que fazer quando um campo nao existe (null, nao invente).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 3 -->
+        <div class="topic-item" id="modulo-1-2#topico-3" data-inema-topic="modulo-1-2#topico-3">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t3-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+            <span class="text-lg" aria-hidden="true">&#128209;</span>
+            <div>
+              <span class="font-medium">Resumir com restricoes</span>
+              <span class="text-neutral-500 text-sm ml-2">- Tamanho e foco</span>
+            </div>
+          </button>
+          <div id="m12-t3-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Pedir um resumo com limite de tamanho e um angulo claro (para quem, com que foco).</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Sem restricao, o resumo vira generico; com elas, ele serve ao seu caso de uso.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">"Ate 3 bullets para um gerente nao tecnico" rende mais que "resuma este texto".</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 4 -->
+        <div class="topic-item" id="modulo-1-2#topico-4" data-inema-topic="modulo-1-2#topico-4">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t4-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+            <span class="text-lg" aria-hidden="true">&#9997;</span>
+            <div>
+              <span class="font-medium">Reescrever mudando uma variavel</span>
+              <span class="text-neutral-500 text-sm ml-2">- Tom, publico ou tamanho</span>
+            </div>
+          </button>
+          <div id="m12-t4-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Pedir a mesma mensagem reescrita variando uma dimensao: tom, publico, formalidade ou tamanho.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">E o caminho mais rapido para adaptar conteudo existente sem reescrever do zero.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Mude uma variavel por vez para enxergar o efeito; preserve os fatos do original.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 5 -->
+        <div class="topic-item" id="modulo-1-2#topico-5" data-inema-topic="modulo-1-2#topico-5">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t5-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+            <span class="text-lg" aria-hidden="true">&#129520;</span>
+            <div>
+              <span class="font-medium">Montar um template reutilizavel</span>
+              <span class="text-neutral-500 text-sm ml-2">- Variaveis entre chaves</span>
+            </div>
+          </button>
+          <div id="m12-t5-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Transformar um prompt que funcionou num molde com lacunas marcadas para reusar.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Templates evitam reescrever o mesmo prompt e mantem a qualidade consistente entre usos.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Marque as partes variaveis com {chaves}; guarde so o que muda, fixe o resto.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topico 6 -->
+        <div class="topic-item" id="modulo-1-2#topico-6" data-inema-topic="modulo-1-2#topico-6">
+          <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="m12-t6-panel"
+                  class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+            <span class="text-lg" aria-hidden="true">&#128737;</span>
+            <div>
+              <span class="font-medium">Lidar com casos de borda</span>
+              <span class="text-neutral-500 text-sm ml-2">- Quando o padrao falha</span>
+            </div>
+          </button>
+          <div id="m12-t6-panel" class="topic-explanation px-6 pb-4">
+            <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+              <div>
+                <span class="text-emerald-400 font-semibold">O que e:</span>
+                <p class="text-neutral-300 text-sm">Antecipar entradas inesperadas (vazias, ambiguas, fora do escopo) e dizer ao modelo como reagir.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Por que aprender:</span>
+                <p class="text-neutral-300 text-sm">Um padrao so e confiavel quando voce sabe o que ele faz nos casos que fogem do comum.</p>
+              </div>
+              <div>
+                <span class="text-emerald-400 font-semibold">Conceitos-chave:</span>
+                <p class="text-neutral-300 text-sm">Instrua um comportamento padrao seguro; prefira "diga que nao sabe" a inventar.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botoes (ESQUERDA — justify-start; MASTER #1.1) -->
+      <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+        <button type="button" onclick="openModal('modal-1-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">
+          Ver em Modal
+        </button>
+        <a href="modulo-1-2.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">
+          Ver Completo
+        </a>
+      </div>
+    </div>
+
+    <!-- NAVEGACAO (Voltar | Proxima Trilha) -->
+    <div class="flex flex-col sm:flex-row gap-4 mt-10">
+      <a href="../../index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">&#8592; Voltar ao inicio</a>
+      <a href="../trilha2/index.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Proxima trilha &#8594;</a>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Curso Demo - 2026 ·
+        <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       MODAIS IFRAME (carregam a pagina completa do modulo — MASTER §9.3)
+       =================================================================== -->
+  <div id="modal-1-1" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-emerald-400 font-bold">1.1</span>
+          <span class="font-semibold">Fundamentos de Engenharia de Prompts</span>
+        </div>
+        <button type="button" onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none" aria-label="Fechar modal">&times;</button>
+      </div>
+      <iframe data-src="modulo-1-1.html" title="Modulo 1.1 completo" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <div id="modal-1-2" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <span class="text-emerald-400 font-bold">1.2</span>
+          <span class="font-semibold">Padroes de Prompt para Tarefas Comuns</span>
+        </div>
+        <button type="button" onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none" aria-label="Fechar modal">&times;</button>
+      </div>
+      <iframe data-src="modulo-1-2.html" title="Modulo 1.2 completo" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       SCRIPTS — 3 funcoes-nucleo do v1 + learn.js + INEMA.init()
+       =================================================================== -->
+
+  <!-- 3 funcoes-nucleo do v1: toggleTopic (acordeao), openModal/closeModal
+       (modal iframe com lazy-load do src) e theme toggle. O learn.js absorve
+       os icones do toggle; aqui mantemos o handler de classe .dark + storage. -->
+  <script>
+    // Acordeao dos topicos (fecha os outros do mesmo card)
+    function toggleTopic(button) {
+      var topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      var explanation = topicItem.querySelector('.topic-explanation');
+      var moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(function (exp) {
+          if (exp !== explanation) {
+            exp.classList.remove('active');
+            var bb = exp.closest('.topic-item');
+            var prevBtn = bb && bb.querySelector('button[aria-expanded]');
+            if (prevBtn) prevBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+      var nowOpen = explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+    }
+
+    // Modal iframe: carrega o src so na abertura (lazy), trava o scroll do body
+    function openModal(modalId) {
+      var modal = document.getElementById(modalId);
+      if (!modal) return;
+      var iframe = modal.querySelector('iframe[data-src]');
+      if (iframe && !iframe.getAttribute('src')) {
+        iframe.setAttribute('src', iframe.getAttribute('data-src'));
+      }
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(function (modal) {
+        modal.classList.add('hidden');
+      });
+      document.body.style.overflow = 'auto';
+    }
+
+    // Fecha modal com ESC
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Theme toggle legado (eixo claro/escuro; learn.js cuida dos icones)
+    (function () {
+      var themeToggle = document.getElementById('theme-toggle');
+      var html = document.documentElement;
+      if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+          var nowDark = html.classList.toggle('dark');
+          html.style.colorScheme = nowDark ? 'dark' : 'light';
+          try { localStorage.setItem('theme', nowDark ? 'dark' : 'light'); } catch (e) {}
+          if (window.INEMA && typeof INEMA.setPref === 'function') {
+            INEMA.setPref('theme', nowDark ? 'inema-dark' : 'claro');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- learn.js (caminho RELATIVO) + INEMA.init() -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') {
+      window.INEMA.init();
+
+      // GLUE da nav: o listener de clique do learn.js vive no <main>; os controles
+      // na <nav> (jornada + aparencia) ficam fora dele. Aqui ligamos esses controles
+      // a API publica do INEMA (sem tocar no learn.js).
+      (function () {
+        var nav = document.querySelector('nav');
+        if (!nav) return;
+
+        nav.addEventListener('click', function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+
+          // abrir "minha jornada"
+          if (t.closest('[data-inema-journey-open]')) {
+            e.preventDefault();
+            INEMA.openJourney();
+            return;
+          }
+
+          // toggle do painel de aparencia
+          var tgl = t.closest('[data-inema-appearance-toggle]');
+          if (tgl) {
+            var sel = tgl.getAttribute('data-inema-appearance-toggle');
+            var panel = sel ? document.querySelector(sel) : document.querySelector('[data-inema-appearance]');
+            if (panel) {
+              var open = panel.classList.toggle('is-open');
+              panel.setAttribute('data-open', open ? 'true' : 'false');
+              tgl.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+            return;
+          }
+
+          // botoes de preferencia (tema/fonte/tamanho/medida/entrelinha/acento)
+          var prefMap = [
+            ['data-inema-set-theme', 'theme'],
+            ['data-inema-set-font', 'font'],
+            ['data-inema-set-fontscale', 'fontScale'],
+            ['data-inema-set-linewidth', 'lineWidth'],
+            ['data-inema-set-leading', 'leading'],
+            ['data-inema-set-accent', 'accent']
+          ];
+          for (var i = 0; i < prefMap.length; i++) {
+            var btn = t.closest('[' + prefMap[i][0] + ']');
+            if (btn) {
+              var raw = btn.getAttribute(prefMap[i][0]);
+              var key = prefMap[i][1];
+              var val = (key === 'fontScale' || key === 'lineWidth') ? parseInt(raw, 10)
+                : (key === 'leading' ? parseFloat(raw) : raw);
+              INEMA.setPref(key, val);
+              return;
+            }
+          }
+        });
+
+        // fecha o painel de aparencia ao clicar fora
+        document.addEventListener('mousedown', function (e) {
+          var panel = document.querySelector('[data-inema-appearance]');
+          if (!panel || !panel.classList.contains('is-open')) return;
+          if (e.target.closest && (e.target.closest('[data-inema-appearance]') || e.target.closest('[data-inema-appearance-toggle]'))) return;
+          panel.classList.remove('is-open');
+          panel.setAttribute('data-open', 'false');
+          var tg = document.querySelector('[data-inema-appearance-toggle]');
+          if (tg) tg.setAttribute('aria-expanded', 'false');
+        });
+
+        // mantem o badge da jornada atualizado quando o progresso/duvidas mudam
+        function refreshBadge() {
+          try {
+            var badges = document.querySelectorAll('[data-inema-journey-badge]');
+            var pr = INEMA.progress('curso');
+            var doubts = INEMA.listDoubts().filter(function (d) { return !d.resolved; }).length;
+            for (var i = 0; i < badges.length; i++) {
+              badges[i].textContent = pr.pct + '%';
+              badges[i].setAttribute('data-count', String(pr.done));
+              badges[i].setAttribute('data-doubts', String(doubts));
+            }
+          } catch (err) {}
+        }
+        document.addEventListener('inema:read', refreshBadge);
+        document.addEventListener('inema:doubt', refreshBadge);
+        document.addEventListener('inema:progress', refreshBadge);
+        refreshBadge();
+      })();
+    }
+  </script>
+
+</body>
+</html>

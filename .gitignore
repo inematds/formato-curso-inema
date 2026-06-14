@@ -1,0 +1,6 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# nada de build aqui (projeto self-contained)

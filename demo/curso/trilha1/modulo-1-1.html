@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="inema-course" content="demo">
+  <script type="application/json" data-inema-manifest>
+{
+  "course": "demo",
+  "tracks": [
+    { "n": "1", "title": "Trilha 1", "modules": [
+      { "id": "1-1", "title": "Modulo 1.1", "topics": 7, "href": "curso/trilha1/modulo-1-1.html" },
+      { "id": "1-2", "title": "Modulo 1.2", "topics": 7, "href": "curso/trilha1/modulo-1-2.html" }
+    ] }
+  ]
+}
+</script>
+  <title>Modulo 1.1 - Fundamentos de Engenharia de Prompts | Curso Demo</title>
+
+  <!-- ===================================================================
+       1) ANTI-FOUC: script BLOQUEANTE, PRIMEIRO no <head>, ANTES do Tailwind
+          e de qualquer <style>/<link>. Le inema.prefs (global) e aplica
+          .dark + data-theme + CSS vars de leitura ANTES do primeiro paint.
+          try/catch total => default dark no erro (preserva a marca INEMA).
+          (REL = "../.." — caminho ate a pasta com assets/.)
+       =================================================================== -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k];
+          }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+
+      var THEMES = {
+        'inema-dark': { dark: true,  attr: null,        cs: 'dark'  },
+        'claro':      { dark: false, attr: null,        cs: 'light' },
+        'sepia':      { dark: false, attr: 'sepia',     cs: 'light' },
+        'foco':       { dark: null,  attr: 'foco',      cs: null    },
+        'contraste':  { dark: true,  attr: 'contraste', cs: 'dark'  }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+
+      if (t.attr) html.setAttribute('data-theme', t.attr);
+      else html.removeAttribute('data-theme');
+
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system'
+        ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura'
+          ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif'
+          : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+
+      var ACC = {
+        emerald: [152, 76, 45], blue: [217, 91, 60], purple: [258, 90, 66],
+        amber: [38, 92, 50], teal: [174, 72, 41], rose: [350, 89, 60]
+      };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + '');
+      s.setProperty('--accent-s', a[1] + '%');
+      s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+
+      html.setAttribute('data-line-width', String(+p.lineWidth || 68));
+      html.setAttribute('data-leading', (+p.leading === 1.45 ? 'compacto' : 'confortavel'));
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <!-- 2) Tailwind via CDN (DEPOIS do anti-FOUC) + config v1 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' },
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+            blue:    { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' },
+            purple:  { 400: '#c084fc', 500: '#a855f7', 600: '#9333ea' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- 3) CSS base/dark/light do v1 (MASTER §1.5 / §8.1 / §10) -->
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (Parte 1 - Base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Parte 2 - Cores de acento da trilha (T1 Emerald) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    /* Cores das demais trilhas para o nav (inativas) */
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+
+    /* Parte 3 - Remove gradientes + cores especiais */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Parte 4 - Navbar */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Parte 5 - Bordas suavizadas no DARK MODE */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG futurista: suaviza no tema claro (MASTER #1.10) */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* altura real do nav -> usada pelo scroll-margin da learn.css */
+    :root { --inema-nav-h: 3.5rem; }
+  </style>
+
+  <!-- 4) Folha de estilos da camada de aprendizagem (caminho RELATIVO) -->
+  <link rel="stylesheet" href="../../assets/learn.css">
+</head>
+
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <!-- SKIP LINK (PRIMEIRO FOCAVEL) -->
+  <a class="skip" href="#conteudo">Pular para o conteudo</a>
+
+  <!-- ===================================================================
+       NAVIGATION GLOBAL (v1 completo, IDENTICO ao index) — MASTER §1.6 / §5.2
+       Logo + INEMA.CLUB (sky-400) + botoes de trilha + minha jornada +
+       aparencia + theme toggle. Trilha 1 (emerald) = ativa.
+       =================================================================== -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+
+        <!-- Logo + INEMA.CLUB -->
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl" aria-hidden="true">&#129504;</span>
+            <span class="font-bold text-lg hidden sm:inline">Curso Demo</span>
+          </a>
+          <span class="text-neutral-600" aria-hidden="true">|</span>
+          <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+        </div>
+
+        <!-- Trilhas + Jornada + Aparencia + Theme Toggle -->
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <!-- Trilha 1 (ATIVA - emerald) -->
+          <a href="index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" aria-current="page">
+            <span class="sm:hidden">T1</span>
+            <span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <!-- Trilha 2 (inativa - blue) -->
+          <a href="../trilha2/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span>
+            <span class="hidden sm:inline">Aplicacao</span>
+          </a>
+          <!-- Trilha 3 (inativa - purple) -->
+          <a href="../trilha3/index.html" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span>
+            <span class="hidden sm:inline">Avancado</span>
+          </a>
+
+          <!-- Minha jornada -->
+          <button type="button" data-inema-journey-open
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors ml-1">
+            <span aria-hidden="true">&#9719;</span>
+            <span class="hidden sm:inline">Minha jornada</span>
+            <span class="inema-journey-badge" data-inema-journey-badge data-count="0">0%</span>
+          </button>
+
+          <!-- Seletor de aparencia (button-based; absorve o sol/lua) -->
+          <div class="relative">
+            <button type="button"
+                    data-inema-appearance-toggle="[data-inema-appearance]"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    class="inema-appearance-trigger"
+                    title="Aparencia e leitura">
+              <span aria-hidden="true">&#9681;</span>
+              <span class="hidden sm:inline">Aparencia</span>
+            </button>
+
+            <div data-inema-appearance class="inema-appearance-pop" role="dialog" aria-label="Preferencias de aparencia e leitura">
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-tema">Tema</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-tema">
+                  <button type="button" data-inema-set-theme="inema-dark" aria-pressed="false">Escuro</button>
+                  <button type="button" data-inema-set-theme="claro" aria-pressed="false">Claro</button>
+                  <button type="button" data-inema-set-theme="sepia" aria-pressed="false">Sepia</button>
+                </div>
+                <div class="inema-segment" role="group" aria-label="Mais temas">
+                  <button type="button" data-inema-set-theme="foco" aria-pressed="false">Foco</button>
+                  <button type="button" data-inema-set-theme="contraste" aria-pressed="false">Alto contraste</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-fonte">Fonte</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-fonte">
+                  <button type="button" data-inema-set-font="inter" aria-pressed="false">Inter</button>
+                  <button type="button" data-inema-set-font="system" aria-pressed="false">Sistema</button>
+                  <button type="button" data-inema-set-font="leitura" aria-pressed="false">Leitura</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-tamanho">Tamanho</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-tamanho">
+                  <button type="button" data-inema-set-fontscale="100" aria-pressed="false">A</button>
+                  <button type="button" data-inema-set-fontscale="112" aria-pressed="false">A+</button>
+                  <button type="button" data-inema-set-fontscale="125" aria-pressed="false">A++</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-medida">Largura da linha</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-medida">
+                  <button type="button" data-inema-set-linewidth="60" aria-pressed="false">Estreito</button>
+                  <button type="button" data-inema-set-linewidth="68" aria-pressed="false">Medio</button>
+                  <button type="button" data-inema-set-linewidth="75" aria-pressed="false">Largo</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-entrelinha">Entrelinha</span>
+                <div class="inema-segment" role="group" aria-labelledby="pref-entrelinha">
+                  <button type="button" data-inema-set-leading="1.45" aria-pressed="false">Compacto</button>
+                  <button type="button" data-inema-set-leading="1.7" aria-pressed="false">Confortavel</button>
+                </div>
+              </div>
+
+              <div class="inema-pref-group">
+                <span class="inema-pref-group__label" id="pref-acento">Acento</span>
+                <div class="inema-accent-grid" role="group" aria-labelledby="pref-acento">
+                  <button type="button" data-inema-set-accent="emerald" aria-pressed="false" aria-label="Acento esmeralda"></button>
+                  <button type="button" data-inema-set-accent="blue" aria-pressed="false" aria-label="Acento azul"></button>
+                  <button type="button" data-inema-set-accent="purple" aria-pressed="false" aria-label="Acento roxo"></button>
+                  <button type="button" data-inema-set-accent="amber" aria-pressed="false" aria-label="Acento ambar"></button>
+                  <button type="button" data-inema-set-accent="teal" aria-pressed="false" aria-label="Acento turquesa"></button>
+                  <button type="button" data-inema-set-accent="rose" aria-pressed="false" aria-label="Acento rosa"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Theme Toggle legado (absorvido; o JS mantem os icones coerentes) -->
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" aria-label="Alternar tema claro/escuro">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Trilha de navegacao">
+    <ol class="flex items-center space-x-2 text-sm text-neutral-400">
+      <li><a href="../../index.html" class="hover:text-emerald-400">Inicio</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="index.html" class="hover:text-emerald-400">Trilha 1</a></li>
+      <li aria-hidden="true">/</li>
+      <li><span class="text-emerald-400" aria-current="page">Modulo 1.1</span></li>
+    </ol>
+  </nav>
+
+  <!-- HEADER DO MODULO (tema do modulo: data-inema-module / data-inema-track) -->
+  <header id="modulo-1-1" data-inema-module="1-1" data-inema-track="1"
+          class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        MODULO 1.1
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4">&#129504; Fundamentos de Engenharia de Prompts</h1>
+      <p class="text-lg text-neutral-400 max-w-3xl">
+        Como escrever instrucoes que um modelo de linguagem entende de primeira: contexto, tarefa, formato,
+        exemplos e iteracao. Sete tarefas curtas, cada uma com um conceito, um diagrama e um proximo passo claro.
+      </p>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">7</div>
+          <div class="text-xs text-neutral-400">Topicos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">35</div>
+          <div class="text-xs text-neutral-400">Minutos</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Basico</div>
+          <div class="text-xs text-neutral-400">Nivel</div>
+        </div>
+        <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+          <div class="text-xl font-bold text-emerald-400">Teoria</div>
+          <div class="text-xs text-neutral-400">Tipo</div>
+        </div>
+      </div>
+
+      <!-- PROGRESSO EM 3 GRANULARIDADES (derivado do DOM; "N de M" + %) -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 max-w-3xl">
+        <!-- Modulo -->
+        <div class="bg-dark-800/50 rounded-lg p-4 border border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-neutral-400">Este modulo</span>
+            <span class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</span>
+          </div>
+          <div data-inema-meter="modulo:1-1" aria-label="Progresso do modulo 1.1">
+            <div class="inema-bar"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="inema-meter-label mt-2 inline-block" data-inema-meter-frac>0 de 0</span>
+          </div>
+        </div>
+        <!-- Trilha -->
+        <div class="bg-dark-800/50 rounded-lg p-4 border border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-neutral-400">Trilha 1</span>
+            <span class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</span>
+          </div>
+          <div data-inema-meter="trilha:1" aria-label="Progresso da trilha 1">
+            <div class="inema-bar"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="inema-meter-label mt-2 inline-block" data-inema-meter-frac>0 de 0</span>
+          </div>
+        </div>
+        <!-- Curso -->
+        <div class="bg-dark-800/50 rounded-lg p-4 border border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wide text-neutral-400">Curso</span>
+            <span class="text-sm font-bold text-emerald-400" data-inema-meter-pct>0%</span>
+          </div>
+          <div data-inema-meter="curso" aria-label="Progresso do curso">
+            <div class="inema-bar"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="inema-meter-label mt-2 inline-block" data-inema-meter-frac>0 de 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       LAYOUT: TOC sticky lateral + conteudo (main)
+       =================================================================== -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-10">
+
+    <!-- TOC STICKY + SCROLLSPY + "Secao N de M" -->
+    <nav data-inema-toc aria-label="Indice da pagina" data-inema-decor>
+      <p class="inema-toc-progress" data-inema-section-counter>Secao 1 de 7</p>
+      <ol>
+        <li><a href="#topico-1">1. Veja o anatomia de um prompt</a></li>
+        <li><a href="#topico-2">2. Defina o papel e o contexto</a></li>
+        <li><a href="#topico-3">3. Escreva a tarefa como um pedido unico</a></li>
+        <li><a href="#topico-4">4. Especifique o formato da resposta</a></li>
+        <li><a href="#topico-5">5. Ensine com poucos exemplos</a></li>
+        <li><a href="#topico-6">6. Peca raciocinio passo a passo</a></li>
+        <li><a href="#topico-7">7. Itere medindo o resultado</a></li>
+      </ol>
+    </nav>
+
+    <!-- CONTEUDO -->
+    <main id="conteudo" class="inema-prose">
+
+      <!-- ============================= TOPICO 1 ============================= -->
+      <section id="topico-1" data-inema-topic="modulo-1-1#topico-1" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">1</span>
+            <h2 class="text-2xl font-bold">Veja a anatomia de um prompt</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t1-p1">
+          Um <strong class="text-emerald-400">prompt</strong> nao e uma pergunta solta: e um pequeno briefing.
+          Quando o resultado vem errado, quase sempre falta uma das cinco pecas que o modelo precisa para
+          decidir o que fazer. Antes de qualquer sintaxe, vale guardar o modelo mental das partes.
+        </p>
+
+        <!-- SVG futurista inline (emerald + ciano), COLADO ao texto -->
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 230" class="w-full h-auto" role="img"
+               aria-label="Diagrama das cinco partes de um prompt: papel, contexto, tarefa, formato e exemplos alimentam o modelo, que devolve a resposta.">
+            <defs>
+              <linearGradient id="m11t1-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#10b981" stop-opacity="0.25"/>
+                <stop offset="1" stop-color="#0b1220" stop-opacity="0.1"/>
+              </linearGradient>
+              <filter id="m11t1-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect x="1" y="1" width="638" height="228" rx="16" fill="url(#m11t1-grad)" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="13">
+              <!-- cinco pecas -->
+              <g>
+                <rect x="24" y="24" width="150" height="34" rx="8" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+                <text x="99" y="46" fill="#34d399" font-weight="600" text-anchor="middle">Papel</text>
+                <rect x="24" y="66" width="150" height="34" rx="8" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+                <text x="99" y="88" fill="#34d399" font-weight="600" text-anchor="middle">Contexto</text>
+                <rect x="24" y="108" width="150" height="34" rx="8" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+                <text x="99" y="130" fill="#34d399" font-weight="600" text-anchor="middle">Tarefa</text>
+                <rect x="24" y="150" width="150" height="34" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+                <text x="99" y="172" fill="#38bdf8" font-weight="600" text-anchor="middle">Formato</text>
+                <rect x="24" y="190" width="150" height="28" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+                <text x="99" y="209" fill="#38bdf8" font-weight="600" text-anchor="middle">Exemplos</text>
+              </g>
+              <!-- conexoes -->
+              <g stroke="#34d399" stroke-width="1.6" fill="none" opacity="0.8">
+                <path d="M174 41 C 240 41, 250 110, 320 115"/>
+                <path d="M174 83 C 240 83, 250 112, 320 115"/>
+                <path d="M174 125 C 250 125, 270 116, 320 115"/>
+              </g>
+              <g stroke="#38bdf8" stroke-width="1.6" fill="none" opacity="0.8">
+                <path d="M174 167 C 250 167, 270 118, 320 115"/>
+                <path d="M174 204 C 250 204, 270 120, 320 115"/>
+              </g>
+              <!-- modelo (caixa-foco com glow leve) -->
+              <g filter="url(#m11t1-glow)">
+                <rect x="320" y="86" width="150" height="58" rx="12" fill="#10b981" fill-opacity="0.15" stroke="#34d399" stroke-width="2"/>
+                <text x="395" y="112" fill="#e6e6e6" font-weight="600" text-anchor="middle">Modelo</text>
+                <text x="395" y="130" fill="#a8a8b3" font-size="11" text-anchor="middle">de linguagem</text>
+              </g>
+              <path d="M470 115 H 560" stroke="#38bdf8" stroke-width="1.8" fill="none" marker-end="url(#m11t1-arrow)"/>
+              <marker id="m11t1-arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+                <path d="M0 0 L7 3 L0 6 Z" fill="#38bdf8"/>
+              </marker>
+              <rect x="556" y="92" width="64" height="46" rx="10" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="588" y="119" fill="#38bdf8" font-weight="600" font-size="12" text-anchor="middle">Resposta</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">
+            As cinco pecas alimentam o modelo; o ramo em ciano e o caminho de volta (formato e exemplos moldam a saida).
+          </figcaption>
+        </figure>
+
+        <p data-inema-block="m1-1-t1-p2">
+          Nem todo prompt precisa das cinco pecas ao mesmo tempo. Tarefas simples vivem so com
+          <strong class="text-emerald-400">tarefa + formato</strong>. Mas quando a saida desaponta, percorrer
+          a lista na ordem acima costuma revelar o buraco mais rapido do que reescrever tudo do zero.
+        </p>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 2 ============================= -->
+      <section id="topico-2" data-inema-topic="modulo-1-1#topico-2" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">2</span>
+            <h2 class="text-2xl font-bold">Defina o papel e o contexto</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t2-p1">
+          Dar um <strong class="text-emerald-400">papel</strong> ("voce e um revisor tecnico") e descrever o
+          <strong class="text-emerald-400">contexto</strong> (quem le, para que serve) restringe o espaco de
+          respostas possiveis. O modelo nao adivinha o seu publico: ou voce diz, ou ele assume um padrao generico.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 200" class="w-full h-auto" role="img"
+               aria-label="Sem papel definido, a resposta abre em muitas direcoes vagas; com papel e contexto, ela converge para uma faixa util.">
+            <defs>
+              <filter id="m11t2-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect x="1" y="1" width="638" height="198" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <text x="150" y="30" fill="#a8a8b3" text-anchor="middle">Sem papel</text>
+              <circle cx="150" cy="55" r="8" fill="#38bdf8"/>
+              <g stroke="#38bdf8" stroke-width="1.4" opacity="0.6" fill="none">
+                <path d="M150 63 L70 150"/><path d="M150 63 L120 165"/><path d="M150 63 L180 165"/>
+                <path d="M150 63 L230 150"/><path d="M150 63 L40 110"/><path d="M150 63 L260 110"/>
+              </g>
+              <text x="150" y="185" fill="#7a8aa0" text-anchor="middle" font-size="11">respostas dispersas</text>
+
+              <line x1="320" y1="24" x2="320" y2="176" stroke="#1f2937" stroke-width="1.5"/>
+
+              <text x="490" y="30" fill="#34d399" text-anchor="middle" font-weight="600">Com papel + contexto</text>
+              <circle cx="490" cy="55" r="8" fill="#34d399" filter="url(#m11t2-glow)"/>
+              <path d="M455 150 L490 63 L525 150 Z" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2"/>
+              <g stroke="#34d399" stroke-width="1.6" fill="none">
+                <path d="M490 63 L470 150"/><path d="M490 63 L490 155"/><path d="M490 63 L510 150"/>
+              </g>
+              <text x="490" y="185" fill="#34d399" text-anchor="middle" font-size="11">faixa util e consistente</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">
+            O papel funciona como funil: estreita a saida antes mesmo de o modelo comecar a escrever.
+          </figcaption>
+        </figure>
+
+        <div class="bg-primary/10 rounded-xl border border-primary/30 p-6 my-6" data-inema-block="m1-1-t2-p2">
+          <h3 class="text-lg font-semibold text-primary mb-2 flex items-center">
+            <span class="mr-2" aria-hidden="true">&#128161;</span> Dica pratica
+          </h3>
+          <p class="text-neutral-300">
+            Coloque papel e contexto <strong>no inicio</strong> do prompt. O que vem primeiro pesa mais na
+            interpretacao; enterrar o contexto no fim e desperdicar o melhor lugar dele.
+          </p>
+        </div>
+
+        <details>
+          <summary>Indo mais fundo (opcional): papel persona vs papel funcional</summary>
+          <p class="text-neutral-300">
+            "Voce e a Marie Curie" (persona) muda o tom; "voce e um verificador de fatos" (funcional) muda o
+            criterio de qualidade. Para tarefas de trabalho, o papel <em>funcional</em> quase sempre rende mais.
+          </p>
+        </details>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 3 ============================= -->
+      <section id="topico-3" data-inema-topic="modulo-1-1#topico-3" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">3</span>
+            <h2 class="text-2xl font-bold">Escreva a tarefa como um pedido unico</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t3-p1">
+          O coracao do prompt e o <strong class="text-emerald-400">verbo de acao</strong>: resuma, classifique,
+          extraia, reescreva, compare. Quanto mais especifico o verbo, menor a chance de o modelo escolher uma
+          tarefa diferente da que voce tinha em mente. "Fale sobre X" abre demais; "liste tres riscos de X" fecha.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 170" class="w-full h-auto" role="img"
+               aria-label="Um pedido vago se ramifica em saidas diferentes; um pedido unico e especifico leva a uma unica saida previsivel.">
+            <rect x="1" y="1" width="638" height="168" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <rect x="24" y="60" width="150" height="44" rx="10" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="99" y="80" fill="#38bdf8" text-anchor="middle">Pedido vago</text>
+              <text x="99" y="96" fill="#7a8aa0" text-anchor="middle" font-size="10">"fale sobre X"</text>
+              <g stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.7">
+                <path d="M174 75 C 220 60, 240 40, 300 36"/>
+                <path d="M174 82 C 220 82, 250 82, 300 82"/>
+                <path d="M174 90 C 220 105, 240 125, 300 128"/>
+              </g>
+              <text x="320" y="40" fill="#7a8aa0">saida A</text>
+              <text x="320" y="86" fill="#7a8aa0">saida B</text>
+              <text x="320" y="132" fill="#7a8aa0">saida C</text>
+
+              <rect x="430" y="48" width="150" height="44" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2"/>
+              <text x="505" y="68" fill="#34d399" font-weight="600" text-anchor="middle">Pedido unico</text>
+              <text x="505" y="84" fill="#a8a8b3" text-anchor="middle" font-size="10">"liste 3 riscos de X"</text>
+              <path d="M505 92 L505 130" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#m11t3-arrow)"/>
+              <marker id="m11t3-arrow" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto">
+                <path d="M0 0 L8 5 L0 10 Z" fill="#34d399"/>
+              </marker>
+              <text x="505" y="150" fill="#34d399" text-anchor="middle">saida previsivel</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">Um verbo especifico colapsa as muitas saidas possiveis numa so.</figcaption>
+        </figure>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6" data-inema-block="m1-1-t3-p2">
+            <h4 class="font-bold text-emerald-400 mb-4">&#10003; O que FAZER</h4>
+            <ul class="space-y-3 text-neutral-300">
+              <li class="flex items-start space-x-2"><span class="text-emerald-400">&#10003;</span><span>Um verbo de acao por pedido</span></li>
+              <li class="flex items-start space-x-2"><span class="text-emerald-400">&#10003;</span><span>Quantificar quando der ("tres", "ate 200 palavras")</span></li>
+              <li class="flex items-start space-x-2"><span class="text-emerald-400">&#10003;</span><span>Separar tarefas longas em passos numerados</span></li>
+            </ul>
+          </div>
+          <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6" data-inema-block="m1-1-t3-p3">
+            <h4 class="font-bold text-red-400 mb-4">&#10007; O que EVITAR</h4>
+            <ul class="space-y-3 text-neutral-300">
+              <li class="flex items-start space-x-2"><span class="text-red-400">&#10007;</span><span>Empilhar tres pedidos num paragrafo so</span></li>
+              <li class="flex items-start space-x-2"><span class="text-red-400">&#10007;</span><span>Verbos vagos: "explore", "aborde", "discorra"</span></li>
+              <li class="flex items-start space-x-2"><span class="text-red-400">&#10007;</span><span>Deixar o tamanho da resposta em aberto</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 4 ============================= -->
+      <section id="topico-4" data-inema-topic="modulo-1-1#topico-4" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">4</span>
+            <h2 class="text-2xl font-bold">Especifique o formato da resposta</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t4-p1">
+          Se a resposta vai ser lida por uma pessoa, peca <strong class="text-emerald-400">prosa curta</strong>;
+          se vai alimentar um sistema, peca <strong class="text-emerald-400">JSON</strong> com chaves fixas.
+          Definir o formato e a alavanca mais barata para tornar a saida util de imediato, sem retrabalho.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 180" class="w-full h-auto" role="img"
+               aria-label="O mesmo conteudo pode sair como lista, tabela ou JSON conforme o formato pedido; o destino define a escolha.">
+            <rect x="1" y="1" width="638" height="178" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <rect x="24" y="70" width="120" height="40" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2"/>
+              <text x="84" y="94" fill="#34d399" font-weight="600" text-anchor="middle">Conteudo</text>
+              <g stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.8">
+                <path d="M144 80 C 200 50, 230 40, 290 40"/>
+                <path d="M144 90 C 200 90, 230 90, 290 90"/>
+                <path d="M144 100 C 200 130, 230 140, 290 140"/>
+              </g>
+              <rect x="290" y="22" width="150" height="36" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="365" y="44" fill="#38bdf8" text-anchor="middle">Lista de bullets</text>
+              <rect x="290" y="72" width="150" height="36" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="365" y="94" fill="#38bdf8" text-anchor="middle">Tabela markdown</text>
+              <rect x="290" y="122" width="150" height="36" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="365" y="144" fill="#38bdf8" text-anchor="middle">JSON estruturado</text>
+              <text x="470" y="78" fill="#a8a8b3" font-size="11">Destino define</text>
+              <text x="470" y="96" fill="#a8a8b3" font-size="11">a escolha</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">Mesmo conteudo, formatos diferentes — peca o que o destino consome.</figcaption>
+        </figure>
+
+        <div class="bg-dark-800 rounded-xl border border-dark-600 p-5 my-6 font-mono text-sm" data-inema-fullbleed data-inema-block="m1-1-t4-p2">
+          <p class="text-neutral-500 mb-2"># exemplo: pedindo formato fixo</p>
+          <p class="text-neutral-300">Responda <span class="text-emerald-400">apenas</span> com JSON:</p>
+          <p class="text-neutral-300">{ "sentimento": "positivo|neutro|negativo", "confianca": 0.0 }</p>
+        </div>
+
+        <!-- CHECAGEM LEVE (nao-bloqueante) -->
+        <div data-inema-check="modulo-1-1#q1">
+          <p class="inema-check__q">Voce vai enviar a resposta para outro programa processar. Que formato pedir?</p>
+          <div class="inema-check__options">
+            <button type="button" class="inema-check__option" data-inema-check-option="0">Texto livre, bem detalhado</button>
+            <button type="button" class="inema-check__option" data-inema-check-option="1">JSON com chaves fixas</button>
+            <button type="button" class="inema-check__option" data-inema-check-option="2">Uma tabela bonita em markdown</button>
+          </div>
+        </div>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 5 ============================= -->
+      <section id="topico-5" data-inema-topic="modulo-1-1#topico-5" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">5</span>
+            <h2 class="text-2xl font-bold">Ensine com poucos exemplos</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t5-p1">
+          Mostrar um ou dois <strong class="text-emerald-400">exemplos resolvidos</strong> (few-shot) ensina o
+          padrao melhor do que paragrafos de instrucao. O modelo aprende o formato, o tom e o nivel de detalhe
+          imitando a demonstracao — e exemplos sao mais curtos do que descrever todas as regras em palavras.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 175" class="w-full h-auto" role="img"
+               aria-label="Dois pares de entrada e saida servem de molde; a nova entrada e respondida no mesmo padrao demonstrado.">
+            <defs>
+              <filter id="m11t5-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect x="1" y="1" width="638" height="173" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <text x="120" y="28" fill="#a8a8b3" text-anchor="middle" font-size="11">Exemplos (molde)</text>
+              <rect x="40" y="40" width="70" height="30" rx="6" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="75" y="59" fill="#34d399" text-anchor="middle" font-size="11">in 1</text>
+              <path d="M110 55 H 140" stroke="#34d399" stroke-width="1.6" marker-end="url(#m11t5-a)"/>
+              <rect x="140" y="40" width="70" height="30" rx="6" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="175" y="59" fill="#34d399" text-anchor="middle" font-size="11">out 1</text>
+              <rect x="40" y="80" width="70" height="30" rx="6" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="75" y="99" fill="#34d399" text-anchor="middle" font-size="11">in 2</text>
+              <path d="M110 95 H 140" stroke="#34d399" stroke-width="1.6" marker-end="url(#m11t5-a)"/>
+              <rect x="140" y="80" width="70" height="30" rx="6" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="175" y="99" fill="#34d399" text-anchor="middle" font-size="11">out 2</text>
+
+              <line x1="260" y1="30" x2="260" y2="145" stroke="#1f2937" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+              <rect x="300" y="60" width="80" height="34" rx="8" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="340" y="82" fill="#38bdf8" text-anchor="middle">in nova</text>
+              <path d="M380 77 H 430" stroke="#38bdf8" stroke-width="2" marker-end="url(#m11t5-a)"/>
+              <rect x="430" y="56" width="160" height="42" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2" filter="url(#m11t5-glow)"/>
+              <text x="510" y="74" fill="#e6e6e6" text-anchor="middle" font-weight="600">out no mesmo</text>
+              <text x="510" y="90" fill="#a8a8b3" text-anchor="middle" font-size="11">padrao</text>
+              <marker id="m11t5-a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="#38bdf8"/></marker>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">Os pares resolvidos sao o molde; a entrada nova herda o formato deles.</figcaption>
+        </figure>
+
+        <div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 my-6" data-inema-block="m1-1-t5-p2">
+          <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center">
+            <span class="mr-2" aria-hidden="true">&#128202;</span> Quanto e suficiente?
+          </h3>
+          <p class="text-neutral-300">
+            Para a maioria das tarefas de classificacao e formatacao, <strong>2 a 5 exemplos</strong> ja capturam
+            o padrao. Acrescentar mais raramente ajuda e gasta a janela de contexto — comece pequeno.
+          </p>
+        </div>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 6 ============================= -->
+      <section id="topico-6" data-inema-topic="modulo-1-1#topico-6" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">6</span>
+            <h2 class="text-2xl font-bold">Peca raciocinio passo a passo</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t6-p1">
+          Em tarefas com varias etapas (calculo, deducao, comparacao), pedir que o modelo
+          <strong class="text-emerald-400">pense em voz alta antes de concluir</strong> reduz erros. O passo a
+          passo da ao modelo espaco para corrigir a propria rota — em vez de chutar a resposta de uma vez.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 160" class="w-full h-auto" role="img"
+               aria-label="Pular direto do problema para a resposta erra mais; passar por passos intermediarios chega a uma conclusao verificada.">
+            <rect x="1" y="1" width="638" height="158" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <rect x="20" y="60" width="96" height="40" rx="10" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="68" y="84" fill="#34d399" text-anchor="middle" font-weight="600">Problema</text>
+
+              <path d="M116 80 C 150 30, 470 30, 524 70" stroke="#38bdf8" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#m11t6-a)"/>
+              <text x="320" y="28" fill="#7a8aa0" text-anchor="middle" font-size="11">atalho direto (erra mais)</text>
+
+              <rect x="170" y="60" width="80" height="40" rx="9" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="210" y="84" fill="#34d399" text-anchor="middle">passo 1</text>
+              <path d="M250 80 H 286" stroke="#34d399" stroke-width="1.6" marker-end="url(#m11t6-a)"/>
+              <rect x="286" y="60" width="80" height="40" rx="9" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="326" y="84" fill="#34d399" text-anchor="middle">passo 2</text>
+              <path d="M366 80 H 402" stroke="#34d399" stroke-width="1.6" marker-end="url(#m11t6-a)"/>
+              <rect x="402" y="60" width="80" height="40" rx="9" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="442" y="84" fill="#34d399" text-anchor="middle">passo 3</text>
+              <path d="M482 80 H 518" stroke="#34d399" stroke-width="2" marker-end="url(#m11t6-a)"/>
+              <rect x="518" y="56" width="104" height="48" rx="11" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2"/>
+              <text x="570" y="84" fill="#e6e6e6" text-anchor="middle" font-weight="600">conclusao</text>
+              <marker id="m11t6-a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="#34d399"/></marker>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">A cadeia de passos da ao modelo chance de se corrigir antes da conclusao.</figcaption>
+        </figure>
+
+        <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 my-6" data-inema-block="m1-1-t6-p2">
+          <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center">
+            <span class="mr-2" aria-hidden="true">&#9888;</span> Atencao
+          </h3>
+          <p class="text-neutral-300">
+            Passo a passo deixa a resposta mais longa e mais cara. Use em tarefas que <strong>realmente</strong>
+            tem etapas; para uma classificacao trivial, ele so adiciona ruido.
+          </p>
+        </div>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================= TOPICO 7 ============================= -->
+      <section id="topico-7" data-inema-topic="modulo-1-1#topico-7" class="mb-16">
+        <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl flex-shrink-0">7</span>
+            <h2 class="text-2xl font-bold">Itere medindo o resultado</h2>
+          </div>
+          <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar duvida neste topico">
+            <span aria-hidden="true">?</span><span>Tenho duvida</span>
+          </button>
+        </div>
+
+        <p data-inema-block="m1-1-t7-p1">
+          O primeiro prompt raramente e o melhor. Engenharia de prompt e um <strong class="text-emerald-400">ciclo</strong>:
+          escrever, rodar, comparar com o que voce queria, ajustar uma variavel por vez. Mudar tudo de uma vez
+          esconde qual alteracao ajudou — troque um elemento, observe, repita.
+        </p>
+
+        <figure class="my-6 rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-5">
+          <svg viewBox="0 0 640 200" class="w-full h-auto" role="img"
+               aria-label="Ciclo de iteracao: escrever, rodar, avaliar e ajustar formam um loop fechado que volta ao escrever.">
+            <defs>
+              <filter id="m11t7-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="1.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect x="1" y="1" width="638" height="198" rx="16" fill="#0b1220" fill-opacity="0.35" stroke="#1f2937"/>
+            <g font-family="Inter,sans-serif" font-size="12">
+              <rect x="60" y="40" width="120" height="44" rx="10" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="120" y="67" fill="#34d399" font-weight="600" text-anchor="middle">Escrever</text>
+              <rect x="460" y="40" width="120" height="44" rx="10" fill="#0b1220" stroke="#34d399" stroke-width="2"/>
+              <text x="520" y="67" fill="#34d399" font-weight="600" text-anchor="middle">Rodar</text>
+              <rect x="460" y="116" width="120" height="44" rx="10" fill="#0b1220" stroke="#38bdf8" stroke-width="2"/>
+              <text x="520" y="143" fill="#38bdf8" font-weight="600" text-anchor="middle">Avaliar</text>
+              <rect x="60" y="116" width="120" height="44" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#34d399" stroke-width="2" filter="url(#m11t7-glow)"/>
+              <text x="120" y="143" fill="#e6e6e6" font-weight="600" text-anchor="middle">Ajustar 1x</text>
+
+              <path d="M180 62 H 456" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#m11t7-a)"/>
+              <path d="M520 84 V 112" stroke="#38bdf8" stroke-width="1.8" fill="none" marker-end="url(#m11t7-a2)"/>
+              <path d="M460 138 H 184" stroke="#38bdf8" stroke-width="1.8" fill="none" marker-end="url(#m11t7-a2)"/>
+              <path d="M120 116 V 88" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#m11t7-a)"/>
+              <marker id="m11t7-a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="#34d399"/></marker>
+              <marker id="m11t7-a2" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="#38bdf8"/></marker>
+              <text x="320" y="185" fill="#7a8aa0" text-anchor="middle" font-size="11">um loop fechado, uma variavel por volta</text>
+            </g>
+          </svg>
+          <figcaption class="text-sm text-neutral-400 mt-3">O loop fecha em "ajustar"; cada volta muda so uma coisa para voce saber o que funcionou.</figcaption>
+        </figure>
+
+        <p data-inema-block="m1-1-t7-p2">
+          Com este ciclo nas maos, voce ja tem o suficiente para o resto da trilha: os proximos modulos so
+          aprofundam cada peca. Marque os topicos como lidos para ver as barras de progresso fecharem — e use
+          a flag de duvida nos pontos que ficaram em aberto, para revisar depois na sua jornada.
+        </p>
+
+        <div class="flex justify-start mt-6">
+          <button type="button" data-inema-read-toggle aria-pressed="false">
+            <span class="inema-ico-todo" aria-hidden="true">&#9675;</span>
+            <span class="inema-ico-done" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <span class="inema-label-todo">Marcar como lido</span>
+            <span class="inema-label-done">Lido</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- RESUMO DO MODULO -->
+      <section class="mb-12">
+        <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+          <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <span class="mr-3" aria-hidden="true">&#127919;</span> Resumo do modulo
+          </h2>
+          <div class="space-y-4 mb-8">
+            <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">&#10003;</span><div><strong class="text-neutral-100">Cinco pecas</strong><span class="text-neutral-400"> - papel, contexto, tarefa, formato, exemplos.</span></div></div>
+            <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">&#10003;</span><div><strong class="text-neutral-100">Verbo unico</strong><span class="text-neutral-400"> - um pedido especifico por prompt.</span></div></div>
+            <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">&#10003;</span><div><strong class="text-neutral-100">Formato explicito</strong><span class="text-neutral-400"> - prosa para humanos, JSON para sistemas.</span></div></div>
+            <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">&#10003;</span><div><strong class="text-neutral-100">Iterar medindo</strong><span class="text-neutral-400"> - uma variavel por volta, comparando o resultado.</span></div></div>
+          </div>
+
+          <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+            <h3 class="font-semibold text-emerald-400 mb-2">Proximo modulo:</h3>
+            <p class="text-neutral-300">1.2 - Padroes de prompt para tarefas comuns</p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">&#8592; Voltar para a trilha</a>
+            <a href="modulo-1-2.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Proximo modulo &#8594;</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>Curso Demo - 2026 ·
+        <a href="https://inema.club" target="_blank" rel="noopener" class="text-sky-400 hover:text-sky-300">INEMA.CLUB</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ===================================================================
+       SCRIPTS — 3 funcoes-nucleo do v1 + learn.js + INEMA.init()
+       =================================================================== -->
+
+  <!-- 3 funcoes-nucleo do v1 (theme toggle; toggleTopic/openModal nao usados nesta
+       pagina mas mantidos por compatibilidade do padrao). O learn.js absorve os
+       icones do toggle; aqui mantemos o handler de classe .dark + localStorage. -->
+  <script>
+    (function () {
+      var themeToggle = document.getElementById('theme-toggle');
+      var html = document.documentElement;
+      if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+          var nowDark = html.classList.toggle('dark');
+          html.style.colorScheme = nowDark ? 'dark' : 'light';
+          try { localStorage.setItem('theme', nowDark ? 'dark' : 'light'); } catch (e) {}
+          // mantem inema.prefs coerente com o eixo claro/escuro
+          if (window.INEMA && typeof INEMA.setPref === 'function') {
+            INEMA.setPref('theme', nowDark ? 'inema-dark' : 'claro');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- learn.js (caminho RELATIVO) + INEMA.init() -->
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') {
+      window.INEMA.init();
+
+      // Declara a checagem leve (resposta + feedback explicativo por opcao).
+      INEMA.registerCheck('modulo-1-1#q1', {
+        q: 'Voce vai enviar a resposta para outro programa processar. Que formato pedir?',
+        options: ['Texto livre', 'JSON com chaves fixas', 'Tabela markdown'],
+        answer: '1',
+        explain: {
+          '0': 'Texto livre e otimo para humanos, mas um programa teria que adivinhar onde esta cada campo.',
+          '1': 'Isso. JSON com chaves fixas e previsivel e facil de outro sistema ler.',
+          '2': 'Tabela ajuda a leitura humana, mas nao e o formato mais simples para outro programa consumir.'
+        }
+      });
+
+      // GLUE da nav: o listener de clique do learn.js vive no <main>; os controles
+      // na <nav> (jornada + aparencia) ficam fora dele. Aqui ligamos esses controles
+      // a API publica do INEMA (sem tocar no learn.js).
+      (function () {
+        var nav = document.querySelector('nav');
+        if (!nav) return;
+
+        nav.addEventListener('click', function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+
+          // abrir "minha jornada"
+          if (t.closest('[data-inema-journey-open]')) {
+            e.preventDefault();
+            INEMA.openJourney();
+            return;
+          }
+
+          // toggle do painel de aparencia
+          var tgl = t.closest('[data-inema-appearance-toggle]');
+          if (tgl) {
+            var sel = tgl.getAttribute('data-inema-appearance-toggle');
+            var panel = sel ? document.querySelector(sel) : document.querySelector('[data-inema-appearance]');
+            if (panel) {
+              var open = panel.classList.toggle('is-open');
+              panel.setAttribute('data-open', open ? 'true' : 'false');
+              tgl.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+            return;
+          }
+
+          // botoes de preferencia (tema/fonte/tamanho/medida/entrelinha/acento)
+          var prefMap = [
+            ['data-inema-set-theme', 'theme'],
+            ['data-inema-set-font', 'font'],
+            ['data-inema-set-fontscale', 'fontScale'],
+            ['data-inema-set-linewidth', 'lineWidth'],
+            ['data-inema-set-leading', 'leading'],
+            ['data-inema-set-accent', 'accent']
+          ];
+          for (var i = 0; i < prefMap.length; i++) {
+            var btn = t.closest('[' + prefMap[i][0] + ']');
+            if (btn) {
+              var raw = btn.getAttribute(prefMap[i][0]);
+              var key = prefMap[i][1];
+              var val = (key === 'fontScale' || key === 'lineWidth') ? parseInt(raw, 10)
+                : (key === 'leading' ? parseFloat(raw) : raw);
+              INEMA.setPref(key, val);
+              return;
+            }
+          }
+        });
+
+        // fecha o painel de aparencia ao clicar fora
+        document.addEventListener('mousedown', function (e) {
+          var panel = document.querySelector('[data-inema-appearance]');
+          if (!panel || !panel.classList.contains('is-open')) return;
+          if (e.target.closest && (e.target.closest('[data-inema-appearance]') || e.target.closest('[data-inema-appearance-toggle]'))) return;
+          panel.classList.remove('is-open');
+          panel.setAttribute('data-open', 'false');
+          var tg = document.querySelector('[data-inema-appearance-toggle]');
+          if (tg) tg.setAttribute('aria-expanded', 'false');
+        });
+
+        // mantem o badge da jornada atualizado quando o progresso/duvidas mudam
+        function refreshBadge() {
+          try {
+            var badges = document.querySelectorAll('[data-inema-journey-badge]');
+            var pr = INEMA.progress('curso');
+            var doubts = INEMA.listDoubts().filter(function (d) { return !d.resolved; }).length;
+            for (var i = 0; i < badges.length; i++) {
+              badges[i].textContent = pr.pct + '%';
+              badges[i].setAttribute('data-count', String(pr.done));
+              badges[i].setAttribute('data-doubts', String(doubts));
+            }
+          } catch (err) {}
+        }
+        document.addEventListener('inema:read', refreshBadge);
+        document.addEventListener('inema:doubt', refreshBadge);
+        document.addEventListener('inema:progress', refreshBadge);
+        refreshBadge();
+      })();
+    }
+  </script>
+
+</body>
+</html>
