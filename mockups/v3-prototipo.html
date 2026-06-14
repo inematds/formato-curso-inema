@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="paper" data-a11y="off">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>INEMA.CLUB — Fundamentos de Engenharia de Prompts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Display: Spectral · Body: Source Serif 4 · Mono/labels: IBM Plex Mono · A11y toggle: Atkinson Hyperlegible -->
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=IBM+Plex+Mono:wght@400;500&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   V3 — SIMPLICIDADE RADICAL + CONTEUDO PROFUNDO
+   Reading-mode como default. Papel quente (OKLCH), nunca #fff/#000.
+   Profundidade por CAMADAS sob demanda: sidenotes de margem (CSS puro),
+   <details> "indo mais fundo", definicao inline. Zero barra de progresso,
+   zero chip de stat, zero glow ambar/ciano. Premium = quietude.
+   ============================================================ */
+
+/* ---- THEME: PAPER (default) ---- */
+:root,
+[data-theme="paper"]{
+  --paper:        oklch(0.971 0.012 86);   /* ~#f4efe4  fundo quente, nunca branco */
+  --paper-raised: oklch(0.985 0.010 86);   /* ~#faf6ec  superficie levemente elevada */
+  --paper-margin: oklch(0.962 0.012 88);   /* ~#efe8da  gutter da margem */
+  --paper-deep:   oklch(0.935 0.014 86);   /* ~#ece5d6  filete de papel */
+  --ink:          oklch(0.255 0.012 70);   /* ~#26211b  tinta de corpo, quase-preta quente */
+  --ink-soft:     oklch(0.455 0.012 70);   /* ~#5b5347  secundario */
+  --ink-faint:    oklch(0.610 0.013 75);   /* ~#8a8073  metadados, "N de M" */
+  --rule:         oklch(0.855 0.012 82);   /* ~#d8cfbc  hairline 1px */
+  --rule-soft:    oklch(0.900 0.011 84);   /* ~#e3dccb  regra ainda mais leve */
+  --accent:       oklch(0.385 0.075 255);  /* ~#243a63  ACENTO UNICO de tinta (azul) */
+  --accent-soft:  oklch(0.470 0.070 258);  /* ~#3a527e */
+  --accent-wash:  oklch(0.945 0.010 80);   /* ~#e7e2d8  raramente */
+  --mark:         oklch(0.560 0.105 35);   /* ~#7a2230  oxblood: nota do aluno / duvida */
+  --mark-soft:    oklch(0.640 0.100 35);
+  --highlight:    oklch(0.905 0.105 100);  /* ~#f0e08c  marca-texto sobre 1 termo */
+  --highlight-edge: oklch(0.835 0.110 100);
+  color-scheme: light;
+}
+
+/* ---- THEME: SEPIA ---- */
+[data-theme="sepia"]{
+  --paper:        oklch(0.945 0.030 75);   /* ~#efe2cc */
+  --paper-raised: oklch(0.960 0.028 75);
+  --paper-margin: oklch(0.930 0.030 76);
+  --paper-deep:   oklch(0.900 0.032 74);
+  --ink:          oklch(0.290 0.020 60);   /* ~#352a1d */
+  --ink-soft:     oklch(0.460 0.022 62);
+  --ink-faint:    oklch(0.600 0.024 66);
+  --rule:         oklch(0.830 0.030 72);
+  --rule-soft:    oklch(0.880 0.028 73);
+  --accent:       oklch(0.400 0.072 250);
+  --accent-soft:  oklch(0.480 0.068 252);
+  --accent-wash:  oklch(0.910 0.028 72);
+  --mark:         oklch(0.500 0.110 35);
+  --mark-soft:    oklch(0.590 0.105 35);
+  --highlight:    oklch(0.880 0.110 98);
+  --highlight-edge: oklch(0.810 0.112 98);
+  color-scheme: light;
+}
+
+/* ---- THEME: ESCURO (calmo, sem ambar, off-white quente, zero glow) ---- */
+[data-theme="dark"]{
+  --paper:        oklch(0.245 0.010 70);   /* ~#211f1c */
+  --paper-raised: oklch(0.285 0.010 70);   /* ~#2a2724 */
+  --paper-margin: oklch(0.225 0.010 70);
+  --paper-deep:   oklch(0.205 0.010 70);
+  --ink:          oklch(0.900 0.008 80);   /* ~#e6e2da off-white quente, NUNCA #fff */
+  --ink-soft:     oklch(0.730 0.010 80);
+  --ink-faint:    oklch(0.580 0.012 78);
+  --rule:         oklch(0.380 0.010 74);
+  --rule-soft:    oklch(0.330 0.010 74);
+  --accent:       oklch(0.700 0.060 255);  /* azul claro, contraste rebaixado, zero glow */
+  --accent-soft:  oklch(0.640 0.062 256);
+  --accent-wash:  oklch(0.300 0.012 256);
+  --mark:         oklch(0.680 0.090 35);
+  --mark-soft:    oklch(0.620 0.092 35);
+  --highlight:    oklch(0.500 0.080 100);
+  --highlight-edge: oklch(0.560 0.082 100);
+  color-scheme: dark;
+}
+
+/* ---- type tokens ---- */
+:root{
+  --serif-disp:"Spectral", Georgia, serif;
+  --serif-body:"Source Serif 4", Georgia, serif;
+  --mono:"IBM Plex Mono", ui-monospace, monospace;
+  --measure: 66ch;          /* 62-70ch — a restricao que LIBERA a margem */
+  --leading: 1.66;          /* 1.62-1.70 */
+  --size-body: clamp(1.06rem, 0.62rem + 0.72vw, 1.18rem);  /* ~18-19px */
+  --rail-w: clamp(220px, 26vw, 320px);
+  /* espaco base 8px */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --s7:48px; --s8:64px; --s9:96px;
+  --radius:4px;
+}
+/* size toggle steps */
+[data-size="s"]{ --size-body: clamp(1.0rem, 0.6rem + 0.62vw, 1.08rem); --measure:64ch; }
+[data-size="l"]{ --size-body: clamp(1.16rem, 0.7rem + 0.85vw, 1.32rem); --measure:68ch; }
+
+/* a11y: Atkinson Hyperlegible substitui as serifs */
+[data-a11y="on"]{
+  --serif-disp:"Atkinson Hyperlegible", system-ui, sans-serif;
+  --serif-body:"Atkinson Hyperlegible", system-ui, sans-serif;
+  --leading: 1.7;
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif-body);
+  font-size:var(--size-body);
+  line-height:var(--leading);
+  font-optical-sizing:auto;
+}
+/* faint paper fiber — papel, nao material. Removido no escuro. */
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:.45; mix-blend-mode:multiply;
+  background-image:
+    repeating-linear-gradient(92deg, oklch(0.255 0.012 70 / .012) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(2deg,  oklch(0.255 0.012 70 / .008) 0 1px, transparent 1px 5px);
+}
+[data-theme="dark"] body::before{ opacity:0; }
+
+::selection{ background:var(--highlight); color:var(--ink); }
+[data-theme="dark"] ::selection{ background:var(--accent); color:var(--paper); }
+
+a{ color:inherit; text-decoration:underline; text-decoration-color:var(--rule);
+   text-underline-offset:3px; text-decoration-thickness:1px; }
+a:hover{ text-decoration-color:var(--accent); }
+
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:2px; }
+
+/* ============ READER BAR (controles minimos: tema, tamanho, a11y) ============ */
+.reader-bar{
+  position:sticky; top:0; z-index:6;
+  background:color-mix(in oklch, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:saturate(108%) blur(3px);
+  backdrop-filter:saturate(108%) blur(3px);
+  border-bottom:1px solid var(--rule);
+}
+.reader-inner{
+  max-width:1180px; margin:0 auto; padding:10px 40px;
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s5);
+}
+.wordmark{
+  font-family:var(--serif-disp); font-weight:600; font-size:18px;
+  letter-spacing:.14em; color:var(--ink); display:flex; align-items:baseline; gap:.4ch;
+}
+.wordmark .dot{ color:var(--accent); }
+.wordmark .club{ color:var(--ink-faint); font-weight:400; letter-spacing:.2em; }
+.reader-controls{ display:flex; align-items:center; gap:var(--s2); }
+.rc-group{ display:flex; border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; }
+.rc-btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+  background:transparent; color:var(--ink-soft); border:0;
+  padding:6px 11px; cursor:pointer; line-height:1;
+  border-right:1px solid var(--rule);
+}
+.rc-group .rc-btn:last-child{ border-right:0; }
+.rc-btn:hover{ background:var(--paper-margin); color:var(--ink); }
+.rc-btn[aria-pressed="true"]{ background:var(--accent); color:var(--paper); }
+.rc-read{ font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-faint); white-space:nowrap; }
+
+/* ============ MASTHEAD + WAYFINDING DISCRETO ============ */
+.masthead{
+  position:relative; z-index:2; max-width:1180px;
+  margin:0 auto; padding:var(--s7) 40px 0;
+}
+.wayfind{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-faint);
+  display:flex; flex-wrap:wrap; gap:var(--s4) var(--s5); align-items:baseline;
+  margin-bottom:var(--s5);
+}
+.wayfind .sep{ color:var(--rule); }
+.wayfind b{ color:var(--accent); font-weight:500; }
+/* grade silenciosa de percurso (estilo mastery do Khan) — NAO e barra */
+.wayfind .mastery{ display:inline-flex; gap:3px; align-items:center; }
+.wayfind .mastery i{
+  width:9px; height:9px; border:1px solid var(--rule); background:var(--paper-margin);
+  border-radius:1px; display:inline-block;
+}
+.wayfind .mastery i.read{ background:var(--accent); border-color:var(--accent); }
+.wayfind .mastery i.cur{ border-color:var(--accent); box-shadow:inset 0 0 0 2px var(--paper); background:var(--accent); }
+
+/* ============ SPREAD: coluna de leitura + rail de margem ============ */
+.spread{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 40px var(--s9); }
+.leaf{
+  display:grid;
+  grid-template-columns: minmax(0, var(--measure)) var(--rail-w);
+  column-gap:54px; padding-top:var(--s6);
+}
+.column{ position:relative; min-width:0; }
+
+/* module opener */
+.kicker{
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--accent);
+  display:flex; align-items:center; gap:var(--s3); margin-bottom:var(--s4);
+}
+.kicker::after{ content:""; flex:1 1 auto; height:1px;
+  background:linear-gradient(90deg, var(--rule), transparent); }
+h1.module{
+  font-family:var(--serif-disp); font-weight:500;
+  font-size:clamp(2.0rem, 1.2rem + 2.4vw, 3.0rem); line-height:1.06;
+  letter-spacing:-.015em; margin:0 0 var(--s4); color:var(--ink);
+}
+h1.module em{ font-style:italic; font-weight:400; color:var(--accent); }
+.deck{
+  font-family:var(--serif-body); font-style:italic;
+  font-size:1.18rem; line-height:1.55; color:var(--ink-soft);
+  max-width:60ch; margin:0 0 var(--s5);
+}
+.read-meta{
+  font-family:var(--mono); font-size:0.78rem; letter-spacing:.04em;
+  color:var(--ink-faint); display:flex; gap:var(--s4); flex-wrap:wrap;
+  padding-bottom:var(--s5); margin-bottom:var(--s6);
+  border-bottom:1px solid var(--rule);
+}
+.read-meta .here{ color:var(--accent); }
+
+/* objetivos do modulo (o que voce vai entender) — 1a camada */
+.aims{ margin:0 0 var(--s7); }
+.aims h2{
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-faint); margin:0 0 var(--s3);
+}
+.aims ul{ list-style:none; margin:0; padding:0; display:grid; gap:var(--s2); }
+.aims li{
+  display:flex; gap:var(--s3); align-items:baseline;
+  font-size:1.02rem; color:var(--ink-soft); line-height:1.5;
+}
+.aims li::before{
+  content:""; flex:0 0 auto; width:7px; height:7px; margin-top:.5em;
+  border:1px solid var(--accent); border-radius:1px; transform:rotate(45deg);
+}
+.aims li b{ color:var(--ink); font-weight:600; font-family:var(--serif-disp); }
+
+/* ============ SUMARIO (pagina de indice impressa) ============ */
+.toc{
+  margin:0 0 var(--s8); padding:var(--s5) var(--s5) var(--s4);
+  background:var(--paper-margin); border:1px solid var(--rule); border-radius:var(--radius);
+}
+.toc-head{
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-faint);
+  margin:0 0 var(--s4); padding-bottom:var(--s3); border-bottom:1px solid var(--rule);
+}
+.toc ol{ list-style:none; margin:0; padding:0; columns:2; column-gap:38px; }
+.toc li{
+  break-inside:avoid; display:flex; align-items:baseline; gap:var(--s2);
+  padding:6px 0; font-size:0.97rem; color:var(--ink-soft); line-height:1.4;
+}
+.toc li .n{
+  font-family:var(--mono); font-size:0.78rem; color:var(--ink-faint);
+  flex:0 0 auto; width:1.4em; text-align:right;
+}
+.toc li .t{ flex:1 1 auto; }
+.toc li .leader{
+  flex:1 1 auto; align-self:flex-end; border-bottom:1px dotted var(--rule);
+  transform:translateY(-4px); min-width:8px;
+}
+.toc li a{ text-decoration:none; color:inherit; }
+.toc li.done .t{ color:var(--ink-faint); }
+.toc li.done .mk{ color:var(--accent); font-size:0.78rem; }
+.toc li.current .n{ color:var(--accent); font-weight:500; }
+.toc li.current .t{ font-weight:600; font-family:var(--serif-disp); color:var(--ink); }
+.toc li .dot-now{ width:5px; height:5px; border-radius:50%; background:var(--accent);
+  align-self:center; flex:0 0 auto; }
+
+/* ============ SECTION ============ */
+.section{ scroll-margin-top:80px; }
+.section + .section{ margin-top:var(--s9); }   /* cada secao RESPIRA (~96px) */
+.section-mark{
+  display:flex; align-items:baseline; gap:var(--s3); margin:0 0 var(--s2);
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-faint);
+}
+.section-mark .where{ color:var(--accent); }
+h2.head{
+  font-family:var(--serif-disp); font-weight:500;
+  font-size:clamp(1.5rem, 1.1rem + 1.2vw, 1.95rem); line-height:1.14;
+  letter-spacing:-.01em; margin:0 0 var(--s2); color:var(--ink);
+}
+h2.head .num{ font-style:italic; font-weight:400; color:var(--accent); margin-right:.3ch; }
+/* h3 subtitulo descritivo — 1a camada de leitura (layer-cake) */
+h3.sub{
+  font-family:var(--serif-disp); font-weight:600; font-size:1.22rem;
+  line-height:1.3; color:var(--ink); margin:var(--s7) 0 var(--s3);
+  letter-spacing:-.005em;
+}
+.prose p{ margin:0 0 var(--s5); max-width:var(--measure); }
+.prose p.lede{ font-size:1.04em; }
+.dropcap::first-letter{
+  font-family:var(--serif-disp); font-weight:600; float:left;
+  font-size:5.0em; line-height:.78; padding:.06em .12em 0 0; margin:.02em 0 -.04em 0;
+  color:var(--accent);
+}
+
+/* enfase UNICA: italico para termos; bold so para chaves */
+.prose em{ font-style:italic; }
+.prose strong{ font-weight:600; }
+
+/* definicao inline (glossario sob demanda, sem JS) — <details> compacto */
+.dfn{ display:inline; }
+.dfn > summary{
+  display:inline; list-style:none; cursor:help;
+  border-bottom:1px dotted var(--accent); color:var(--ink);
+}
+.dfn > summary::-webkit-details-marker{ display:none; }
+.dfn > summary::after{
+  content:"●"; font-size:.5em; vertical-align:super; color:var(--accent);
+  margin-left:1px;
+}
+.dfn[open] > summary::after{ content:"○"; }
+.dfn .body{
+  display:block; margin:var(--s2) 0 var(--s3);
+  padding:var(--s3) var(--s4); background:var(--paper-margin);
+  border:1px solid var(--rule); border-radius:var(--radius);
+  font-size:0.92em; line-height:1.5; color:var(--ink-soft); max-width:var(--measure);
+}
+.dfn .body b{ font-family:var(--serif-disp); color:var(--ink); }
+
+/* o termo grifado "briefing" + nota do aluno ancorada */
+.grif{
+  position:relative; cursor:help; font-style:italic; color:var(--ink);
+  padding:.02em .1em;
+  background:linear-gradient(180deg, transparent 10%, var(--highlight) 10% 84%, transparent 84%);
+  box-shadow:inset 0 0 0 .5px var(--highlight-edge);
+}
+[data-theme="dark"] .grif{
+  background:linear-gradient(180deg, transparent 10%, color-mix(in oklch,var(--highlight) 55%, transparent) 10% 84%, transparent 84%);
+}
+.grif sup{ font-family:var(--mono); font-size:.55em; color:var(--mark);
+  vertical-align:super; margin-left:1px; font-style:normal; }
+
+/* "pare e preveja" — recall ativo embutido, calmo */
+.predict{
+  margin:var(--s6) 0; padding:var(--s4) var(--s5);
+  background:var(--paper-raised); border:1px solid var(--rule); border-radius:var(--radius);
+  box-shadow:0 1px 0 var(--paper-deep); max-width:var(--measure);
+}
+.predict .lbl{
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:var(--s2);
+}
+.predict p{ margin:0; font-style:italic; color:var(--ink-soft); }
+.predict details{ margin-top:var(--s3); }
+.predict summary{
+  font-family:var(--mono); font-size:0.78rem; letter-spacing:.06em;
+  color:var(--ink-faint); cursor:pointer; list-style:none;
+}
+.predict summary::-webkit-details-marker{ display:none; }
+.predict summary::before{ content:"▸ "; color:var(--accent); }
+.predict details[open] summary::before{ content:"▾ "; }
+.predict .answer{ margin-top:var(--s3); font-style:normal; color:var(--ink); }
+
+/* ============ FIGURE — uma figura por ideia ============ */
+.figure{ margin:var(--s7) 0 var(--s6); max-width:var(--measure); }
+.figure figcaption{
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-faint);
+  margin-bottom:var(--s4); padding-bottom:var(--s2);
+  border-bottom:1px solid var(--rule);
+  display:flex; gap:var(--s3); align-items:baseline;
+}
+.figure figcaption b{ color:var(--accent); font-weight:500; }
+.figure figcaption .fig-n{ font-family:var(--serif-disp); font-style:italic; color:var(--ink); }
+.diagram{ width:100%; height:auto; display:block;
+  background:var(--paper-raised); border:1px solid var(--rule); border-radius:var(--radius); }
+/* SVG herda as cores do tema via currentColor + CSS vars */
+.diagram .ink{ fill:var(--ink); }
+.diagram .ink-soft{ fill:var(--ink-soft); }
+.diagram .faint{ fill:var(--ink-faint); }
+.diagram .accent{ fill:var(--accent); }
+.diagram .accent-stroke{ stroke:var(--accent); }
+.diagram .rule-stroke{ stroke:var(--rule); }
+.diagram .mark-stroke{ stroke:var(--mark); }
+.diagram .mark-fill{ fill:var(--mark); }
+.diagram .wash{ fill:var(--paper-margin); }
+
+/* ============ "INDO MAIS FUNDO" — divulgacao progressiva ============ */
+.deeper{
+  margin:var(--s6) 0; max-width:var(--measure);
+  border:1px solid var(--rule); border-radius:var(--radius);
+  background:var(--paper-raised);
+}
+.deeper > summary{
+  list-style:none; cursor:pointer; padding:var(--s4) var(--s5);
+  display:flex; align-items:center; gap:var(--s3);
+  font-family:var(--serif-disp); font-weight:500; font-size:1.05rem; color:var(--ink);
+}
+.deeper > summary::-webkit-details-marker{ display:none; }
+.deeper > summary .chev{
+  font-family:var(--mono); color:var(--accent); transition:transform .25s ease;
+  flex:0 0 auto;
+}
+.deeper[open] > summary .chev{ transform:rotate(90deg); }
+.deeper > summary .opt{
+  margin-left:auto; font-family:var(--mono); font-size:0.7rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-faint); font-weight:400;
+}
+.deeper .inner{
+  padding:0 var(--s5) var(--s5);
+  border-top:1px solid var(--rule);
+}
+.deeper .inner > *:first-child{ margin-top:var(--s4); }
+.deeper .inner p{ margin:0 0 var(--s4); color:var(--ink-soft); font-size:0.98em; }
+.deeper .inner p:last-child{ margin-bottom:0; }
+.deeper code, .prose code{
+  font-family:var(--mono); font-size:0.86em; background:var(--paper-margin);
+  border:1px solid var(--rule); border-radius:3px; padding:.05em .35em; color:var(--accent);
+}
+.codeblock{
+  font-family:var(--mono); font-size:0.82em; line-height:1.65;
+  background:var(--paper-margin); border:1px solid var(--rule); border-radius:var(--radius);
+  padding:var(--s4); margin:var(--s3) 0 var(--s4); color:var(--ink);
+  white-space:pre-wrap; overflow-x:auto;
+}
+.codeblock .c{ color:var(--ink-faint); }
+.codeblock .k{ color:var(--accent); }
+
+/* ============ MARGIN RAIL — sidenotes (CSS puro) + controles ============ */
+.rail{ position:relative; }
+.rail::before{
+  content:""; position:absolute; left:-27px; top:6px; bottom:0; width:1px;
+  background:linear-gradient(180deg, var(--rule), transparent 96%);
+}
+
+/* SIDENOTE / NOTA DE MARGEM — desktop ancorada, mobile inline (sem JS) */
+.sidenote{
+  font-size:0.85rem; line-height:1.45; color:var(--ink-soft);
+  margin:0 0 var(--s6);
+}
+.sidenote .tag{
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-faint);
+  display:flex; align-items:center; gap:7px; margin-bottom:7px;
+}
+.sidenote .pip{ width:6px; height:6px; border-radius:1px; flex:0 0 auto; }
+.sidenote .pip.def{ background:var(--accent); }
+.sidenote .pip.src{ background:var(--ink-soft); }
+.sidenote .pip.more{ background:var(--mark); }
+.sidenote .src-line{
+  font-family:var(--mono); font-size:0.68rem; color:var(--ink-faint);
+  margin-top:6px; letter-spacing:.02em;
+}
+.sidenote b{ font-family:var(--serif-disp); color:var(--ink); font-weight:600; }
+
+/* nota DO ALUNO ancorada em "briefing" — oxblood, na margem */
+.note-hand{
+  font-family:var(--serif-disp); font-style:italic; font-size:1.02rem;
+  line-height:1.45; color:var(--mark); padding-left:var(--s3); position:relative;
+  margin:0 0 var(--s6);
+}
+.note-hand::before{ content:""; position:absolute; left:0; top:.35em; bottom:.35em;
+  width:2px; background:var(--mark-soft); opacity:.55; }
+.note-hand .meta{ display:block; font-family:var(--mono); font-style:normal;
+  font-size:0.62rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-faint); margin-top:8px; }
+.note-hand .tag{ font-family:var(--mono); font-style:normal; font-size:0.62rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+  display:flex; align-items:center; gap:7px; margin-bottom:7px; }
+
+/* controles minimos de aprendizado (na margem) */
+.control{
+  margin:0 0 var(--s6); padding:var(--s3) var(--s4);
+  background:var(--paper-margin); border:1px solid var(--rule); border-radius:var(--radius);
+}
+.control .lbl{
+  font-family:var(--mono); font-size:0.62rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:var(--s3);
+}
+.read-toggle{
+  display:flex; align-items:center; gap:11px; width:100%;
+  background:transparent; border:0; padding:0; margin:0; cursor:pointer; text-align:left;
+  font-family:var(--serif-body); color:var(--ink-soft);
+}
+.read-box{
+  flex:0 0 auto; width:24px; height:24px; position:relative;
+  border:1.5px solid var(--ink-soft); background:var(--paper); border-radius:3px;
+  transition:background .25s ease, border-color .25s ease;
+}
+.read-box svg{ position:absolute; inset:0; margin:auto; width:15px; height:15px;
+  stroke:var(--paper); stroke-width:2.4; fill:none; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:24; stroke-dashoffset:24; transition:stroke-dashoffset .4s ease .05s; }
+.read-toggle[aria-pressed="true"] .read-box{ background:var(--accent); border-color:var(--accent); }
+.read-toggle[aria-pressed="true"] .read-box svg{ stroke-dashoffset:0; }
+.read-txt b{ font-weight:600; display:block; font-family:var(--serif-disp);
+  font-size:1.0rem; color:var(--ink); }
+.read-sub{ font-size:0.78rem; color:var(--ink-faint); font-family:var(--mono); }
+
+.doubt-btn{
+  display:flex; align-items:center; gap:10px; width:100%; margin-top:11px;
+  padding:9px 11px; background:var(--paper); border:1px solid var(--rule); border-radius:3px;
+  font-family:var(--serif-body); font-size:0.92rem; color:var(--mark); cursor:pointer;
+  transition:border-color .2s ease, background .2s ease;
+}
+.doubt-btn:hover{ border-color:var(--mark-soft); }
+.doubt-btn[aria-pressed="true"]{ border-color:var(--mark-soft);
+  background:color-mix(in oklch, var(--mark) 8%, var(--paper)); }
+.doubt-btn .q{ flex:0 0 auto; width:20px; height:20px; border:1px solid var(--mark-soft);
+  border-radius:50%; display:grid; place-items:center; font-family:var(--serif-disp);
+  font-style:italic; font-size:0.82rem; color:var(--mark); }
+.doubt-btn .txt{ flex:1 1 auto; text-align:left; }
+.doubt-note{ max-height:0; overflow:hidden; transition:max-height .3s ease; }
+.doubt-note.open{ max-height:160px; margin-top:8px; }
+.doubt-note textarea{ width:100%; resize:vertical; min-height:60px;
+  border:1px solid var(--rule); border-radius:3px; background:var(--paper);
+  font-family:var(--serif-body); font-style:italic; font-size:0.85rem; color:var(--ink-soft);
+  padding:8px 9px; line-height:1.45; }
+
+/* ============ KNOWLEDGE CHECK (auto-checagem, sem pontuacao) ============ */
+.check{
+  margin:var(--s8) 0 0; max-width:var(--measure);
+  border-top:1px solid var(--rule); padding-top:var(--s6);
+}
+.check h2{
+  font-family:var(--serif-disp); font-weight:500; font-size:1.4rem;
+  color:var(--ink); margin:0 0 var(--s2); letter-spacing:-.005em;
+}
+.check .intro{ color:var(--ink-soft); font-style:italic; margin:0 0 var(--s5); }
+.q-item{ margin:0 0 var(--s4); border:1px solid var(--rule); border-radius:var(--radius);
+  background:var(--paper-raised); }
+.q-item > summary{ list-style:none; cursor:pointer; padding:var(--s4) var(--s5);
+  font-family:var(--serif-disp); font-weight:500; font-size:1.05rem; color:var(--ink);
+  display:flex; gap:var(--s3); align-items:baseline; }
+.q-item > summary::-webkit-details-marker{ display:none; }
+.q-item > summary .qn{ font-family:var(--mono); font-size:0.82rem; color:var(--accent); flex:0 0 auto; }
+.q-item > summary .reveal{ margin-left:auto; font-family:var(--mono); font-size:0.7rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); flex:0 0 auto; }
+.q-item[open] > summary .reveal{ color:var(--accent); }
+.q-item .ans{ padding:0 var(--s5) var(--s5); color:var(--ink-soft);
+  border-top:1px solid var(--rule); }
+.q-item .ans p{ margin:var(--s4) 0 0; }
+
+/* ============ MINHA JORNADA — sem barras, grade silenciosa ============ */
+.journey{
+  margin:var(--s8) 0 0; max-width:var(--measure);
+  border:1px solid var(--rule); border-radius:var(--radius);
+  background:var(--paper-margin); box-shadow:0 1px 0 var(--paper-deep);
+}
+.journey-top{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s4);
+  padding:var(--s4) var(--s5); border-bottom:1px solid var(--rule);
+}
+.journey-top h2{ font-family:var(--serif-disp); font-weight:500; font-size:1.25rem;
+  margin:0; color:var(--ink); letter-spacing:-.01em; }
+.journey-top h2 .ico{ color:var(--accent); font-style:italic; margin-right:.3ch; }
+.journey-cta{
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); background:transparent; border:1px solid var(--accent); border-radius:3px;
+  padding:8px 14px; cursor:pointer; transition:background .2s ease, color .2s ease;
+}
+.journey-cta:hover{ background:var(--accent); color:var(--paper); }
+.journey-body{ display:grid; grid-template-columns:repeat(3,1fr); }
+.jstat{ padding:var(--s4) var(--s5); border-right:1px solid var(--rule); }
+.jstat:last-child{ border-right:0; }
+.jstat .k{ font-family:var(--mono); font-size:0.62rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:var(--s2); }
+.jstat .v{ font-family:var(--serif-disp); font-size:0.98rem; color:var(--ink); line-height:1.4; }
+.jstat .v em{ font-style:italic; color:var(--accent); }
+.jstat .v .nm{ font-family:var(--mono); font-style:normal; color:var(--ink-faint);
+  font-size:0.82rem; letter-spacing:.04em; }
+/* grade silenciosa de quadradinhos (mastery), NUNCA barra */
+.jgrid{ display:flex; gap:4px; margin-top:var(--s3); flex-wrap:wrap; }
+.jgrid i{ width:11px; height:11px; border:1px solid var(--rule); background:var(--paper-deep);
+  border-radius:1px; }
+.jgrid i.on{ background:var(--accent); border-color:var(--accent); }
+.jgrid i.cur{ border-color:var(--accent); box-shadow:inset 0 0 0 2px var(--paper-margin); background:var(--accent); }
+
+/* proxima acao (UMA clara) */
+.nextup{
+  margin:var(--s7) 0 0; max-width:var(--measure);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s4);
+  padding:var(--s4) var(--s5); border:1px solid var(--rule); border-radius:var(--radius);
+  background:var(--paper-raised);
+}
+.nextup .txt{ }
+.nextup .k{ font-family:var(--mono); font-size:0.7rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-faint); margin-bottom:4px; }
+.nextup .t{ font-family:var(--serif-disp); font-size:1.1rem; color:var(--ink); }
+.nextup a.go{ font-family:var(--mono); font-size:0.78rem; letter-spacing:.08em;
+  color:var(--paper); background:var(--accent); border-radius:3px; padding:10px 16px;
+  text-decoration:none; white-space:nowrap; }
+.nextup a.go:hover{ background:var(--accent-soft); }
+
+/* ============ COLOFAO ============ */
+.colophon{
+  max-width:1180px; margin:var(--s8) auto 0; padding:var(--s5) 40px 0;
+  border-top:1px solid var(--rule);
+  display:flex; justify-content:space-between; align-items:baseline; gap:var(--s5);
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-faint); flex-wrap:wrap;
+}
+.colophon .pg{ font-family:var(--serif-disp); font-style:italic; text-transform:none;
+  letter-spacing:0; font-size:0.85rem; color:var(--ink-soft); }
+
+/* ============ RESPONSIVO — mobile: rail desmonta, sidenote vira inline ============ */
+@media (max-width:1080px){
+  .reader-inner, .masthead, .spread, .colophon{ padding-left:var(--s5); padding-right:var(--s5); }
+  .leaf{ grid-template-columns:1fr; column-gap:0; }
+  .rail{ display:contents; }       /* dissolve o rail: seus filhos entram no fluxo */
+  .toc ol{ columns:1; }
+  .journey-body{ grid-template-columns:1fr; }
+  .jstat{ border-right:0; border-bottom:1px solid var(--rule); }
+  .jstat:last-child{ border-bottom:0; }
+  /* sidenote/controle vira bloco inline calmo abaixo do texto */
+  .sidenote, .note-hand, .control{
+    max-width:var(--measure); border-left:2px solid var(--rule); padding-left:var(--s4);
+    margin-left:0;
+  }
+  .note-hand{ border-left:2px solid var(--mark-soft); }
+  .reader-controls .rc-read{ display:none; }
+}
+@media (max-width:560px){
+  .reader-inner{ flex-wrap:wrap; gap:var(--s3); }
+  .toc ol{ columns:1; }
+}
+
+/* reduced motion: nada de transicoes chamativas */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== READER BAR (controles minimos) ===================== -->
+<div class="reader-bar">
+  <div class="reader-inner">
+    <div class="wordmark">INEMA<span class="dot">.</span><span class="club">CLUB</span></div>
+    <div class="reader-controls">
+      <span class="rc-read" id="rt">— min de leitura</span>
+      <div class="rc-group" role="group" aria-label="Tema de leitura">
+        <button class="rc-btn" data-set-theme="paper" aria-pressed="true">Papel</button>
+        <button class="rc-btn" data-set-theme="sepia" aria-pressed="false">Sépia</button>
+        <button class="rc-btn" data-set-theme="dark" aria-pressed="false">Escuro</button>
+      </div>
+      <div class="rc-group" role="group" aria-label="Tamanho do texto">
+        <button class="rc-btn" data-set-size="s" aria-pressed="false">A−</button>
+        <button class="rc-btn" data-set-size="m" aria-pressed="true">A</button>
+        <button class="rc-btn" data-set-size="l" aria-pressed="false">A+</button>
+      </div>
+      <div class="rc-group" role="group" aria-label="Acessibilidade">
+        <button class="rc-btn" data-toggle-a11y aria-pressed="false" title="Atkinson Hyperlegible — legibilidade máxima">Aa↹</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MASTHEAD + WAYFINDING ===================== -->
+<header class="masthead">
+  <nav class="wayfind" aria-label="Onde você está">
+    <span>Curso <b>21%</b></span>
+    <span class="sep">·</span>
+    <span>Módulo <b>3</b> / 7 · Trilha 1 Fundamentos</span>
+    <span class="sep">·</span>
+    <span>Seção <b>1</b> de 7</span>
+    <span class="sep">·</span>
+    <span class="mastery" aria-label="Percurso do módulo: 1 de 7 seções">
+      <i class="cur"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </span>
+  </nav>
+</header>
+
+<!-- ===================== SPREAD ===================== -->
+<main class="spread">
+  <div class="leaf">
+
+    <!-- ================= READING COLUMN ================= -->
+    <article class="column" id="reading">
+
+      <!-- module opener -->
+      <p class="kicker">Módulo 3 · Trilha 1 · Fundamentos</p>
+      <h1 class="module">Fundamentos de <em>Engenharia de Prompts</em></h1>
+      <p class="deck">Escrever instruções que um modelo entende de primeira — pensando o prompt
+        como um pedido bem-feito, não como uma fórmula mágica.</p>
+      <p class="read-meta">
+        <span class="here">Lendo agora</span>
+        <span>~14 min · módulo inteiro</span>
+        <span>7 seções · 2 abertas</span>
+      </p>
+
+      <!-- objetivos: o que voce vai entender (3-4) -->
+      <section class="aims" aria-label="O que você vai entender">
+        <h2>O que você vai entender</h2>
+        <ul>
+          <li>Por que um prompt é um <b>pedido</b>, e quais peças o modelo precisa para respondê-lo.</li>
+          <li>Como <b>contexto e papel</b> mudam a resposta antes mesmo de você descrever a tarefa.</li>
+          <li>Onde a maioria dos prompts falha — e a pergunta única que diagnostica isso.</li>
+          <li>Como ler a saída e <b>iterar</b> sem reescrever tudo do zero.</li>
+        </ul>
+      </section>
+
+      <!-- SUMARIO -->
+      <nav class="toc" aria-label="Sumário do módulo">
+        <p class="toc-head">Sumário — sete movimentos</p>
+        <ol>
+          <li class="current"><span class="dot-now"></span><span class="n">1</span>
+            <a href="#s1"><span class="t">Veja a anatomia de um prompt</span></a></li>
+          <li><span class="n">2</span><a href="#s2"><span class="t">Defina o papel e o contexto</span></a><span class="leader"></span></li>
+          <li><span class="n">3</span><span class="t">Escreva a tarefa como um pedido único</span><span class="leader"></span></li>
+          <li><span class="n">4</span><span class="t">Especifique o formato da resposta</span><span class="leader"></span></li>
+          <li><span class="n">5</span><span class="t">Ensine com poucos exemplos</span><span class="leader"></span></li>
+          <li><span class="n">6</span><span class="t">Itere lendo a saída</span><span class="leader"></span></li>
+          <li><span class="n">7</span><span class="t">Monte seu checklist de revisão</span><span class="leader"></span></li>
+        </ol>
+      </nav>
+
+      <!-- ============ SEÇÃO 1 ============ -->
+      <section class="section" id="s1">
+        <div class="section-mark">
+          <span class="where">Seção 1 de 7</span><span>·</span><span>Anatomia</span>
+        </div>
+        <h2 class="head"><span class="num">1.</span>Veja a anatomia de um prompt</h2>
+
+        <div class="prose">
+          <p class="lede dropcap">Um prompt não é uma pergunta solta jogada na caixa de texto:
+            é um pequeno <span class="grif" id="grif-briefing">briefing<sup>n</sup></span>. Quando o
+            resultado vem morno, genérico ou simplesmente errado, quase nunca o problema é a
+            redação — é uma <em>peça ausente</em>. Falta uma das informações que o modelo precisava
+            para decidir o que fazer, e ele preencheu o buraco com a média de tudo que já viu.</p>
+
+          <p>Pense no que acontece do outro lado. O modelo recebe seu texto e, palavra após palavra,
+            estima qual continuação é mais provável dado <em>tudo</em> que você escreveu. Ele não
+            tem acesso à sua intenção, ao seu projeto, ao seu leitor — só ao que está na janela.
+            Por isso a qualidade da saída é, antes de mais nada, uma função de quanto do
+            <span class="dfn"><details class="dfn"><summary>contexto necessário</summary><span class="body"><b>Contexto necessário</b> é o conjunto mínimo de fatos, restrições e objetivos sem os quais a tarefa fica ambígua. Não é "tudo o que você sabe" — é só o que muda a resposta.</span></details></span>
+            você de fato colocou ali.</p>
+
+          <h3 class="sub">As cinco peças que um pedido completo carrega</h3>
+
+          <p>Um prompt completo tende a carregar cinco peças. Não é uma fórmula rígida — é uma
+            lista de verificação mental. <strong>Contexto</strong> situa o cenário e quem fala.
+            <strong>Tarefa</strong> é o pedido único e explícito. <strong>Formato</strong> diz a
+            forma da resposta. <strong>Exemplos</strong> mostram, em vez de descrever. E
+            <strong>iteração</strong> fecha o ciclo: você lê a saída e devolve o que faltou.</p>
+        </div>
+
+        <!-- recall ativo: pare e preveja -->
+        <div class="predict">
+          <p class="lbl">Pare e preveja</p>
+          <p>Antes de ver a figura: dessas cinco peças, qual você acha que, sozinha, costuma
+            destravar mais resultados ruins quando é adicionada?</p>
+          <details>
+            <summary>Ver uma resposta possível</summary>
+            <p class="answer">Quase sempre é o <strong>contexto</strong> — porque ele muda a
+              interpretação de <em>todas</em> as outras peças. Uma boa tarefa lida no contexto
+              errado ainda produz a resposta errada. Guardamos essa intuição: é o tema da Seção 2.</p>
+          </details>
+        </div>
+
+        <!-- a figura: uma por ideia -->
+        <figure class="figure">
+          <figcaption><span class="fig-n">Fig. 1</span> · As cinco peças de um <b>briefing</b> de prompt</figcaption>
+          <svg class="diagram" viewBox="0 0 720 232" role="img"
+               aria-label="Diagrama: Contexto, Tarefa, Formato e Exemplos compõem o pedido; a Iteração realimenta o contexto.">
+            <defs>
+              <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="0" y2="6" class="accent-stroke" stroke-width="2.4" opacity="0.16"/>
+              </pattern>
+            </defs>
+            <line x1="20" y1="156" x2="700" y2="156" class="rule-stroke" stroke-width="1"/>
+            <!-- 01 Contexto -->
+            <g>
+              <rect x="20" y="62" width="120" height="64" fill="url(#hatch)" class="accent-stroke" stroke-width="1.2" rx="3"/>
+              <text x="80" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.5" class="faint">01</text>
+              <text x="80" y="100" text-anchor="middle" font-family="Spectral, serif" font-style="italic" font-size="18" class="ink">Contexto</text>
+              <text x="80" y="178" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">o cenário</text>
+              <text x="80" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">e quem fala</text>
+            </g>
+            <!-- 02 Tarefa -->
+            <g>
+              <rect x="160" y="62" width="120" height="64" class="wash accent-stroke" stroke-width="1.2" rx="3"/>
+              <text x="220" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.5" class="faint">02</text>
+              <text x="220" y="100" text-anchor="middle" font-family="Spectral, serif" font-style="italic" font-size="18" class="ink">Tarefa</text>
+              <text x="220" y="178" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">o pedido</text>
+              <text x="220" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">único</text>
+            </g>
+            <!-- 03 Formato -->
+            <g>
+              <rect x="300" y="62" width="120" height="64" class="wash accent-stroke" stroke-width="1.2" rx="3"/>
+              <text x="360" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.5" class="faint">03</text>
+              <text x="360" y="100" text-anchor="middle" font-family="Spectral, serif" font-style="italic" font-size="18" class="ink">Formato</text>
+              <text x="360" y="178" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">forma da</text>
+              <text x="360" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">resposta</text>
+            </g>
+            <!-- 04 Exemplos -->
+            <g>
+              <rect x="440" y="62" width="120" height="64" class="wash accent-stroke" stroke-width="1.2" rx="3"/>
+              <text x="500" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.5" class="faint">04</text>
+              <text x="500" y="100" text-anchor="middle" font-family="Spectral, serif" font-style="italic" font-size="18" class="ink">Exemplos</text>
+              <text x="500" y="178" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">poucos e</text>
+              <text x="500" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">certeiros</text>
+            </g>
+            <!-- 05 Iteração -->
+            <g>
+              <rect x="580" y="62" width="120" height="64" fill="url(#hatch)" class="accent-stroke" stroke-width="1.2" rx="3"/>
+              <text x="640" y="48" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.5" class="faint">05</text>
+              <text x="640" y="100" text-anchor="middle" font-family="Spectral, serif" font-style="italic" font-size="18" class="ink">Iteração</text>
+              <text x="640" y="178" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">leia, ajuste,</text>
+              <text x="640" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" class="ink-soft">repita</text>
+            </g>
+            <!-- joints -->
+            <g class="accent">
+              <circle cx="80" cy="156" r="3"/><circle cx="220" cy="156" r="3"/>
+              <circle cx="360" cy="156" r="3"/><circle cx="500" cy="156" r="3"/><circle cx="640" cy="156" r="3"/>
+            </g>
+            <!-- feedback arc 05 -> 01 -->
+            <path d="M 640 58 C 640 18, 80 18, 80 58" fill="none" class="mark-stroke" stroke-width="1.3" stroke-dasharray="4 4"/>
+            <path d="M 80 58 l -5 -7 m 5 7 l 6 -6" fill="none" class="mark-stroke" stroke-width="1.3"/>
+            <text x="360" y="14" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="1.4" class="mark-fill">A ITERAÇÃO REALIMENTA O CONTEXTO</text>
+          </svg>
+        </figure>
+
+        <div class="prose">
+          <p>Repare na seta tracejada: a iteração não é um sexto passo no fim da fila, é o que
+            devolve informação para o começo. Você lê a saída, descobre qual peça estava vaga e a
+            recoloca no contexto. Engenharia de prompt madura é quase toda feita desse laço curto —
+            não de acertar tudo na primeira tentativa.</p>
+        </div>
+
+        <!-- indo mais fundo: divulgacao progressiva -->
+        <details class="deeper">
+          <summary><span class="chev">▸</span> Indo mais fundo: por que o modelo "preenche o buraco"
+            <span class="opt">opcional</span></summary>
+          <div class="inner">
+            <p>O caminho-feliz acima já basta para usar bem. Esta camada é para quem quer entender
+              o <em>porquê</em> mecânico — e pode ser pulada sem perda.</p>
+            <p>Um modelo de linguagem é, no fundo, um estimador de continuação: dado o texto até
+              aqui, qual é o próximo token mais provável? Quando o contexto é específico, a
+              distribuição de continuações prováveis fica <em>estreita</em> — há poucos caminhos
+              coerentes, e o modelo segue por um deles. Quando o contexto é vago, a distribuição
+              fica <em>larga</em>: muitas continuações são igualmente plausíveis, e o modelo
+              recorre ao que é mais comum no corpus — ou seja, ao genérico. Foi exatamente isso
+              que você percebeu como resposta "morna".</p>
+            <p>Há uma consequência prática útil: adicionar contexto raramente é desperdício, mas
+              adicionar contexto <em>irrelevante</em> pode atrapalhar, porque concorre pela
+              atenção do modelo. Por isso a Seção 2 insiste em contexto <em>necessário</em>, não em
+              contexto <em>abundante</em>.</p>
+            <div class="codeblock"><span class="c"># Vago — distribuição larga, saída genérica</span>
+Escreva um email de cobrança.
+
+<span class="c"># Específico — distribuição estreita, saída útil</span>
+<span class="k">Contexto:</span> cliente atrasou 5 dias, é recorrente, tom cordial.
+<span class="k">Tarefa:</span> escreva o email de lembrete.
+<span class="k">Formato:</span> 4 linhas, sem assunto, assinatura "Equipe".</div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============ SEÇÃO 2 ============ -->
+      <section class="section" id="s2">
+        <div class="section-mark">
+          <span class="where">Seção 2 de 7</span><span>·</span><span>Contexto e papel</span>
+        </div>
+        <h2 class="head"><span class="num">2.</span>Defina o papel e o contexto</h2>
+
+        <div class="prose">
+          <p class="lede">Antes de pedir qualquer coisa, você decide <em>de onde</em> a resposta vem.
+            Dois prompts com a mesma tarefa — "explique recursão" — produzem textos completamente
+            diferentes se um diz "para uma criança de dez anos" e o outro diz "para um colega que
+            já programa". A tarefa não mudou. Mudou o <em>papel</em> de quem responde e o leitor a
+            quem responde. Esse é o controle mais barato e mais subutilizado da engenharia de
+            prompt.</p>
+
+          <p>Definir um papel não é vestir o modelo de fantasia ("você é um especialista mundial").
+            É estreitar o espaço de respostas plausíveis: ao nomear <em>quem fala</em> e
+            <em>para quem</em>, você descarta de antemão o registro errado, o nível de detalhe
+            errado e os exemplos fora de lugar. O papel funciona porque carrega, de forma
+            compacta, um monte de contexto implícito.</p>
+
+          <h3 class="sub">Contexto é o que muda a resposta — nada mais</h3>
+
+          <p>A tentação é despejar tudo o que você sabe. Resista. Bom contexto é
+            <em>seletivo</em>: contém os fatos, as restrições e o objetivo que, se ausentes,
+            deixariam a tarefa ambígua — e <em>só</em> isso. Um teste simples antes de colar um
+            parágrafo no prompt: <strong>se eu apagar esta frase, a resposta certa muda?</strong>
+            Se não muda, ela está disputando atenção à toa.</p>
+        </div>
+
+        <!-- figura 2: papel estreita o leque -->
+        <figure class="figure">
+          <figcaption><span class="fig-n">Fig. 2</span> · O papel <b>estreita</b> o leque de respostas plausíveis</figcaption>
+          <svg class="diagram" viewBox="0 0 720 220" role="img"
+               aria-label="Diagrama: sem papel definido, o leque de respostas é largo e genérico; com papel e leitor definidos, o leque fica estreito e útil.">
+            <!-- sem papel: leque largo -->
+            <text x="170" y="32" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.4" class="faint">SEM PAPEL — LEQUE LARGO</text>
+            <circle cx="170" cy="70" r="5" class="ink"/>
+            <g class="rule-stroke" stroke-width="1.2" fill="none">
+              <path d="M170 70 L60 188"/><path d="M170 70 L110 192"/><path d="M170 70 L170 195"/>
+              <path d="M170 70 L230 192"/><path d="M170 70 L280 188"/>
+            </g>
+            <g class="faint">
+              <text x="58" y="205" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">vago</text>
+              <text x="110" y="207" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">genérico</text>
+              <text x="170" y="209" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">médio</text>
+              <text x="230" y="207" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">prolixo</text>
+              <text x="282" y="205" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">solto</text>
+            </g>
+            <!-- divisor -->
+            <line x1="370" y1="44" x2="370" y2="196" class="rule-stroke" stroke-width="1" stroke-dasharray="3 4"/>
+            <!-- com papel: leque estreito -->
+            <text x="545" y="32" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.4" class="accent">COM PAPEL + LEITOR — ESTREITO</text>
+            <circle cx="545" cy="70" r="5" class="accent"/>
+            <g class="accent-stroke" stroke-width="1.4" fill="none">
+              <path d="M545 70 L520 190"/><path d="M545 70 L545 193"/><path d="M545 70 L570 190"/>
+            </g>
+            <!-- area sombreada do leque estreito -->
+            <path d="M545 70 L520 190 L570 190 Z" class="accent" opacity="0.08"/>
+            <g class="ink-soft">
+              <text x="520" y="205" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">no ponto</text>
+              <text x="545" y="207" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">no tom</text>
+              <text x="572" y="205" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10.5">no nível</text>
+            </g>
+          </svg>
+        </figure>
+
+        <div class="prose">
+          <p>O leque da esquerda é o que você recebe quando deixa o modelo escolher o registro.
+            O da direita é o que acontece quando você decide por ele. Note que não é "menos
+            liberdade" — é menos <em>ambiguidade</em>. O modelo continua criativo dentro do leque
+            estreito; ele só para de gastar criatividade adivinhando o que você queria.</p>
+        </div>
+
+        <!-- pare e preveja 2 -->
+        <div class="predict">
+          <p class="lbl">Pare e preveja</p>
+          <p>Você vai pedir um resumo de um artigo técnico para postar no LinkedIn. Quais
+            <em>duas</em> frases de contexto teriam o maior efeito na qualidade do resultado?</p>
+          <details>
+            <summary>Ver uma resposta possível</summary>
+            <p class="answer">Provavelmente <strong>o leitor</strong> ("para gestores não-técnicos")
+              e <strong>o objetivo do post</strong> ("gerar conversa, não ensinar"). Ambas mudam
+              tom, comprimento e o que entra ou sai — muito mais do que pedir "faça um bom resumo".</p>
+          </details>
+        </div>
+
+        <details class="deeper">
+          <summary><span class="chev">▸</span> Indo mais fundo: papel no sistema vs. papel no pedido
+            <span class="opt">opcional</span></summary>
+          <div class="inner">
+            <p>Camada opcional. Na prática há dois lugares para definir o papel, e eles servem a
+              propósitos diferentes.</p>
+            <p>O <strong>papel persistente</strong> (frequentemente uma <em>system message</em>)
+              vale para a conversa inteira: "você é um editor que prefere frases curtas". Use-o para
+              o que não muda entre pedidos. Já o <strong>papel pontual</strong>, escrito no próprio
+              pedido, ajusta um caso específico: "neste, escreva como se fosse para um leitor
+              cético". A regra prática: o que se repete sobe para o papel persistente; o que é
+              específico desce para o pedido — assim você evita reescrever o mesmo preâmbulo toda
+              vez e mantém cada pedido enxuto.</p>
+            <p>Há um limite honesto a registrar: papel ajuda a <em>selecionar</em> conhecimento e
+              registro que o modelo já tem; ele não <em>cria</em> competência ausente. "Você é
+              advogado" melhora o tom jurídico, mas não garante que a lei citada exista. Por isso
+              papel e <em>verificação</em> (Seção 6) andam juntos.</p>
+          </div>
+        </details>
+
+      </section>
+
+      <!-- ============ KNOWLEDGE CHECK ============ -->
+      <section class="check" aria-label="Auto-checagem">
+        <h2>Antes de seguir: três checagens rápidas</h2>
+        <p class="intro">Sem nota, sem placar. Responda de cabeça, depois revele para comparar.</p>
+
+        <details class="q-item">
+          <summary><span class="qn">01</span><span>Por que uma instrução bem escrita ainda pode produzir uma resposta ruim?</span><span class="reveal">Revelar</span></summary>
+          <div class="ans"><p>Porque a redação raramente é o problema: falta uma <em>peça</em> —
+            quase sempre contexto. Sem ela, o modelo preenche o buraco com o genérico.</p></div>
+        </details>
+        <details class="q-item">
+          <summary><span class="qn">02</span><span>Qual teste decide se uma frase de contexto merece estar no prompt?</span><span class="reveal">Revelar</span></summary>
+          <div class="ans"><p>"Se eu apagar esta frase, a resposta certa muda?" Se não muda, a
+            frase está disputando atenção à toa e pode sair.</p></div>
+        </details>
+        <details class="q-item">
+          <summary><span class="qn">03</span><span>Definir um papel dá menos liberdade ao modelo?</span><span class="reveal">Revelar</span></summary>
+          <div class="ans"><p>Não — dá menos <em>ambiguidade</em>. O modelo segue criativo dentro
+            de um leque estreito; só para de adivinhar o registro que você queria.</p></div>
+        </details>
+      </section>
+
+      <!-- MINHA JORNADA -->
+      <section class="journey" aria-label="Minha jornada — progresso consolidado">
+        <div class="journey-top">
+          <h2><span class="ico">❧</span> Minha jornada</h2>
+          <button class="journey-cta" type="button" id="journeyCta">Abrir caderno →</button>
+        </div>
+        <div class="journey-body">
+          <div class="jstat">
+            <div class="k">Neste módulo</div>
+            <div class="v">Seção <em id="jSec">1</em> de 7 <span class="nm">lida</span></div>
+            <div class="jgrid" id="jGrid" aria-label="Seções lidas no módulo">
+              <i class="cur"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+          <div class="jstat">
+            <div class="k">Na trilha</div>
+            <div class="v">Módulo <em>3</em> de 7</div>
+            <div class="jgrid" aria-label="Módulos da trilha">
+              <i class="on"></i><i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+          <div class="jstat">
+            <div class="k">No curso</div>
+            <div class="v"><em>21%</em> <span class="nm">percorrido</span></div>
+            <div class="jgrid" aria-label="Trilhas do curso">
+              <i class="on"></i><i class="cur"></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- proxima acao (UMA clara) -->
+      <div class="nextup">
+        <div class="txt">
+          <div class="k">Continuar</div>
+          <div class="t">Seção 3 — Escreva a tarefa como um pedido único</div>
+        </div>
+        <a class="go" href="#">Próxima →</a>
+      </div>
+
+    </article>
+
+    <!-- ================= MARGIN RAIL ================= -->
+    <aside class="rail" aria-label="Margem: notas, definições e controles de aprendizado">
+
+      <!-- nota DO ALUNO ancorada em "briefing" -->
+      <div class="note-hand" id="note-anchor">
+        <span class="tag"><span class="pip" style="background:var(--highlight);border:1px solid var(--highlight-edge)"></span> Sua nota · grifo</span>
+        “briefing = pedir como eu pediria a um estagiário esperto. Revisar isso depois.”
+        <span class="meta">Ancorada em <span style="color:var(--mark)">briefing</span> · hoje, 08:14</span>
+      </div>
+
+      <!-- controle: marcar lido + duvida -->
+      <div class="control">
+        <div class="lbl">Checkpoint · Seção 1</div>
+        <button class="read-toggle" type="button" aria-pressed="false" id="readBtn">
+          <span class="read-box"><svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5"/></svg></span>
+          <span class="read-txt">
+            <b id="readLabel">Marcar como lida</b>
+            <span class="read-sub" id="readSub">seção 1 · não lida</span>
+          </span>
+        </button>
+        <button class="doubt-btn" type="button" aria-pressed="false" aria-expanded="false" id="doubtBtn">
+          <span class="q">?</span><span class="txt">Tenho uma dúvida aqui</span>
+        </button>
+        <div class="doubt-note" id="doubtNote">
+          <textarea rows="3" placeholder="O que ficou confuso? Escreva — fica salvo nesta margem…"></textarea>
+        </div>
+      </div>
+
+      <!-- SIDENOTE 1 · definicao -->
+      <div class="sidenote">
+        <div class="tag"><span class="pip def"></span> Definição</div>
+        <b>Briefing.</b> Documento curto que orienta um trabalho: contexto, objetivo, restrições e
+        formato esperado. Pedir bem a um modelo é, basicamente, escrever um bom briefing.
+      </div>
+
+      <!-- SIDENOTE 2 · fonte -->
+      <div class="sidenote">
+        <div class="tag"><span class="pip src"></span> Fonte</div>
+        A ideia de tratar o prompt como pedido estruturado aparece nos guias de prompting da
+        Anthropic e da OpenAI, e em <i>Just JavaScript</i> de Dan Abramov para o método "pare e
+        preveja".
+        <div class="src-line">docs.anthropic.com · justjavascript.com</div>
+      </div>
+
+      <!-- SIDENOTE 3 · indo mais fundo (rail) -->
+      <div class="sidenote">
+        <div class="tag"><span class="pip more"></span> Indo mais fundo</div>
+        "Morno" tem nome técnico: quando o contexto é vago, a <i>distribuição de continuações</i>
+        prováveis fica larga e o modelo regride à média. Detalhe completo no bloco
+        <i>Indo mais fundo</i> ao lado.
+      </div>
+
+      <!-- SIDENOTE 4 · onde estou (lombada calma, sem barra) -->
+      <div class="sidenote" style="margin-bottom:0">
+        <div class="tag"><span class="pip" style="background:var(--ink-soft)"></span> Onde estou</div>
+        <div style="font-family:var(--mono); font-size:0.72rem; line-height:1.95; color:var(--ink-faint); letter-spacing:.02em;">
+          <span style="color:var(--accent)">●</span> §1 anatomia <span style="color:var(--ink-faint)">— lendo</span><br/>
+          <span style="color:var(--accent)">●</span> §2 contexto <span style="color:var(--ink-faint)">— aberta</span><br/>
+          <span style="color:var(--rule)">○</span> §3–§7 <span style="color:var(--ink-faint)">— adiante</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- colofao -->
+  <footer class="colophon">
+    <span>INEMA.CLUB · Caderno do aluno</span>
+    <span class="pg">Módulo 3 — fólio iii</span>
+    <span>Composto em Spectral &amp; Source Serif 4</span>
+  </footer>
+</main>
+
+<script>
+/* Tudo abaixo e PROGRESSIVE ENHANCEMENT: a pagina le perfeita com JS desligado.
+   Persistencia em localStorage. Sem backend. */
+(function(){
+  "use strict";
+  var html = document.documentElement;
+  var KEY = "inema-v3";
+  var store = {};
+  try{ store = JSON.parse(localStorage.getItem(KEY) || "{}"); }catch(e){ store = {}; }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+
+  /* ---- reading time (palavras / ~225 wpm) ---- */
+  (function(){
+    var col = document.getElementById("reading");
+    var words = (col.innerText.match(/\S+/g) || []).length;
+    var min = Math.max(1, Math.round(words / 225));
+    document.getElementById("rt").textContent = "~" + min + " min de leitura";
+  })();
+
+  /* ---- tema ---- */
+  function setTheme(t){
+    html.setAttribute("data-theme", t);
+    document.querySelectorAll("[data-set-theme]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-set-theme") === t));
+    });
+    store.theme = t; save();
+  }
+  document.querySelectorAll("[data-set-theme]").forEach(function(b){
+    b.addEventListener("click", function(){ setTheme(b.getAttribute("data-set-theme")); });
+  });
+  if(store.theme) setTheme(store.theme);
+
+  /* ---- tamanho ---- */
+  function setSize(s){
+    if(s === "m") html.removeAttribute("data-size"); else html.setAttribute("data-size", s);
+    document.querySelectorAll("[data-set-size]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-set-size") === s));
+    });
+    store.size = s; save();
+  }
+  document.querySelectorAll("[data-set-size]").forEach(function(b){
+    b.addEventListener("click", function(){ setSize(b.getAttribute("data-set-size")); });
+  });
+  if(store.size) setSize(store.size);
+
+  /* ---- a11y (Atkinson) ---- */
+  var a11yBtn = document.querySelector("[data-toggle-a11y]");
+  function setA11y(on){
+    html.setAttribute("data-a11y", on ? "on" : "off");
+    a11yBtn.setAttribute("aria-pressed", String(on));
+    store.a11y = on; save();
+  }
+  a11yBtn.addEventListener("click", function(){ setA11y(html.getAttribute("data-a11y") !== "on"); });
+  if(store.a11y) setA11y(true);
+
+  /* ---- marcar como lida (atualiza a grade silenciosa de minha jornada) ---- */
+  var readBtn = document.getElementById("readBtn");
+  var readLabel = document.getElementById("readLabel");
+  var readSub = document.getElementById("readSub");
+  var jGrid = document.getElementById("jGrid");
+  var jSec = document.getElementById("jSec");
+  function paintRead(on){
+    readBtn.setAttribute("aria-pressed", String(on));
+    readLabel.textContent = on ? "Seção lida" : "Marcar como lida";
+    readSub.textContent = on ? "seção 1 · lida agora ✓" : "seção 1 · não lida";
+    var cells = jGrid.children;
+    cells[0].className = on ? "on" : "cur";
+    cells[1].className = on ? "cur" : "";
+    jSec.textContent = on ? "2" : "1";
+  }
+  readBtn.addEventListener("click", function(){
+    store.read1 = readBtn.getAttribute("aria-pressed") !== "true";
+    paintRead(store.read1); save();
+  });
+  if(store.read1) paintRead(true);
+
+  /* ---- tenho duvida (campo inline na margem, sem modal) ---- */
+  var doubtBtn = document.getElementById("doubtBtn");
+  var doubtNote = document.getElementById("doubtNote");
+  var ta = doubtNote.querySelector("textarea");
+  doubtBtn.addEventListener("click", function(){
+    var open = doubtNote.classList.toggle("open");
+    doubtBtn.setAttribute("aria-pressed", String(open));
+    doubtBtn.setAttribute("aria-expanded", String(open));
+    if(open) ta.focus();
+  });
+  if(store.doubt){ ta.value = store.doubt; doubtNote.classList.add("open");
+    doubtBtn.setAttribute("aria-pressed","true"); doubtBtn.setAttribute("aria-expanded","true"); }
+  ta.addEventListener("input", function(){ store.doubt = ta.value; save(); });
+
+  /* ---- grifo "briefing" realca sua nota na margem (ink-quiet) ---- */
+  var grif = document.getElementById("grif-briefing");
+  var anchor = document.getElementById("note-anchor");
+  if(grif && anchor){
+    grif.addEventListener("mouseenter", function(){
+      anchor.style.transition = "background .35s ease";
+      anchor.style.background = "color-mix(in oklch, var(--mark) 7%, transparent)";
+    });
+    grif.addEventListener("mouseleave", function(){ anchor.style.background = "transparent"; });
+  }
+
+  /* ---- minha jornada: cta calmo, sem confete ---- */
+  var cta = document.getElementById("journeyCta");
+  cta.addEventListener("click", function(){
+    cta.textContent = "Caderno aberto ✓";
+    setTimeout(function(){ cta.textContent = "Abrir caderno →"; }, 1400);
+  });
+})();
+</script>
+</body>
+</html>
