@@ -1274,6 +1274,12 @@ Render do highlight via **`TreeWalker`** (nunca `Range.surroundContents()` cego 
 
 ### d) Medidores de progresso (anel/barra — so derivado)
 
+> Slots de texto: o `learn.js` aceita **atributo** (`data-inema-meter-pct` / `data-inema-meter-frac`)
+> **ou** as classes deste snippet (`.inema-meter-pct` / `.inema-meter-count`). Os dois funcionam —
+> escolha um. O mesmo vale no botao "marcar como lido": o padrao canonico sao os 4 spans
+> `.inema-ico-todo/.inema-ico-done/.inema-label-todo/.inema-label-done` (regidos por CSS via
+> `aria-pressed`); o par legado `.inema-read-icon` + `.inema-read-label` tambem e atualizado.
+
 ```html
 <!-- Curso (na landing) -->
 <div data-inema-meter="curso" class="inema-meter" role="progressbar"
@@ -1332,15 +1338,35 @@ onde parei"; Export/Import/Reset. **So leitura do estado** (view pura).
 
 ### g) Checagem leve (NAO-bloqueante, opcional)
 
+As opcoes sao **markup real** (`learn.js` NAO as gera a partir do `registerCheck`): cada
+opcao e um `<button data-inema-check-option="N">` e o feedback vai num `[data-inema-check-feedback]`.
+
 ```html
 <div data-inema-check="modulo-1-1#q1" class="inema-check mt-8
      bg-dark-800 border border-dark-600 rounded-xl p-6">
   <p class="font-medium mb-4">Pergunta de auto-recuperacao (opcional)</p>
   <div class="inema-check-options space-y-2">
-    <!-- options/answer/feedback declarados via INEMA.registerCheck(id, {...}) -->
+    <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Alternativa A</button>
+    <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Alternativa B (correta)</button>
+    <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Alternativa C</button>
   </div>
-  <p class="inema-check-feedback mt-4 text-sm" role="status" aria-live="polite"></p>
+  <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
 </div>
+```
+
+E no JS da pagina (depois do `learn.js`), declare a resposta + explicacao por opcao:
+
+```html
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    if (window.INEMA && INEMA.registerCheck) {
+      INEMA.registerCheck('modulo-1-1#q1', {
+        answer: 1,                                   // indice da opcao correta
+        explain: { 0: 'Por que A erra...', 1: 'Por que B acerta...', 2: 'Por que C erra...' }
+      });
+    }
+  });
+</script>
 ```
 
 Feedback **imediato e explicativo por opcao**; **NUNCA bloqueia avanco**; grava em
@@ -1476,6 +1502,15 @@ controles novos (read-toggle, meters, popover, jornada). Micro-interacoes **toda
 ```
 
 ## 12.3 Seletor de aparencia
+
+> **Contrato real do `learn.js`:** o painel de aparencia **NAO e gerado automaticamente**.
+> A pagina precisa conter o **markup do painel** com os botoes `data-inema-set-theme`,
+> `data-inema-set-font`, `data-inema-set-fontscale`, `data-inema-set-leading`,
+> `data-inema-set-accent` dentro de um container `[data-inema-appearance]`, e um gatilho
+> `data-inema-appearance-toggle="<seletor-do-painel>"` para abri-lo/fecha-lo. Um botao
+> avulso `data-inema-appearance-open` **sem** esse painel nao faz nada. Se voce nao for
+> montar o painel completo, **omita o botao** e mantenha so o toggle sol/lua (que ja
+> funciona pelo nucleo v1).
 
 - **`<button>`-based** (nao `<select>` fragil), na nav, **ao lado** do toggle sol/lua
   existente — que e **absorvido** (o eixo claro/escuro continua funcionando).

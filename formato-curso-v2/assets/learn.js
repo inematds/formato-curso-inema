@@ -648,11 +648,15 @@
     btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
     btn.classList.toggle('is-read', isOn);
     // estado por icone+texto+cor (1.4.1): atualiza label se houver slot
-    var lbl = btn.querySelector('[data-inema-read-label]');
+    var lbl = btn.querySelector('[data-inema-read-label]') || btn.querySelector('.inema-read-label');
     if (lbl) lbl.textContent = isOn ? 'Lido' : 'Marcar como lido';
     else if (!btn.querySelector('svg') && !btn.children.length) {
       btn.textContent = isOn ? 'Lido' : 'Marcar como lido';
     }
+    // slot de icone legado (single-icon): troca o glifo. O padrao 4-span
+    // (.inema-ico-todo/.inema-ico-done) ja e regido por CSS via aria-pressed.
+    var ico = btn.querySelector('.inema-read-icon');
+    if (ico) ico.textContent = isOn ? '●' : '○';
     if (sec) sec.classList.toggle('is-read', isOn);
   }
 
@@ -683,9 +687,9 @@
     el.setAttribute('data-complete', (pr.total > 0 && pr.done === pr.total) ? 'true' : 'false');
 
     // Slots opcionais de texto.
-    var pctSlot = el.querySelector('[data-inema-meter-pct]');
+    var pctSlot = el.querySelector('[data-inema-meter-pct]') || el.querySelector('.inema-meter-pct');
     if (pctSlot) pctSlot.textContent = pr.pct + '%';
-    var fracSlot = el.querySelector('[data-inema-meter-frac]');
+    var fracSlot = el.querySelector('[data-inema-meter-frac]') || el.querySelector('.inema-meter-count') || el.querySelector('.inema-meter-frac');
     if (fracSlot) fracSlot.textContent = pr.done + ' de ' + pr.total;
 
     // Barra: filete interno opcional.
@@ -1853,7 +1857,8 @@
       q: def.q || '',
       options: def.options || [],
       answer: def.answer,
-      explain: def.explain || {} // { indice: "feedback explicativo" }
+      // aceita { explain: {idx:"..."} } ou o legado { feedback: [...] } (indexavel por idx)
+      explain: def.explain || def.feedback || {}
     };
   }
 
@@ -2178,10 +2183,9 @@
 
   function bindGlobalListeners() {
     if (S.bound) return;
-    var main = document.querySelector('main') || document.body;
-
-    // delegacao de click no <main> (um listener, nao N)
-    main.addEventListener('click', onMainClick);
+    // delegacao de click no documento — cobre tambem controles fora do <main>
+    // (ex.: botoes "minha jornada"/aparencia na <nav>). onMainClick filtra por data-* via closest.
+    document.addEventListener('click', onMainClick);
 
     // teclado: Space/Enter em botoes de lido (aria-pressed) ja e nativo em <button>
 

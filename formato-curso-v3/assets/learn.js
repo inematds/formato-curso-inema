@@ -645,7 +645,7 @@
   function setReadButtonVisual(btn, isOn, sec) {
     btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
     btn.classList.toggle('is-read', isOn);
-    var lbl = btn.querySelector('[data-inema-read-label]');
+    var lbl = btn.querySelector('[data-inema-read-label]') || btn.querySelector('.inema-read-label');
     if (lbl) lbl.textContent = isOn ? 'Lido' : 'Marcar como lido';
     if (sec) sec.classList.toggle('is-read', isOn);
   }
@@ -676,9 +676,9 @@
     el.setAttribute('data-complete', (pr.total > 0 && pr.done === pr.total) ? 'true' : 'false');
 
     // Slots de texto. O frac usa <strong> para o numerador (espelha o CSS).
-    var pctSlot = el.querySelector('[data-inema-meter-pct]');
+    var pctSlot = el.querySelector('[data-inema-meter-pct]') || el.querySelector('.inema-meter-pct');
     if (pctSlot) pctSlot.textContent = pr.pct + '%';
-    var fracSlot = el.querySelector('[data-inema-meter-frac]');
+    var fracSlot = el.querySelector('[data-inema-meter-frac]') || el.querySelector('.inema-meter-count') || el.querySelector('.inema-meter-frac');
     if (fracSlot) {
       fracSlot.innerHTML = '';
       var strong = el2('strong', null, String(pr.done));
@@ -2060,7 +2060,7 @@
       q: def.q || '',
       options: def.options || [],
       answer: def.answer,
-      explain: def.explain || {}
+      explain: def.explain || def.feedback || {}
     };
   }
 
@@ -2445,7 +2445,7 @@
     if (S.bound) return;
     var main = document.querySelector('main') || document.body;
 
-    main.addEventListener('click', onMainClick);
+    document.addEventListener('click', onMainClick);
     // campo inline da duvida (textarea na margem)
     main.addEventListener('input', onDoubtFieldInput);
 
