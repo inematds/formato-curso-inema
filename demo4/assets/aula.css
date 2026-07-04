@@ -31,7 +31,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 html[data-theme="papel"] .grain,html[data-theme="sepia"] .grain{display:none}
 
 /* top bar */
-.prog{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0;z-index:60;transition:width .1s linear}
+.prog{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:100%;transform:scaleX(0);transform-origin:left;z-index:60;transition:transform .1s linear;will-change:transform}
 .bar{position:fixed;top:0;left:0;right:0;z-index:55;pointer-events:none;transition:background .25s,border-color .25s;border-bottom:1px solid transparent}
 .bar.scrolled{pointer-events:auto;background:rgba(14,13,20,.82);backdrop-filter:blur(10px);border-bottom-color:var(--line)}
 html[data-theme="papel"] .bar.scrolled{background:rgba(246,241,231,.86)}
@@ -148,7 +148,7 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 .block{margin:18px 0 0}
 .block .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 8px}
 .pbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
-.pbar i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.pbar i{display:block;height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .4s}
 .stat{font-family:var(--serif);font-size:30px;color:var(--ink)}
 .stat small{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:6px}
 .mk{border-left:2px solid var(--accent);padding:4px 0 4px 12px;margin:0 0 10px;font-size:14px;color:var(--ink-soft)}
@@ -167,6 +167,21 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 .grade button{font-family:var(--mono);font-size:12px;padding:12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink-soft);cursor:pointer}
 .grade button:hover{border-color:var(--accent)}
 .revempty{color:var(--muted);text-align:center;padding:40px 0;font-family:var(--serif);font-style:italic}
+
+/* editor de cartão (reformular o grifo antes de salvar) */
+.cedit{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:82;width:min(460px,92vw);max-height:88vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--line2);border-radius:18px;padding:24px 24px 20px;display:none;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.cedit.on{display:block}
+.cedit h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:0 0 2px}
+.cedit .close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+.cedit label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:16px 0 6px}
+.cedit textarea{width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding:10px 12px;resize:vertical;min-height:56px}
+.cedit textarea:focus{outline:none;border-color:var(--accent)}
+.cehint{font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.5}
+.cehint b{color:var(--ink-soft)}
+.cerow{display:flex;gap:8px;margin-top:16px;align-items:stretch}
+.cerow .big{margin-top:0;flex:1}
+.cerow #cecancel{font-family:var(--mono);font-size:12px;color:var(--ink-soft);background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:9px 16px;cursor:pointer}
+.cerow #cecancel:hover{border-color:var(--accent)}
 
 /* subnav (trilhas no topo) — usado quando presente */
 .subnav-inner{max-width:1160px;margin:0 auto;padding:2px clamp(24px,5vw,60px) 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}

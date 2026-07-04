@@ -59,7 +59,7 @@
 
   // ---- progresso + barra que ganha fundo ----
   var prog=$('prog'), topbar=document.querySelector('.bar');
-  function onScroll(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight; prog.style.width=(max>0?(h.scrollTop/max*100):0)+"%"; if(topbar) topbar.classList.toggle('scrolled', h.scrollTop>40); }
+  function onScroll(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight; prog.style.transform="scaleX("+(max>0?(h.scrollTop/max):0)+")"; if(topbar) topbar.classList.toggle('scrolled', h.scrollTop>40); }
   document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
   // ---- trilho vivo ----
@@ -169,7 +169,7 @@
   function renderJornada(){
     var n=0; SECTIONS.forEach(function(id){ if(state.read[id]) n++; });
     var pct=Math.round(n/N*100);
-    $('jpbar').style.width=pct+"%"; $('jpct').textContent=pct; $('jread').textContent=n; $('jtotal').textContent=N;
+    $('jpbar').style.transform="scaleX("+(N?n/N:0)+")"; $('jpct').textContent=pct; $('jread').textContent=n; $('jtotal').textContent=N;
     var total=0; for(var id in state.cards) total++;
     $('jcards').textContent=total; $('jdue').textContent=dueCount();
     var mk=$('jmarks');

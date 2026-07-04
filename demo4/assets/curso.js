@@ -17,7 +17,12 @@
       '<div class="block"><p class="lbl">Meus grifos</p><div id="jmarks"></div></div>'+
       '<div class="btnrow"><button id="expbtn">exportar .json</button><button id="impbtn">importar</button><button id="resetbtn">zerar</button></div>'+
       '<input type="file" id="impfile" accept="application/json" style="display:none"></div></aside>'+
-    '<aside class="panel" id="revisar"><button class="close" data-close>&#10005;</button><h3>Revisar</h3><div class="rev" id="revbody"></div></aside>');
+    '<aside class="panel" id="revisar"><button class="close" data-close>&#10005;</button><h3>Revisar</h3><div class="rev" id="revbody"></div></aside>'+
+    '<div class="cedit" id="cedit"><button class="close" data-close>&#10005;</button><h3>Novo cart&atilde;o</h3>'+
+      '<label>Frente (pergunta)</label><textarea id="cefront"></textarea>'+
+      '<label>Verso (resposta)</label><textarea id="ceback"></textarea>'+
+      '<p class="cehint">Reformule a frente como uma <b>pergunta</b> &mdash; recordar fixa mais do que reconhecer.</p>'+
+      '<div class="cerow"><button id="cesave" class="big">salvar cart&atilde;o</button><button id="cecancel">cancelar</button></div></div>');
 
   function $(id){ return document.getElementById(id); }
   function el(t,c){ var e=document.createElement(t); if(c) e.className=c; return e; }
@@ -68,7 +73,7 @@
   function renderTrilha(){
     KEYS.forEach(function(k){ var a=state.aulas[k], n=readCount(k), total=a.total||1;
       var bar=document.querySelector('.au[data-aula="'+k+'"] .prog i'), meta=document.querySelector('.au[data-aula="'+k+'"] .meta');
-      if(bar) bar.style.width=(n/total*100)+'%';
+      if(bar) bar.style.transform='scaleX('+(total?n/total:0)+')';
       if(meta) meta.textContent = n>=total ? 'concluída ✓' : (n>0 ? 'em andamento · '+n+'/'+total : total+' seções · abrir →');
     });
   }
@@ -117,10 +122,10 @@
   },10); });
   function hideTB(){ tb.classList.remove('on'); }
   document.addEventListener('scroll',hideTB,{passive:true});
-  tb.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ if(!pending) return; var makeCard=b.getAttribute('data-a')==='card';
+  tb.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){ if(!pending) return; var makeCard=b.getAttribute('data-a')==='card', pend=pending;
     wrapFirst(pending.col,pending.text); state.aulas[pending.aula].marks.push({ id:'m'+Date.now(), text:pending.text });
-    if(makeCard){ var front=pending.blockText.replace(pending.text,'________'); state.aulas[pending.aula].cards['h'+Date.now()]={ front:'Complete: '+front, back:pending.text, due:today, interval:0, ease:2.5, reps:0, src:'grifo' }; }
     save(); hideTB(); window.getSelection().removeAllRanges(); refreshRevn();
+    if(makeCard) openCardEditor(pend);
   }); });
   function wrapFirst(col,text){ var w=document.createTreeWalker(col,NodeFilter.SHOW_TEXT,null), node;
     while((node=w.nextNode())){ if(node.parentNode&&node.parentNode.classList&&node.parentNode.classList.contains('hl')) continue;
@@ -148,7 +153,7 @@
 
   // ---- jornada (curso) ----
   function renderJornada(){ var rd=0,tt=0,cards=0; KEYS.forEach(function(k){ rd+=readCount(k); tt+=state.aulas[k].total; var cs=state.aulas[k].cards; for(var id in cs) cards++; });
-    var pct=tt?Math.round(rd/tt*100):0; $('jpbar').style.width=pct+'%'; $('jpct').textContent=pct; $('jread').textContent=rd; $('jtotal').textContent=tt; $('jcards').textContent=cards; $('jdue').textContent=dueCount();
+    var pct=tt?Math.round(rd/tt*100):0; $('jpbar').style.transform='scaleX('+(tt?rd/tt:0)+')'; $('jpct').textContent=pct; $('jread').textContent=rd; $('jtotal').textContent=tt; $('jcards').textContent=cards; $('jdue').textContent=dueCount();
     var mk=$('jmarks'), all=[]; KEYS.forEach(function(k){ state.aulas[k].marks.forEach(function(m){ all.push(m); }); });
     if(!all.length) mk.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhum grifo ainda.</p>'; else { mk.innerHTML=''; all.slice().reverse().forEach(function(m){ var d=el('div','mk'); d.textContent='“'+m.text+'”'; mk.appendChild(d); }); }
   }
@@ -156,12 +161,18 @@
   // ---- painéis ----
   var scrim=$('scrim');
   function openPanel(id){ $(id).classList.add('on'); scrim.classList.add('on'); }
-  function closePanels(){ document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); }); scrim.classList.remove('on'); }
+  function closePanels(){ document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); }); if($('cedit')) $('cedit').classList.remove('on'); scrim.classList.remove('on'); }
   scrim.addEventListener('click',closePanels);
   document.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',closePanels); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePanels(); hideTB(); } });
   if($('jorbtn')) $('jorbtn').addEventListener('click',function(){ renderJornada(); openPanel('jornada'); });
   if($('revbtn')) $('revbtn').addEventListener('click',openReview);
+
+  // ---- editor de cartão (reformular o grifo em pergunta antes de salvar) ----
+  var cePending=null;
+  function openCardEditor(p){ cePending=p; var sug=(p.blockText||'').replace(p.text,'________'); if($('cefront')) $('cefront').value=sug; if($('ceback')) $('ceback').value=p.text; if($('cedit')){ $('cedit').classList.add('on'); scrim.classList.add('on'); } var cf=$('cefront'); if(cf) setTimeout(function(){ cf.focus(); },30); }
+  if($('cesave')) $('cesave').addEventListener('click',function(){ if(!cePending) return; var f=($('cefront').value||'').trim(), bk=($('ceback').value||'').trim(); if(!f||!bk) return; state.aulas[cePending.aula].cards['h'+Date.now()]={ front:f, back:bk, due:today, interval:0, ease:2.5, reps:0, src:'grifo' }; save(); cePending=null; closePanels(); refreshRevn(); });
+  if($('cecancel')) $('cecancel').addEventListener('click',closePanels);
 
   if($('expbtn')) $('expbtn').addEventListener('click',function(){ var b=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); var a=el('a'); a.href=URL.createObjectURL(b); a.download='curso-hooks.json'; a.click(); });
   if($('impbtn')) $('impbtn').addEventListener('click',function(){ $('impfile').click(); });
@@ -170,7 +181,7 @@
 
   // ---- barra de progresso + fundo ----
   var prog=$('prog'), topbar=document.querySelector('.bar');
-  function onScroll(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight; prog.style.width=(max>0?(h.scrollTop/max*100):0)+'%'; if(topbar) topbar.classList.toggle('scrolled', h.scrollTop>40); }
+  function onScroll(){ var h=document.documentElement, max=h.scrollHeight-h.clientHeight; prog.style.transform='scaleX('+(max>0?(h.scrollTop/max):0)+')'; if(topbar) topbar.classList.toggle('scrolled', h.scrollTop>40); }
   document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
   show((location.hash||'#trilha').slice(1));
