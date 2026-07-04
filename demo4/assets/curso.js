@@ -36,7 +36,7 @@
   function load(){ try{ var s=JSON.parse(localStorage.getItem(CK)); if(s&&typeof s==='object') return norm(s); }catch(e){} return norm({}); }
   function norm(s){
     s.prefs=s.prefs||{}; if(!s.prefs.theme) s.prefs.theme='dark'; s.aulas=s.aulas||{};
-    KEYS.forEach(function(k){ var total=aulaEls[k].querySelectorAll('.step').length; var a=s.aulas[k]=s.aulas[k]||{}; a.read=a.read||{}; a.marks=a.marks||[]; a.cards=a.cards||{}; a.total=total; });
+    KEYS.forEach(function(k){ var total=aulaEls[k].querySelectorAll('.step').length; var a=s.aulas[k]=s.aulas[k]||{}; a.read=a.read||{}; a.marks=a.marks||[]; a.cards=a.cards||{}; a.tasks=a.tasks||{}; a.total=total; });
     return s;
   }
   function save(){ try{ localStorage.setItem(CK, JSON.stringify(state)); }catch(e){} }
@@ -85,6 +85,17 @@
   document.querySelectorAll('.readbtn').forEach(function(b){ b.addEventListener('click',function(){ var k=aulaOf(b); if(!k) return; var sec=b.getAttribute('data-read'); state.aulas[k].read[sec]=!state.aulas[k].read[sec]; save(); refreshReadBtns(); updatePill(); }); });
   function refreshReadBtns(){ document.querySelectorAll('.readbtn').forEach(function(b){ var k=aulaOf(b), sec=b.getAttribute('data-read'), done=k&&state.aulas[k].read[sec]; b.classList.toggle('done',!!done); b.textContent=done?'✓ lido':'marcar como lido'; }); }
   refreshReadBtns();
+
+  // ---- pratique agora (checklist com estado + copiar código) ----
+  function flashBtn(btn,msg){ var o=btn.getAttribute('data-o'); if(o===null){ o=btn.textContent; btn.setAttribute('data-o',o); } btn.textContent=msg; setTimeout(function(){ btn.textContent=btn.getAttribute('data-o'); },1400); }
+  function execCopy(t,btn){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); flashBtn(btn,'copiado ✓'); }catch(e){} document.body.removeChild(ta); }
+  function copyText(t,btn){ try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){ flashBtn(btn,'copiado ✓'); },function(){ execCopy(t,btn); }); return; } }catch(e){} execCopy(t,btn); }
+  document.querySelectorAll('.practice').forEach(function(pr){ var k=aulaOf(pr); if(!k) return; var tasks=state.aulas[k].tasks, boxes=[].slice.call(pr.querySelectorAll('input[data-ptask]')), cnt=pr.querySelector('.pcount');
+    function refresh(){ var done=0; boxes.forEach(function(b){ var id=b.getAttribute('data-ptask'); b.checked=!!tasks[id]; if(tasks[id]) done++; }); if(cnt) cnt.textContent=done+'/'+boxes.length+' feito'; pr.classList.toggle('done', boxes.length>0&&done===boxes.length); }
+    boxes.forEach(function(b){ b.addEventListener('change',function(){ tasks[b.getAttribute('data-ptask')]=b.checked; save(); refresh(); }); });
+    var cp=pr.querySelector('.pcopy'), code=pr.querySelector('.pcode'); if(cp&&code) cp.addEventListener('click',function(){ copyText(code.textContent,cp); });
+    refresh();
+  });
 
   // ---- teste-se ----
   document.querySelectorAll('.quiz').forEach(function(q){ var ans=q.getAttribute('data-answer'), fb=q.querySelector('.qfb'), done=false;

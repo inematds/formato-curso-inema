@@ -277,6 +277,31 @@ exit 0</pre>
       <div class="mobfig" data-mobfig="5"></div>
       <button class="readbtn" data-read="s5">marcar como lido</button>
     </section>
+
+    <section class="practice" data-practice="p1">
+      <p class="pk">Pratique agora <span class="pcount">0/4 feito</span></p>
+      <h3 class="ph">Seu primeiro hook: registrar comandos</h3>
+      <p class="pgoal">Faça o Claude gravar cada comando num arquivo — e veja funcionar. Uns 5 minutos, e seguro: o hook só <b>observa</b> (sai com <code>exit 0</code>), não bloqueia nada.</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: "Bash",
+        <span class="k">"hooks"</span>: [
+          { "type": "command", "command": "cat &gt;&gt; .claude/cmd.log" }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Crie o arquivo <code>.claude/settings.json</code> na raiz do seu projeto.</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Cole o bloco acima e salve.</label></li>
+        <li><label><input type="checkbox" data-ptask="3"> Peça ao Claude pra rodar um comando qualquer (ex.: <code>ls</code>).</label></li>
+        <li><label><input type="checkbox" data-ptask="4"> No terminal, rode <code>cat .claude/cmd.log</code>. Apareceu o que o hook recebeu?</label></li>
+      </ol>
+      <p class="pdone">✓ Pronto: seu primeiro hook rodou sozinho. É exatamente isto — <b>quando isto → roda aquilo</b>. Nas próximas aulas ele fica mais esperto: formatar, avisar, barrar o perigoso.</p>
+    </section>
   </div>
 
   <aside class="rail"><div class="railsticky">
