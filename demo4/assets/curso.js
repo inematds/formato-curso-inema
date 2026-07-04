@@ -28,7 +28,16 @@
       '<div class="prow"><span>Largura</span><span class="pbtns"><button data-pf="width" data-d="-1" aria-label="mais estreita">&minus;</button><button data-pf="width" data-d="1" aria-label="mais larga">+</button></span></div>'+
       '<div class="prow"><span>Entrelinha</span><span class="pbtns"><button data-pf="leading" data-d="-1" aria-label="menos">&minus;</button><button data-pf="leading" data-d="1" aria-label="mais">+</button></span></div>'+
       '<button class="preset" data-pf="reset">restaurar padr&atilde;o</button></div>'+
-    '<div id="routestatus" class="sronly" role="status" aria-live="polite"></div>');
+    '<div id="routestatus" class="sronly" role="status" aria-live="polite"></div>'+
+    '<div class="welcome" id="welcome"><button class="close" data-close>&#10005;</button>'+
+      '<p class="wk">Bem-vindo</p><h3>Como este curso funciona</h3>'+
+      '<ul class="wlist">'+
+        '<li><b>Leia com calma</b> &mdash; uma ideia por se&ccedil;&atilde;o. Ajuste tamanho e largura no <b>Aa</b>.</li>'+
+        '<li><b>Grife</b> qualquer trecho e ele vira um <b>flashcard</b> (voc&ecirc; reformula a pergunta).</li>'+
+        '<li><b>Revisar</b> traz os cart&otilde;es na hora certa &mdash; revis&atilde;o espa&ccedil;ada, como no Anki.</li>'+
+        '<li><b>Pratique agora</b>, no fim de cada aula: m&atilde;o na massa, passo a passo.</li>'+
+        '<li><b>Jornada</b> mostra seu progresso. Tudo salva sozinho no seu navegador.</li>'+
+      '</ul><button class="big" id="wstart">come&ccedil;ar a estudar</button></div>');
 
   function $(id){ return document.getElementById(id); }
   function el(t,c){ var e=document.createElement(t); if(c) e.className=c; return e; }
@@ -99,8 +108,9 @@
 
   // ---- marcar lido ----
   function aulaOf(node){ var v=node.closest('.view[data-aula]'); return v?v.getAttribute('data-aula'):null; }
-  document.querySelectorAll('.readbtn').forEach(function(b){ b.addEventListener('click',function(){ var k=aulaOf(b); if(!k) return; var sec=b.getAttribute('data-read'); state.aulas[k].read[sec]=!state.aulas[k].read[sec]; save(); refreshReadBtns(); updatePill(); }); });
+  document.querySelectorAll('.readbtn').forEach(function(b){ b.addEventListener('click',function(){ var k=aulaOf(b); if(!k) return; var sec=b.getAttribute('data-read'); state.aulas[k].read[sec]=!state.aulas[k].read[sec]; save(); refreshReadBtns(); updatePill(); refreshMaps(); }); });
   function refreshReadBtns(){ document.querySelectorAll('.readbtn').forEach(function(b){ var k=aulaOf(b), sec=b.getAttribute('data-read'), done=k&&state.aulas[k].read[sec]; b.classList.toggle('done',!!done); b.textContent=done?'✓ lido':'marcar como lido'; }); }
+  function refreshMaps(){ document.querySelectorAll('.view[data-aula]').forEach(function(v){ var k=v.getAttribute('data-aula'), steps=[].slice.call(v.querySelectorAll('.step')), map=v.querySelector('.aulamap'); if(!map) return; [].slice.call(map.children).forEach(function(r,i){ var rb=steps[i]&&steps[i].querySelector('.readbtn'), key=rb?rb.getAttribute('data-read'):null, done=key&&state.aulas[k].read[key]; r.classList.toggle('done',!!done); }); }); }
   refreshReadBtns();
 
   // ---- pratique agora (checklist com estado + copiar código) ----
@@ -127,11 +137,20 @@
     if(ind){ ind.innerHTML=''; figs.forEach(function(_,i){ var ii=el('i'); if(i===0) ii.className='on'; ind.appendChild(ii); }); }
     var cap=v.querySelector('.railcap'), f1=v.querySelector('.figstage .fig[data-fig="1"]'); if(cap&&f1) cap.innerHTML=f1.getAttribute('data-cap')||'';
     v.querySelectorAll('.mobfig').forEach(function(m){ var n=m.getAttribute('data-mobfig'); var src=v.querySelector('.figstage .fig[data-fig="'+n+'"] svg'); if(src&&!m.firstChild) m.appendChild(src.cloneNode(true)); });
+    var sticky=v.querySelector('.railsticky'), steps=[].slice.call(v.querySelectorAll('.step'));
+    if(sticky&&steps.length&&!v.querySelector('.aulamap')){ var map=el('nav','aulamap'); map.setAttribute('aria-label','Seções da aula');
+      steps.forEach(function(s,i){ var h=s.querySelector('h2'), nEl=h&&h.querySelector('.n'), num=nEl?nEl.textContent:(''+(i+1)); var title=h?h.textContent.replace(num,'').trim():('Seção '+(i+1));
+        var a=el('button','amrow'); a.type='button'; a.innerHTML='<span class="amn"></span><span class="amt"></span><span class="amck">✓</span>'; a.querySelector('.amn').textContent=num; a.querySelector('.amt').textContent=title; a.title=title;
+        a.addEventListener('click',function(){ s.scrollIntoView({behavior:'smooth',block:'start'}); }); map.appendChild(a); });
+      var sn=sticky.querySelector('.sidenote'); if(sn) sticky.insertBefore(map,sn); else sticky.appendChild(map);
+    }
   });
+  refreshMaps();
   function activateFor(step){ var v=step.closest('.view'); if(!v) return; var fign=step.getAttribute('data-fig'); if(!fign) return;
     v.querySelectorAll('.figstage .fig').forEach(function(f){ f.classList.toggle('on', f.getAttribute('data-fig')===fign); });
     var ind=v.querySelector('.steps-ind'); if(ind){ [].slice.call(ind.children).forEach(function(i,ix){ i.classList.toggle('on', String(ix+1)===fign); }); }
     var cap=v.querySelector('.railcap'); if(cap){ var fig=v.querySelector('.figstage .fig[data-fig="'+fign+'"]'); cap.innerHTML=fig?(fig.getAttribute('data-cap')||''):''; }
+    var map=v.querySelector('.aulamap'); if(map){ var ssteps=[].slice.call(v.querySelectorAll('.step')), idx=ssteps.indexOf(step); [].slice.call(map.children).forEach(function(r,ri){ r.classList.toggle('on',ri===idx); }); }
   }
   var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) activateFor(e.target); }); },{rootMargin:'-45% 0px -45% 0px',threshold:0});
   document.querySelectorAll('.view[data-aula] .step').forEach(function(s){ io.observe(s); });
@@ -190,7 +209,7 @@
   // ---- painéis ----
   var scrim=$('scrim');
   function openPanel(id){ $(id).classList.add('on'); scrim.classList.add('on'); }
-  function closePanels(){ document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); }); if($('cedit')) $('cedit').classList.remove('on'); if($('prefs')) $('prefs').classList.remove('on'); scrim.classList.remove('on'); }
+  function closePanels(){ document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); }); if($('cedit')) $('cedit').classList.remove('on'); if($('prefs')) $('prefs').classList.remove('on'); if($('welcome')) $('welcome').classList.remove('on'); scrim.classList.remove('on'); }
   scrim.addEventListener('click',closePanels);
   document.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',closePanels); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePanels(); hideTB(); } });
@@ -201,6 +220,12 @@
   });
   if($('jorbtn')) $('jorbtn').addEventListener('click',function(){ renderJornada(); openPanel('jornada'); });
   if($('revbtn')) $('revbtn').addEventListener('click',openReview);
+
+  // ---- onboarding de 1º uso ----
+  function showWelcome(){ if($('welcome')){ $('welcome').classList.add('on'); scrim.classList.add('on'); } }
+  if($('helpbtn')) $('helpbtn').addEventListener('click',showWelcome);
+  if($('wstart')) $('wstart').addEventListener('click',closePanels);
+  if(!state.prefs.onboarded){ showWelcome(); state.prefs.onboarded=true; save(); }
 
   // ---- editor de cartão (reformular o grifo em pergunta antes de salvar) ----
   var cePending=null;
