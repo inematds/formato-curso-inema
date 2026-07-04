@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aula 1 · Hooks: o essencial · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<script>(function(){try{var t=localStorage.getItem('v4:theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-lesson="v4hooks:aula1">
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Claude Code na prática</a></span>
+  <a class="back" href="trilha.html">← trilha</a>
+  <button id="pill" class="pill">0 lido</button>
+  <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="jorbtn">jornada</button>
+  <button id="themebtn">tema: escuro</button>
+</div>
+<div class="subnav"><div class="subnav-inner">
+  <a href="landing.html#trilhas" class="soon">01 Fundamentos</a>
+  <a href="landing.html#trilhas" class="soon">02 Fluxo</a>
+  <a href="trilha.html" class="cur">03 Automação</a>
+  <a href="landing.html#trilhas" class="soon">04 Agentes</a>
+  <a href="landing.html#trilhas" class="soon">05 MCP</a>
+  <a href="landing.html#trilhas" class="soon">06 Escala</a>
+</div></div>
+</div>
+
+<header class="hero"><div class="hero-inner">
+  <div>
+    <p class="kicker">Trilha 03 · Aula 1 · Iniciante</p>
+    <h1>Hooks:<br>o <em>essencial</em></h1>
+    <p class="lead">Um hook é uma ordem automática: "toda vez que acontecer isto, rode aquilo". É como o Claude Code segue suas regras sozinho — sem depender de lembrar.</p>
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 240" fill="none" aria-hidden="true">
+      <circle cx="60" cy="80" r="30" fill="none" stroke="#37324a" stroke-width="1.5"/>
+      <path class="pulse" d="M64 66 l-12 20 h10 l-4 16 14 -22 h-10 z" fill="#F2B45C"/>
+      <text x="60" y="132" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#948DA6">evento</text>
+      <path class="pulse" d="M96 80 H150" stroke="#7CE0C6" stroke-width="2"/><path d="M150 74 l10 6 -10 6z" fill="#7CE0C6"/>
+      <rect x="170" y="46" width="110" height="70" rx="12" fill="#15131d" stroke="#37324a" stroke-width="1.5"/>
+      <text x="184" y="76" font-family="Space Mono, monospace" font-size="12" fill="#7CE0C6">$ fmt</text>
+      <rect class="blink" x="184" y="86" width="9" height="14" fill="#7CE0C6"/>
+      <text x="225" y="132" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#948DA6">seu comando</text>
+      <text x="150" y="188" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="17" fill="#C7C2D0">quando isto → roda aquilo</text>
+    </svg>
+  </div>
+</div></header>
+
+<div class="layout">
+  <div class="col">
+    <section class="step" id="s1" data-fig="1">
+      <h2><span class="n">01</span> O que é um hook</h2>
+      <p>Um hook é uma <b>ordem automática</b> que você dá ao Claude Code: "toda vez que acontecer <b>isto</b>, rode <b>aquilo</b>". O <b>isto</b> é um momento (um evento); o <b>aquilo</b> é um comando seu — um script, um formatador, um aviso. O Claude dispara sozinho, sem você pedir de novo.</p>
+      <p>Sem hook, você repete as mesmas instruções ("formata o código", "não roda isso") a cada sessão, e torce pra elas serem seguidas. Com hook, a regra vira <b>parte do ambiente</b>: automática, e o mesmo comportamento toda vez.</p>
+      <div class="mobfig" data-mobfig="1"></div>
+      <div class="quiz" data-answer="b">
+        <p class="qk">Teste-se</p>
+        <p class="q">Um hook, na prática, é:</p>
+        <button class="opt" data-k="a">um tema visual novo do editor</button>
+        <button class="opt" data-k="b">uma ordem automática: quando um evento acontece, roda um comando seu</button>
+        <button class="opt" data-k="c">um modelo de IA mais rápido</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s1">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s2" data-fig="2">
+      <h2><span class="n">02</span> Os momentos (eventos)</h2>
+      <p>Cada hook se pendura num <b>evento</b> — um momento do trabalho do Claude. Os que mais importam pra começar:</p>
+      <ul>
+        <li><b>PreToolUse</b> — <i>antes</i> do Claude usar uma ferramenta (ex.: antes de rodar um comando no terminal).</li>
+        <li><b>PostToolUse</b> — <i>depois</i> (ex.: formatar o arquivo assim que ele é editado).</li>
+        <li><b>UserPromptSubmit</b> — quando <i>você</i> envia uma mensagem.</li>
+        <li><b>Stop</b> — quando o Claude <i>termina</i> de responder.</li>
+        <li><b>SessionStart</b> — quando a sessão <i>começa</i> (ótimo pra injetar contexto do projeto).</li>
+      </ul>
+      <p>Cada evento entrega ao seu comando os <b>detalhes</b> do que está acontecendo (qual ferramenta, qual arquivo) em JSON pela entrada padrão. Seu comando lê isso e decide o que fazer.</p>
+      <div class="mobfig" data-mobfig="2"></div>
+      <button class="readbtn" data-read="s2">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s3" data-fig="3">
+      <h2><span class="n">03</span> Onde eles moram: settings.json</h2>
+      <p>Hooks vivem no <code>settings.json</code> — no projeto (<code>.claude/settings.json</code>) ou global (<code>~/.claude/settings.json</code>). Você diz o <b>evento</b>, um <b>matcher</b> (em qual ferramenta pega) e o <b>comando</b>:</p>
+      <pre><span class="c">// .claude/settings.json — formata todo arquivo editado</span>
+{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PostToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: "Edit|Write",
+        <span class="k">"hooks"</span>: [
+          { "type": "command", "command": "prettier --write $file" }
+        ]
+      }
+    ]
+  }
+}</pre>
+      <p>Leia de dentro pra fora: <b>no evento</b> PostToolUse, <b>quando</b> a ferramenta for Edit ou Write, <b>rode</b> o comando. Só isso — três camadas: evento → matcher → comando.</p>
+      <div class="mobfig" data-mobfig="3"></div>
+      <div class="quiz" data-answer="c">
+        <p class="qk">Teste-se</p>
+        <p class="q">O <code>matcher</code> "Edit|Write" serve pra:</p>
+        <button class="opt" data-k="a">escolher a cor do hook</button>
+        <button class="opt" data-k="b">rodar o comando duas vezes</button>
+        <button class="opt" data-k="c">dizer em quais ferramentas o hook pega</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s3">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s4" data-fig="4">
+      <h2><span class="n">04</span> Um hook que protege</h2>
+      <p>No <b>PreToolUse</b>, seu comando pode <b>bloquear</b> a ação antes dela rodar. Se o comando <b>sai com código 2</b>, o Claude não executa aquilo — e a mensagem que você imprime vira o <b>motivo</b> mostrado a ele. É assim que você barra o perigoso (um <code>rm -rf</code>, um push na main) antes de acontecer.</p>
+      <pre><span class="c"># bloqueia rm -rf; recebe o comando por stdin (JSON)</span>
+grep -q "rm -rf" &amp;&amp; { echo "bloqueado: comando destrutivo" &gt;&amp;2; exit 2; }
+exit 0</pre>
+      <p>Exit <code>0</code> = pode seguir. Exit <code>2</code> = barra e devolve o motivo. Simples e poderoso: você transforma "por favor não faça" numa <b>trava real</b>.</p>
+      <div class="mobfig" data-mobfig="4"></div>
+      <div class="quiz" data-answer="c">
+        <p class="qk">Teste-se</p>
+        <p class="q">Para o hook PreToolUse <i>barrar</i> um comando, ele deve sair com código:</p>
+        <button class="opt" data-k="a">0</button>
+        <button class="opt" data-k="b">1</button>
+        <button class="opt" data-k="c">2</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s5" data-fig="5">
+      <h2><span class="n">05</span> Ideias pra começar</h2>
+      <p>Você não precisa de muitos. Comece com <b>um</b> hook que te tire uma preocupação repetida da cabeça:</p>
+      <ul>
+        <li><b>Formatar ao salvar</b> — PostToolUse em Edit/Write roda o formatador. Nunca mais código torto.</li>
+        <li><b>Avisar quando terminar</b> — Stop dispara uma notificação ou um som.</li>
+        <li><b>Registrar comandos</b> — PreToolUse em Bash grava num log tudo que foi rodado.</li>
+        <li><b>Injetar as regras do projeto</b> — SessionStart imprime seu CLAUDE.md, e o Claude já começa alinhado.</li>
+      </ul>
+      <p>O melhor hook é o mais chato de fazer na mão. Automatize <b>esse</b> primeiro.</p>
+      <details>
+        <summary>Indo mais fundo</summary>
+        <p>Além do exit code, hooks podem devolver <b>JSON</b> pela saída (uma decisão de aprovar/bloquear com motivo), usar <b>matchers</b> mais finos, e existem outros eventos: <code>SubagentStop</code>, <code>Notification</code>, <code>PreCompact</code>, <code>SessionEnd</code>. Continua nas próximas aulas.</p>
+      </details>
+      <div class="mobfig" data-mobfig="5"></div>
+      <button class="readbtn" data-read="s5">marcar como lido</button>
+    </section>
+  </div>
+
+  <aside class="rail"><div class="railsticky">
+    <div class="figstage">
+      <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> evento dispara seu comando">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <circle cx="46" cy="90" r="26" fill="none" stroke="#37324a" stroke-width="1.5"/>
+          <path class="breathe" d="M50 78 l-10 18 h9 l-4 14 12 -20 h-9 z" fill="#F2B45C"/>
+          <text x="46" y="134" text-anchor="middle" font-family="Space Mono, monospace" font-size="9" fill="#948DA6">evento</text>
+          <path class="breathe" d="M78 90 H140" stroke="#7CE0C6" stroke-width="2"/><path d="M140 84 l10 6 -10 6z" fill="#7CE0C6"/>
+          <rect x="158" y="70" width="46" height="40" rx="9" fill="#221f2e" stroke="#37324a" stroke-width="1.5"/>
+          <text x="181" y="94" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#7CE0C6">cmd</text>
+          <text x="181" y="134" text-anchor="middle" font-family="Space Mono, monospace" font-size="9" fill="#948DA6">comando</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> os momentos: Pre · tool · Post · Stop">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <line x1="24" y1="100" x2="196" y2="100" stroke="#37324a" stroke-width="1.5"/>
+          <circle cx="34" cy="100" r="4" fill="#948DA6"/><text x="34" y="122" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#948DA6">você</text>
+          <circle class="breathe" cx="88" cy="100" r="5" fill="#7CE0C6"/><text x="88" y="84" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#7CE0C6">Pre</text>
+          <rect x="102" y="92" width="26" height="16" rx="4" fill="#221f2e" stroke="#37324a"/><text x="115" y="104" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#C7C2D0">tool</text>
+          <circle class="breathe" cx="150" cy="100" r="5" fill="#7CE0C6" style="animation-delay:.5s"/><text x="150" y="84" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#7CE0C6">Post</text>
+          <circle class="breathe" cx="190" cy="100" r="5" fill="#F2B45C" style="animation-delay:1s"/><text x="190" y="122" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#F2B45C">Stop</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="3" data-cap="<b>Fig.</b> settings.json: evento → matcher → comando">
+        <svg viewBox="0 0 220 210" fill="none" aria-hidden="true">
+          <rect x="26" y="18" width="140" height="26" rx="7" fill="#221f2e" stroke="#37324a"/><text x="40" y="35" font-family="Space Mono" font-size="11" fill="#7CE0C6">"hooks"</text>
+          <path d="M40 44 V60 H60" stroke="#37324a" stroke-width="1.5"/>
+          <rect x="60" y="62" width="150" height="26" rx="7" fill="#221f2e" stroke="#37324a"/><text x="74" y="79" font-family="Space Mono" font-size="11" fill="#C7C2D0">"PostToolUse"</text>
+          <path d="M74 88 V104 H94" stroke="#37324a" stroke-width="1.5"/>
+          <rect x="94" y="106" width="116" height="26" rx="7" fill="#221f2e" stroke="#37324a"/><text x="108" y="123" font-family="Space Mono" font-size="10" fill="#948DA6">matcher</text>
+          <path d="M108 132 V148 H128" stroke="#37324a" stroke-width="1.5"/>
+          <rect class="breathe" x="128" y="150" width="82" height="26" rx="7" fill="none" stroke="#7CE0C6"/><text x="169" y="167" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#7CE0C6">command</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="4" data-cap="<b>Fig.</b> PreToolUse + exit 2 = barrado">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="16" y="84" width="70" height="32" rx="8" fill="#221f2e" stroke="#37324a"/><text x="51" y="104" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#C7C2D0">rm -rf</text>
+          <path d="M88 100 H120" stroke="#37324a" stroke-width="2"/>
+          <line x1="132" y1="60" x2="132" y2="140" stroke="#F2B45C" stroke-width="3" stroke-dasharray="4 5"/>
+          <path class="breathe" d="M120 88 l24 24 M144 88 l-24 24" stroke="#F2B45C" stroke-width="3" stroke-linecap="round"/>
+          <text x="150" y="104" font-family="Space Mono" font-size="11" fill="#F2B45C">exit 2</text>
+          <text x="110" y="170" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="13" fill="#948DA6">barrado antes de rodar</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="5" data-cap="<b>Fig.</b> comece com um hook">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect class="breathe" x="24" y="30" width="76" height="34" rx="8" fill="none" stroke="#7CE0C6"/><text x="62" y="51" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">formatar</text>
+          <rect class="breathe" x="120" y="30" width="76" height="34" rx="8" fill="none" stroke="#7CE0C6" style="animation-delay:.3s"/><text x="158" y="51" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">avisar</text>
+          <rect class="breathe" x="24" y="78" width="76" height="34" rx="8" fill="none" stroke="#F2B45C" style="animation-delay:.6s"/><text x="62" y="99" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#F2B45C">logar</text>
+          <rect class="breathe" x="120" y="78" width="76" height="34" rx="8" fill="none" stroke="#F2B45C" style="animation-delay:.9s"/><text x="158" y="99" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#F2B45C">contexto</text>
+          <text x="110" y="150" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="14" fill="#C7C2D0">comece com um</text>
+        </svg>
+      </div>
+    </div>
+    <p class="railcap" id="cap"></p>
+    <div class="steps-ind" id="ind"></div>
+    <p class="sidenote">Grife qualquer trecho do texto para virar um <b>flashcard</b> de revisão — ele aparece em "revisar".</p>
+  </div></aside>
+</div>
+
+<footer>Aula 1 de 5 · Trilha 03 · Automação &amp; Hooks · demo do formato-curso v4 (conteúdo sobre hooks do Claude Code — revisar antes de publicar).</footer>
+
+<script type="application/json" id="authored-cards">
+[
+  {"front":"O que é um hook no Claude Code?","back":"Uma ordem automática: quando um evento acontece, roda um comando seu."},
+  {"front":"Qual evento roda DEPOIS de editar um arquivo?","back":"PostToolUse."},
+  {"front":"Qual evento roda ANTES de uma ferramenta ser usada?","back":"PreToolUse."},
+  {"front":"Como um hook PreToolUse bloqueia uma ação?","back":"Saindo com código 2 (exit 2); a mensagem impressa vira o motivo."},
+  {"front":"Onde os hooks são configurados?","back":"No settings.json (do projeto em .claude/ ou global em ~/.claude/)."},
+  {"front":"Qual evento é ótimo para injetar contexto do projeto?","back":"SessionStart."}
+]
+</script>
+<script src="assets/aula.js"></script>
+</body>
+</html>

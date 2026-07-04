@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trilha 03 · Automação &amp; Hooks · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0D14; --bg2:#15131d; --panel:#1a1824; --panel2:#221f2e;
+    --ink:#ECE6D9; --ink-soft:#C7C2D0; --muted:#948DA6; --faint:#6C6580;
+    --line:#2A2637; --line2:#37324a;
+    --accent:#7CE0C6; --accent-ink:#0E0D14; --warm:#F2B45C;
+    --serif:"Newsreader",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+  }
+  html[data-theme="papel"]{--bg:#F6F1E7;--bg2:#EFE8D8;--panel:#FFFFFF;--panel2:#F3ECDD;--ink:#2A2620;--ink-soft:#463F33;--muted:#736A58;--faint:#9A9182;--line:#E4DAC7;--line2:#D7CBB2;--accent:#0F7A61;--accent-ink:#fff;--warm:#9A6310}
+  html[data-theme="sepia"]{--bg:#ECE0C9;--bg2:#E4D6BB;--panel:#F5ECD7;--panel2:#EDE1C6;--ink:#43331F;--ink-soft:#5A4A34;--muted:#7C6A50;--faint:#9C8A6C;--line:#D8C8A9;--line2:#C9B792;--accent:#0F6E58;--accent-ink:#fff;--warm:#8A5A12}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+  a{color:inherit}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;mix-blend-mode:screen;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  html[data-theme="papel"] .grain,html[data-theme="sepia"] .grain{display:none}
+
+  .bar{position:fixed;top:0;left:0;right:0;z-index:55;pointer-events:none;transition:background .25s,border-color .25s;border-bottom:1px solid transparent}
+  .bar.scrolled{pointer-events:auto;background:rgba(14,13,20,.82);backdrop-filter:blur(10px);border-bottom-color:var(--line)}
+  html[data-theme="papel"] .bar.scrolled{background:rgba(246,241,231,.86)}
+  html[data-theme="sepia"] .bar.scrolled{background:rgba(236,224,201,.86)}
+  .bar-inner{max-width:1080px;margin:0 auto;padding:12px clamp(24px,5vw,60px);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .brand{margin-right:auto;display:flex;align-items:center;gap:9px;text-decoration:none;font-family:var(--mono);pointer-events:auto}
+  .brand .mark{color:var(--accent);font-weight:700;font-size:12px;letter-spacing:.1em}
+  .brand .pro{background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:2px 6px;font-size:9.5px;font-weight:700;letter-spacing:.1em}
+  .brand .course{color:var(--ink-soft);font-size:11px;letter-spacing:.04em;border-left:1px solid var(--line2);padding-left:10px}
+  .brand a{pointer-events:auto;text-decoration:none;cursor:pointer}
+  .brand a.course:hover{color:var(--accent)}
+  .bar a.lnk,.bar button{pointer-events:auto;font-family:var(--mono);font-size:11px;line-height:1;letter-spacing:.04em;white-space:nowrap;color:var(--muted);background:rgba(20,19,29,.6);border:1px solid var(--line2);border-radius:99px;padding:8px 12px;cursor:pointer;text-decoration:none;backdrop-filter:blur(6px);transition:color .2s,border-color .2s}
+  html[data-theme="papel"] .bar a.lnk,html[data-theme="papel"] .bar button,html[data-theme="sepia"] .bar a.lnk,html[data-theme="sepia"] .bar button{background:rgba(255,255,255,.55)}
+  .bar a.lnk:hover,.bar button:hover{color:var(--ink);border-color:var(--accent)}
+  .subnav-inner{max-width:1080px;margin:0 auto;padding:2px clamp(24px,5vw,60px) 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  .subnav-inner::-webkit-scrollbar{display:none}
+  .subnav a{pointer-events:auto;flex:0 0 auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;white-space:nowrap;text-decoration:none;color:var(--muted);background:rgba(20,19,29,.5);border:1px solid var(--line2);border-radius:99px;padding:6px 11px;backdrop-filter:blur(6px);transition:color .2s,border-color .2s}
+  html[data-theme="papel"] .subnav a,html[data-theme="sepia"] .subnav a{background:rgba(255,255,255,.5)}
+  .subnav a:hover{color:var(--ink);border-color:var(--accent)}
+  .subnav a.cur{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+  .subnav a.soon{opacity:.55}
+  @media(max-width:600px){.brand .course{display:none}}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(24px,5vw,60px)}
+
+  .hero{position:relative;overflow:hidden;padding:20vh 0 8vh;border-bottom:1px solid var(--line)}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(48% 44% at 84% 12%,rgba(124,224,198,.18),transparent 60%),radial-gradient(42% 40% at 6% 92%,rgba(242,180,92,.10),transparent 55%);animation:drift 24s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-1.5%,1.3%,0) scale(1.06)}}
+  .hero > *{position:relative;z-index:2}
+  .crumb{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--faint);margin:0 0 20px}
+  .crumb a{text-decoration:none;color:var(--muted)} .crumb a:hover{color:var(--accent)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.4vw,72px);line-height:1.0;letter-spacing:-.025em;margin:0 0 22px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .lead{font-family:var(--serif);font-size:clamp(19px,2.1vw,24px);line-height:1.5;color:var(--ink-soft);max-width:46ch;margin:0 0 30px}
+  .statcards{display:flex;gap:14px;flex-wrap:wrap}
+  .sc{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:16px 22px;min-width:120px}
+  .sc b{font-family:var(--serif);font-weight:500;font-size:28px;color:var(--ink);display:block;line-height:1}
+  .sc span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:6px;display:block}
+
+  section{padding:8vh 0}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+  h2{font-family:var(--serif);font-weight:500;font-size:clamp(26px,3.6vw,38px);letter-spacing:-.015em;margin:0 0 28px}
+
+  .aulas{display:grid;gap:14px}
+  .au{display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 24px;transition:border-color .2s,transform .2s}
+  .au.on:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .au.locked{opacity:.6}
+  .au .num{font-family:var(--serif);font-size:30px;color:var(--accent);line-height:1;text-align:center}
+  .au.locked .num{color:var(--faint)}
+  .au h3{font-family:var(--serif);font-weight:500;font-size:21px;margin:0 0 5px;letter-spacing:-.01em}
+  .au p{margin:0;color:var(--muted);font-size:14.5px}
+  .au .meta{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--faint);white-space:nowrap;text-align:right}
+  .au.on .meta{color:var(--accent)}
+  .au .prog{margin-top:10px;height:5px;border-radius:99px;background:var(--line);overflow:hidden;max-width:220px}
+  .au .prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .5s}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:6vh;margin-top:4vh}
+  .nav a{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line2);border-radius:12px;padding:14px 18px}
+  .nav a:hover{border-color:var(--accent);color:var(--ink)}
+  .nav a.dis{opacity:.4;pointer-events:none}
+
+  footer{padding:6vh 0 10vh;color:var(--faint);font-size:14px;text-align:center;font-family:var(--serif);font-style:italic;border-top:1px solid var(--line)}
+
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media(max-width:640px){.au{grid-template-columns:44px 1fr;gap:14px}.au .meta{grid-column:2;text-align:left;margin-top:6px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}.rv{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Claude Code na prática</a></span>
+  <a class="lnk" href="landing.html">← curso</a>
+  <button id="themebtn">tema: escuro</button>
+</div>
+<div class="subnav"><div class="subnav-inner">
+  <a href="landing.html#trilhas" class="soon">01 Fundamentos</a>
+  <a href="landing.html#trilhas" class="soon">02 Fluxo</a>
+  <a href="trilha.html" class="cur">03 Automação</a>
+  <a href="landing.html#trilhas" class="soon">04 Agentes</a>
+  <a href="landing.html#trilhas" class="soon">05 MCP</a>
+  <a href="landing.html#trilhas" class="soon">06 Escala</a>
+</div></div>
+</div>
+
+<header class="hero"><div class="wrap">
+  <p class="crumb"><a href="landing.html">Claude Code na prática</a> / Trilha 03</p>
+  <p class="kicker">Trilha 03 · Automação</p>
+  <h1>Automação &amp; <em>Hooks</em></h1>
+  <p class="lead">Faça o Claude Code seguir suas regras sozinho: hooks em cada momento, <code style="font-family:var(--mono);font-size:.8em;color:var(--accent)">settings.json</code>, travas de segurança e integração com CI.</p>
+  <div class="statcards">
+    <div class="sc"><b>5</b><span>aulas</span></div>
+    <div class="sc"><b>~48</b><span>minutos</span></div>
+    <div class="sc"><b>iniciante</b><span>nível</span></div>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <p class="eyebrow rv">Aulas desta trilha</p>
+  <h2 class="rv">Do <em>primeiro</em> hook à automação completa</h2>
+  <div class="aulas">
+
+    <a class="au on rv" id="au1" href="aula-1.html">
+      <div class="num">1</div>
+      <div>
+        <h3>Hooks: o essencial</h3>
+        <p>O que é um hook, os eventos, onde configurar, como bloquear o perigoso e ideias pra começar.</p>
+        <div class="prog"><i id="au1bar"></i></div>
+      </div>
+      <div class="meta" id="au1meta">5 seções · abrir →</div>
+    </a>
+
+    <a class="au on rv" id="au2" href="aula-2.html">
+      <div class="num">2</div>
+      <div>
+        <h3>settings.json a fundo</h3>
+        <p>Os três lugares dos hooks, a anatomia evento→matcher→comando, os matchers e o que o hook recebe.</p>
+        <div class="prog"><i id="au2bar"></i></div>
+      </div>
+      <div class="meta" id="au2meta">4 seções · abrir →</div>
+    </a>
+
+    <a class="au on rv" id="au3" href="aula-3.html">
+      <div class="num">3</div>
+      <div>
+        <h3>Hooks que protegem</h3>
+        <p>Travas com <code style="font-family:var(--mono);font-size:.8em">exit 2</code>, ler o comando, casos reais e pedir confirmação.</p>
+        <div class="prog"><i id="au3bar"></i></div>
+      </div>
+      <div class="meta" id="au3meta">4 seções · abrir →</div>
+    </a>
+
+    <a class="au on rv" id="au4" href="aula-4.html">
+      <div class="num">4</div>
+      <div>
+        <h3>Formatar, notificar, logar</h3>
+        <p>Quatro receitas prontas: formatador ao salvar, aviso ao terminar, log de comandos e contexto no início.</p>
+        <div class="prog"><i id="au4bar"></i></div>
+      </div>
+      <div class="meta" id="au4meta">4 seções · abrir →</div>
+    </a>
+
+    <a class="au on rv" id="au5" href="aula-5.html">
+      <div class="num">5</div>
+      <div>
+        <h3>Hooks em equipe e CI</h3>
+        <p>Versionar pro time, determinismo, modo headless em pipeline e a higiene pra não se machucar.</p>
+        <div class="prog"><i id="au5bar"></i></div>
+      </div>
+      <div class="meta" id="au5meta">4 seções · abrir →</div>
+    </a>
+
+  </div>
+
+  <div class="nav">
+    <a class="dis" href="#">← Trilha 02</a>
+    <a href="#">Trilha 04 · Agentes →</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">Trilha 03 · Automação &amp; Hooks · INEMA.CLUB PRO · demo do formato-curso v4</div></footer>
+
+<script>
+(function(){
+  var TK="v4:theme", THEMES=[["dark","escuro"],["papel","papel"],["sepia","sépia"]];
+  var b=document.getElementById('themebtn'), cur="dark";
+  try{ cur=localStorage.getItem(TK)||"dark"; }catch(e){}
+  function apply(t){ document.documentElement.setAttribute('data-theme',t); var l=(THEMES.filter(function(x){return x[0]===t})[0]||THEMES[0])[1]; b.textContent="tema: "+l; cur=t; try{localStorage.setItem(TK,t);}catch(e){} }
+  b.addEventListener('click',function(){ var i=0; for(var k=0;k<THEMES.length;k++){ if(THEMES[k][0]===cur){i=k;break;} } apply(THEMES[(i+1)%THEMES.length][0]); });
+  apply(cur);
+
+  // reveal
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{rootMargin:"0px 0px -8% 0px",threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el,i){ el.style.transitionDelay=(Math.min(i%3,2)*60)+"ms"; io.observe(el); });
+
+  // scrolled bar
+  var topbar=document.querySelector('.bar');
+  document.addEventListener('scroll',function(){ topbar.classList.toggle('scrolled', window.scrollY>40); },{passive:true});
+
+  // progresso de cada aula (lê o localStorage) — relê ao voltar
+  var AULAS=[{key:'v4hooks:aula1',total:5},{key:'v4hooks:aula2',total:4},{key:'v4hooks:aula3',total:4},{key:'v4hooks:aula4',total:4},{key:'v4hooks:aula5',total:4}];
+  function updateProgress(){
+    AULAS.forEach(function(a,ix){
+      var i=ix+1, n=0, total=a.total, started=false;
+      try{ var s=JSON.parse(localStorage.getItem(a.key)); if(s){ started=true; if(s.total) total=s.total; if(s.read){ for(var id in s.read){ if(s.read[id]) n++; } } } }catch(e){}
+      var bar=document.getElementById('au'+i+'bar'), meta=document.getElementById('au'+i+'meta');
+      if(bar) bar.style.width=(total?(n/total*100):0)+"%";
+      if(meta) meta.textContent = (started&&n>=total) ? "concluída ✓" : (n>0 ? "em andamento · "+n+"/"+total : total+" seções · abrir →");
+    });
+  }
+  updateProgress();
+  window.addEventListener('storage', updateProgress);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) updateProgress(); });
+  window.addEventListener('pageshow', updateProgress);
+  window.addEventListener('focus', updateProgress);
+})();
+</script>
+</body>
+</html>

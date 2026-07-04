@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aula 2 · settings.json a fundo · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<script>(function(){try{var t=localStorage.getItem('v4:theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-lesson="v4hooks:aula2">
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Claude Code na prática</a></span>
+  <a class="back" href="trilha.html">← trilha</a>
+  <button id="pill" class="pill">0 lido</button>
+  <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="jorbtn">jornada</button>
+  <button id="themebtn">tema: escuro</button>
+</div>
+<div class="subnav"><div class="subnav-inner">
+  <a href="landing.html#trilhas" class="soon">01 Fundamentos</a>
+  <a href="landing.html#trilhas" class="soon">02 Fluxo</a>
+  <a href="trilha.html" class="cur">03 Automação</a>
+  <a href="landing.html#trilhas" class="soon">04 Agentes</a>
+  <a href="landing.html#trilhas" class="soon">05 MCP</a>
+  <a href="landing.html#trilhas" class="soon">06 Escala</a>
+</div></div>
+</div>
+
+<header class="hero"><div class="hero-inner">
+  <div>
+    <p class="kicker">Trilha 03 · Aula 2 · Iniciante</p>
+    <h1>settings.json<br><em>a fundo</em></h1>
+    <p class="lead">Onde os hooks moram, como cada um é montado, e o que o Claude entrega pro seu comando na hora de rodar.</p>
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 240" fill="none" aria-hidden="true">
+      <rect x="60" y="40" width="180" height="40" rx="10" fill="#15131d" stroke="#37324a" stroke-width="1.5"/>
+      <text x="76" y="65" font-family="Space Mono, monospace" font-size="12" fill="#948DA6">~/.claude/</text>
+      <rect x="60" y="92" width="180" height="40" rx="10" fill="#15131d" stroke="#37324a" stroke-width="1.5"/>
+      <text x="76" y="117" font-family="Space Mono, monospace" font-size="12" fill="#7CE0C6">.claude/</text>
+      <rect class="pulse" x="60" y="144" width="180" height="40" rx="10" fill="#15131d" stroke="#37324a" stroke-width="1.5"/>
+      <text x="76" y="169" font-family="Space Mono, monospace" font-size="12" fill="#F2B45C">.local.json</text>
+      <text x="150" y="212" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="15" fill="#C7C2D0">o mais específico ganha</text>
+    </svg>
+  </div>
+</div></header>
+
+<div class="layout">
+  <div class="col">
+    <section class="step" id="s1" data-fig="1">
+      <h2><span class="n">01</span> Três lugares pros hooks</h2>
+      <p>Um hook pode viver em três arquivos, e todos valem ao mesmo tempo:</p>
+      <ul>
+        <li><b>Global</b> — <code>~/.claude/settings.json</code>. Vale pra <b>todos</b> os seus projetos.</li>
+        <li><b>Projeto</b> — <code>.claude/settings.json</code>. Vai pro Git; <b>todo o time</b> herda.</li>
+        <li><b>Local</b> — <code>.claude/settings.local.json</code>. Fica no <code>.gitignore</code>; é <b>só seu</b>.</li>
+      </ul>
+      <p>Quando há conflito, o <b>mais específico ganha</b>: local sobrepõe projeto, que sobrepõe global. Regra prática: o que é do time vai no <code>.claude/settings.json</code>; o que é gosto seu vai no <code>.local.json</code>.</p>
+      <div class="mobfig" data-mobfig="1"></div>
+      <div class="quiz" data-answer="c">
+        <p class="qk">Teste-se</p>
+        <p class="q">Qual arquivo é pessoal e NÃO vai pro Git?</p>
+        <button class="opt" data-k="a">~/.claude/settings.json</button>
+        <button class="opt" data-k="b">.claude/settings.json</button>
+        <button class="opt" data-k="c">.claude/settings.local.json</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s1">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s2" data-fig="2">
+      <h2><span class="n">02</span> Anatomia de um hook</h2>
+      <p>Todo hook tem a mesma forma de bonecas russas: o <b>evento</b> guarda uma lista; cada item tem um <b>matcher</b> e uma lista de <b>hooks</b>; cada hook é um <b>comando</b>.</p>
+      <pre>{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: "Bash",
+        <span class="k">"hooks"</span>: [
+          { "type": "command", "command": "./guarda.sh" }
+        ]
+      }
+    ]
+  }
+}</pre>
+      <p>Pode haver <b>vários hooks</b> no mesmo matcher — eles rodam <b>em ordem</b>. E vários matchers no mesmo evento. Comece com um; a estrutura aguenta crescer.</p>
+      <div class="mobfig" data-mobfig="2"></div>
+      <button class="readbtn" data-read="s2">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s3" data-fig="3">
+      <h2><span class="n">03</span> O matcher: onde o hook pega</h2>
+      <p>Para <code>PreToolUse</code> e <code>PostToolUse</code>, o matcher casa com o <b>nome da ferramenta</b>. Três formas:</p>
+      <ul>
+        <li><b>Nome exato</b> — <code>"Bash"</code> pega só o terminal.</li>
+        <li><b>Alternância</b> — <code>"Edit|Write"</code> pega edição <i>ou</i> escrita de arquivo.</li>
+        <li><b>Tudo</b> — <code>"*"</code> (ou vazio) pega qualquer ferramenta.</li>
+      </ul>
+      <p>Eventos que não são de ferramenta (como <code>SessionStart</code> ou <code>Stop</code>) não usam matcher de ferramenta — eles simplesmente disparam no momento.</p>
+      <div class="mobfig" data-mobfig="3"></div>
+      <div class="quiz" data-answer="b">
+        <p class="qk">Teste-se</p>
+        <p class="q">Para um hook pegar tanto Edit quanto Write, o matcher é:</p>
+        <button class="opt" data-k="a">"Edit,Write"</button>
+        <button class="opt" data-k="b">"Edit|Write"</button>
+        <button class="opt" data-k="c">"Edit e Write"</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s3">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s4" data-fig="4">
+      <h2><span class="n">04</span> O que o hook recebe</h2>
+      <p>Na hora de rodar, o Claude entrega ao seu comando um <b>JSON pela entrada padrão</b> (stdin) com o contexto: qual evento, qual ferramenta, e a entrada dela.</p>
+      <pre><span class="c"># lê o comando que o Bash ia rodar</span>
+cmd=$(jq -r '.tool_input.command')
+<span class="c"># lê o arquivo que foi editado</span>
+file=$(jq -r '.tool_input.file_path')</pre>
+      <p>Também há a variável <code>$CLAUDE_PROJECT_DIR</code> apontando pra raiz do projeto — útil pra achar seus scripts. Com o stdin + jq, seu hook <b>sabe exatamente</b> o que está prestes a acontecer.</p>
+      <div class="mobfig" data-mobfig="4"></div>
+      <details>
+        <summary>Indo mais fundo</summary>
+        <p>O JSON traz mais campos (<code>session_id</code>, <code>cwd</code>, <code>hook_event_name</code>…). Você raramente precisa de todos — <code>tool_name</code> e <code>tool_input</code> resolvem a maioria dos hooks.</p>
+      </details>
+      <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+  </div>
+
+  <aside class="rail"><div class="railsticky">
+    <div class="figstage">
+      <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> global · projeto · local (o mais específico ganha)">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="30" y="34" width="160" height="34" rx="8" fill="#221f2e" stroke="#37324a"/><text x="44" y="55" font-family="Space Mono" font-size="10" fill="#948DA6">~/.claude · global</text>
+          <rect x="30" y="80" width="160" height="34" rx="8" fill="#221f2e" stroke="#37324a"/><text x="44" y="101" font-family="Space Mono" font-size="10" fill="#7CE0C6">.claude · projeto</text>
+          <rect class="breathe" x="30" y="126" width="160" height="34" rx="8" fill="none" stroke="#F2B45C"/><text x="44" y="147" font-family="Space Mono" font-size="10" fill="#F2B45C">.local · você</text>
+          <path d="M200 51 V143" stroke="#37324a" stroke-width="1.5" stroke-dasharray="3 4"/><path d="M195 138 l5 8 5 -8z" fill="#37324a"/>
+        </svg>
+      </div>
+      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> evento › matcher › hooks[] › comando">
+        <svg viewBox="0 0 220 210" fill="none" aria-hidden="true">
+          <rect x="30" y="20" width="120" height="24" rx="6" fill="#221f2e" stroke="#37324a"/><text x="42" y="36" font-family="Space Mono" font-size="10" fill="#7CE0C6">evento</text>
+          <path d="M42 44 V62 H58" stroke="#37324a"/>
+          <rect x="58" y="64" width="120" height="24" rx="6" fill="#221f2e" stroke="#37324a"/><text x="70" y="80" font-family="Space Mono" font-size="10" fill="#C7C2D0">matcher</text>
+          <path d="M70 88 V106 H86" stroke="#37324a"/>
+          <rect x="86" y="108" width="110" height="24" rx="6" fill="#221f2e" stroke="#37324a"/><text x="98" y="124" font-family="Space Mono" font-size="10" fill="#948DA6">hooks[ ]</text>
+          <path d="M98 132 V150 H114" stroke="#37324a"/>
+          <rect class="breathe" x="114" y="152" width="82" height="24" rx="6" fill="none" stroke="#7CE0C6"/><text x="155" y="168" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#7CE0C6">command</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="3" data-cap="<b>Fig.</b> matcher: exato · alternância · tudo">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect class="breathe" x="40" y="40" width="140" height="30" rx="8" fill="none" stroke="#7CE0C6"/><text x="110" y="60" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#7CE0C6">"Bash"</text>
+          <rect class="breathe" x="40" y="84" width="140" height="30" rx="8" fill="none" stroke="#7CE0C6" style="animation-delay:.3s"/><text x="110" y="104" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#7CE0C6">"Edit|Write"</text>
+          <rect class="breathe" x="40" y="128" width="140" height="30" rx="8" fill="none" stroke="#F2B45C" style="animation-delay:.6s"/><text x="110" y="148" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#F2B45C">"*"  (tudo)</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="4" data-cap="<b>Fig.</b> stdin JSON → jq → você sabe o que vem">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="24" y="40" width="80" height="120" rx="10" fill="#15131d" stroke="#37324a"/>
+          <text x="34" y="62" font-family="Space Mono" font-size="8" fill="#948DA6">{ tool_name</text>
+          <text x="34" y="80" font-family="Space Mono" font-size="8" fill="#7CE0C6">  tool_input</text>
+          <text x="34" y="98" font-family="Space Mono" font-size="8" fill="#948DA6">  cwd … }</text>
+          <text x="64" y="150" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#6C6580">stdin</text>
+          <path class="breathe" d="M108 100 H140" stroke="#7CE0C6" stroke-width="2"/><path d="M140 94 l10 6 -10 6z" fill="#7CE0C6"/>
+          <rect x="152" y="82" width="46" height="36" rx="8" fill="#221f2e" stroke="#37324a"/><text x="175" y="105" text-anchor="middle" font-family="Space Mono" font-size="11" fill="#7CE0C6">jq</text>
+        </svg>
+      </div>
+    </div>
+    <p class="railcap" id="cap"></p>
+    <div class="steps-ind" id="ind"></div>
+    <p class="sidenote">Grife qualquer trecho do texto para virar um <b>flashcard</b> de revisão.</p>
+  </div></aside>
+</div>
+
+<footer>Aula 2 de 5 · Trilha 03 · Automação &amp; Hooks · demo do formato-curso v4 (revisar antes de publicar).</footer>
+
+<script type="application/json" id="authored-cards">
+[
+  {"front":"Quais são os três lugares onde um hook pode viver?","back":"Global (~/.claude/settings.json), projeto (.claude/settings.json) e local (.claude/settings.local.json)."},
+  {"front":"Em conflito de settings, qual vence?","back":"O mais específico: local > projeto > global."},
+  {"front":"Qual matcher pega Edit OU Write?","back":"\"Edit|Write\" (alternância com | )."},
+  {"front":"Como o hook recebe o contexto do que vai acontecer?","back":"Um JSON pela entrada padrão (stdin); lê-se com jq (ex.: .tool_input.command)."},
+  {"front":"Que variável aponta pra raiz do projeto?","back":"$CLAUDE_PROJECT_DIR."}
+]
+</script>
+<script src="assets/aula.js"></script>
+</body>
+</html>

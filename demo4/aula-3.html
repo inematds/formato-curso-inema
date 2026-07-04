@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aula 3 · Hooks que protegem · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<script>(function(){try{var t=localStorage.getItem('v4:theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-lesson="v4hooks:aula3">
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Claude Code na prática</a></span>
+  <a class="back" href="trilha.html">← trilha</a>
+  <button id="pill" class="pill">0 lido</button>
+  <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="jorbtn">jornada</button>
+  <button id="themebtn">tema: escuro</button>
+</div>
+<div class="subnav"><div class="subnav-inner">
+  <a href="landing.html#trilhas" class="soon">01 Fundamentos</a>
+  <a href="landing.html#trilhas" class="soon">02 Fluxo</a>
+  <a href="trilha.html" class="cur">03 Automação</a>
+  <a href="landing.html#trilhas" class="soon">04 Agentes</a>
+  <a href="landing.html#trilhas" class="soon">05 MCP</a>
+  <a href="landing.html#trilhas" class="soon">06 Escala</a>
+</div></div>
+</div>
+
+<header class="hero"><div class="hero-inner">
+  <div>
+    <p class="kicker">Trilha 03 · Aula 3 · Iniciante</p>
+    <h1>Hooks que<br><em>protegem</em></h1>
+    <p class="lead">Transformar "por favor não faça isso" numa trava de verdade: barrar o perigoso antes de acontecer, ou pedir confirmação.</p>
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 240" fill="none" aria-hidden="true">
+      <path d="M150 40 l70 26 v40 c0 44 -30 74 -70 88 c-40 -14 -70 -44 -70 -88 v-40 z" fill="#15131d" stroke="#37324a" stroke-width="1.5"/>
+      <path class="pulse" d="M124 130 l18 18 l34 -40" stroke="#7CE0C6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <text x="150" y="216" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="15" fill="#C7C2D0">a regra vira trava</text>
+    </svg>
+  </div>
+</div></header>
+
+<div class="layout">
+  <div class="col">
+    <section class="step" id="s1" data-fig="1">
+      <h2><span class="n">01</span> A ideia de trava</h2>
+      <p>Uma trava é um hook de <code>PreToolUse</code>: ele roda <b>antes</b> da ferramenta e decide se ela pode seguir. O sinal é o <b>código de saída</b>:</p>
+      <ul>
+        <li><b>exit 0</b> — tudo bem, pode rodar.</li>
+        <li><b>exit 2</b> — <b>barra</b>. O Claude não executa, e o que você imprimiu no <code>stderr</code> vira o motivo.</li>
+      </ul>
+      <p>Repare: a trava não "avisa depois" — ela <b>impede antes</b>. É a diferença entre um extintor e um relatório de incêndio.</p>
+      <div class="mobfig" data-mobfig="1"></div>
+      <div class="quiz" data-answer="c">
+        <p class="qk">Teste-se</p>
+        <p class="q">Qual código de saída BARRA a ação no PreToolUse?</p>
+        <button class="opt" data-k="a">exit 0</button>
+        <button class="opt" data-k="b">exit 1</button>
+        <button class="opt" data-k="c">exit 2</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s1">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s2" data-fig="2">
+      <h2><span class="n">02</span> Ler o que vai rodar</h2>
+      <p>Pra decidir, o hook precisa <b>ver o comando</b>. Ele vem no JSON do stdin; você pega com <code>jq</code> e testa:</p>
+      <pre><span class="c"># .claude/hooks/guarda.sh (PreToolUse, matcher "Bash")</span>
+cmd=$(jq -r '.tool_input.command')
+if echo "$cmd" | grep -qE 'rm -rf|:(){:'; then
+  echo "bloqueado: comando destrutivo" &gt;&amp;2
+  exit 2
+fi
+exit 0</pre>
+      <p>A régua é sua: um <code>grep</code> por padrões perigosos já pega a maioria dos acidentes. Comece simples e vá endurecendo conforme aprende o que te morde.</p>
+      <div class="mobfig" data-mobfig="2"></div>
+      <button class="readbtn" data-read="s2">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s3" data-fig="3">
+      <h2><span class="n">03</span> Casos que valem a pena</h2>
+      <p>Três travas que salvam o dia mais cedo do que tarde:</p>
+      <ul>
+        <li><b>Nada de <code>rm -rf</code></b> em caminhos amplos — o clássico acidente irreversível.</li>
+        <li><b>Não tocar em segredos</b> — barrar edição de <code>.env</code>, <code>*.pem</code>, chaves.</li>
+        <li><b>Não empurrar na <code>main</code></b> — barrar <code>git push</code> direto no branch protegido.</li>
+      </ul>
+      <p>Não precisa prever tudo. Cada susto vira uma linha nova na trava — e ela fica mais esperta com o tempo.</p>
+      <div class="mobfig" data-mobfig="3"></div>
+      <div class="quiz" data-answer="b">
+        <p class="qk">Teste-se</p>
+        <p class="q">Onde o hook lê o comando que o Bash ia rodar?</p>
+        <button class="opt" data-k="a">numa variável de ambiente $COMMAND</button>
+        <button class="opt" data-k="b">no JSON do stdin (ex.: .tool_input.command)</button>
+        <button class="opt" data-k="c">no arquivo settings.json</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s3">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s4" data-fig="4">
+      <h2><span class="n">04</span> Pedir confirmação, não só barrar</h2>
+      <p>Nem tudo é preto no branco. Às vezes você não quer <b>proibir</b>, quer <b>ser avisado</b> pra confirmar. Em vez do <code>exit 2</code>, o hook pode devolver um <b>JSON</b> pedindo confirmação:</p>
+      <pre>{ "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "ask",
+    "permissionDecisionReason": "confirmar antes de deploy" } }</pre>
+      <p>Assim o Claude pausa e pergunta. Três posturas: <code>allow</code> (libera), <code>deny</code> (barra, como o exit 2) e <code>ask</code> (confirma). Use <b>ask</b> quando o certo depende do contexto.</p>
+      <div class="mobfig" data-mobfig="4"></div>
+      <details>
+        <summary>Indo mais fundo</summary>
+        <p>O <code>exit 2</code> é o caminho rápido; a saída JSON é a versão fina, com motivo estruturado. Comece pelo exit code — migre pro JSON quando precisar de "ask" ou mensagens mais ricas.</p>
+      </details>
+      <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+  </div>
+
+  <aside class="rail"><div class="railsticky">
+    <div class="figstage">
+      <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> exit 0 segue · exit 2 barra">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="40" y="46" width="140" height="34" rx="8" fill="none" stroke="#7CE0C6"/><text x="54" y="68" font-family="Space Mono" font-size="11" fill="#7CE0C6">exit 0 → segue</text>
+          <rect class="breathe" x="40" y="112" width="140" height="34" rx="8" fill="none" stroke="#F2B45C"/><text x="54" y="134" font-family="Space Mono" font-size="11" fill="#F2B45C">exit 2 → barra</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> stdin → jq → grep padrão perigoso">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="20" y="80" width="52" height="40" rx="8" fill="#15131d" stroke="#37324a"/><text x="46" y="104" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#948DA6">stdin</text>
+          <path class="breathe" d="M76 100 H104" stroke="#7CE0C6" stroke-width="2"/><path d="M104 94 l9 6 -9 6z" fill="#7CE0C6"/>
+          <rect x="116" y="80" width="40" height="40" rx="8" fill="#221f2e" stroke="#37324a"/><text x="136" y="104" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#7CE0C6">jq</text>
+          <path class="breathe" d="M160 100 H184" stroke="#7CE0C6" stroke-width="2" style="animation-delay:.4s"/><path d="M184 94 l9 6 -9 6z" fill="#7CE0C6"/>
+          <text x="200" y="104" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#F2B45C">grep</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="3" data-cap="<b>Fig.</b> rm -rf · .env · push main">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect class="breathe" x="40" y="36" width="140" height="30" rx="8" fill="none" stroke="#F2B45C"/><text x="110" y="56" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#F2B45C">rm -rf</text>
+          <rect class="breathe" x="40" y="80" width="140" height="30" rx="8" fill="none" stroke="#F2B45C" style="animation-delay:.3s"/><text x="110" y="100" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#F2B45C">.env / *.pem</text>
+          <rect class="breathe" x="40" y="124" width="140" height="30" rx="8" fill="none" stroke="#F2B45C" style="animation-delay:.6s"/><text x="110" y="144" text-anchor="middle" font-family="Space Mono" font-size="10" fill="#F2B45C">push → main</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="4" data-cap="<b>Fig.</b> allow · deny · ask">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <circle cx="60" cy="100" r="26" fill="none" stroke="#7CE0C6"/><text x="60" y="104" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">allow</text>
+          <circle cx="130" cy="100" r="26" fill="none" stroke="#F2B45C"/><text x="130" y="104" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#F2B45C">deny</text>
+          <circle class="breathe" cx="185" cy="60" r="18" fill="none" stroke="#C7C2D0"/><text x="185" y="64" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#C7C2D0">ask</text>
+        </svg>
+      </div>
+    </div>
+    <p class="railcap" id="cap"></p>
+    <div class="steps-ind" id="ind"></div>
+    <p class="sidenote">Grife qualquer trecho do texto para virar um <b>flashcard</b> de revisão.</p>
+  </div></aside>
+</div>
+
+<footer>Aula 3 de 5 · Trilha 03 · Automação &amp; Hooks · demo do formato-curso v4 (revisar antes de publicar).</footer>
+
+<script type="application/json" id="authored-cards">
+[
+  {"front":"Que evento se usa para uma trava (bloquear antes de rodar)?","back":"PreToolUse — roda antes da ferramenta e pode barrar."},
+  {"front":"O que exit 0 e exit 2 significam numa trava?","back":"exit 0 = pode seguir; exit 2 = barra, e o stderr vira o motivo."},
+  {"front":"Como o hook vê o comando que o Bash ia rodar?","back":"No JSON do stdin: jq -r '.tool_input.command'."},
+  {"front":"Além de barrar, o que um PreToolUse pode fazer?","back":"Pedir confirmação via JSON com permissionDecision: ask (allow/deny/ask)."}
+]
+</script>
+<script src="assets/aula.js"></script>
+</body>
+</html>

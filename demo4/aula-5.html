@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aula 5 · Hooks em equipe e CI · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<script>(function(){try{var t=localStorage.getItem('v4:theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-lesson="v4hooks:aula5">
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Claude Code na prática</a></span>
+  <a class="back" href="trilha.html">← trilha</a>
+  <button id="pill" class="pill">0 lido</button>
+  <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="jorbtn">jornada</button>
+  <button id="themebtn">tema: escuro</button>
+</div>
+<div class="subnav"><div class="subnav-inner">
+  <a href="landing.html#trilhas" class="soon">01 Fundamentos</a>
+  <a href="landing.html#trilhas" class="soon">02 Fluxo</a>
+  <a href="trilha.html" class="cur">03 Automação</a>
+  <a href="landing.html#trilhas" class="soon">04 Agentes</a>
+  <a href="landing.html#trilhas" class="soon">05 MCP</a>
+  <a href="landing.html#trilhas" class="soon">06 Escala</a>
+</div></div>
+</div>
+
+<header class="hero"><div class="hero-inner">
+  <div>
+    <p class="kicker">Trilha 03 · Aula 5 · Iniciante</p>
+    <h1>Hooks em<br><em>equipe</em> e CI</h1>
+    <p class="lead">O que muda quando os hooks saem da sua máquina: versionar pro time, confiar no determinismo, rodar em pipeline — e a higiene pra não se machucar.</p>
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 240" fill="none" aria-hidden="true">
+      <circle cx="80" cy="90" r="16" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+      <circle cx="150" cy="70" r="16" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+      <circle cx="220" cy="90" r="16" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+      <path class="pulse" d="M96 90 H134 M166 74 H204" stroke="#37324a" stroke-width="1.5"/>
+      <rect x="120" y="140" width="60" height="34" rx="8" fill="#221f2e" stroke="#37324a"/><text x="150" y="162" text-anchor="middle" font-family="Space Mono, monospace" font-size="11" fill="#F2B45C">.claude</text>
+      <path class="pulse" d="M80 106 V150 H120 M220 106 V150 H180 M150 86 V140" stroke="#37324a" stroke-width="1.5"/>
+      <text x="150" y="206" text-anchor="middle" font-family="Newsreader, serif" font-style="italic" font-size="15" fill="#C7C2D0">um settings, todo o time</text>
+    </svg>
+  </div>
+</div></header>
+
+<div class="layout">
+  <div class="col">
+    <section class="step" id="s1" data-fig="1">
+      <h2><span class="n">01</span> Versionar os hooks</h2>
+      <p>Na sua máquina, o hook ajuda você. No <b>repositório</b>, ele ajuda o time inteiro. A diferença é só o arquivo:</p>
+      <ul>
+        <li><code>.claude/settings.json</code> — vai pro Git. Quem clonar o projeto <b>herda os mesmos hooks</b>.</li>
+        <li><code>.claude/settings.local.json</code> — fica no <code>.gitignore</code>. É seu, não sai da máquina.</li>
+      </ul>
+      <p>Regra: trava de segurança e formatador que <b>todos</b> deveriam ter → versione. Atalho pessoal → local. Assim o padrão do time viaja junto com o código.</p>
+      <div class="mobfig" data-mobfig="1"></div>
+      <div class="quiz" data-answer="a">
+        <p class="qk">Teste-se</p>
+        <p class="q">Onde colocar um hook para TODO o time herdar?</p>
+        <button class="opt" data-k="a">.claude/settings.json (versionado)</button>
+        <button class="opt" data-k="b">.claude/settings.local.json</button>
+        <button class="opt" data-k="c">~/.claude/settings.json</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s1">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s2" data-fig="2">
+      <h2><span class="n">02</span> Determinismo: dá pra confiar</h2>
+      <p>Um hook é um comando comum: <b>mesma entrada, mesmo resultado</b>. Ele não "acha" nada, não varia com o humor do modelo. Roda igual na sua máquina, na do colega e no servidor.</p>
+      <p>É essa previsibilidade que deixa você <b>confiar a segurança</b> a um hook. A trava que barra <code>rm -rf</code> vai barrar sempre — não é uma sugestão que o modelo pode ignorar, é código que sempre executa.</p>
+      <div class="mobfig" data-mobfig="2"></div>
+      <button class="readbtn" data-read="s2">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s3" data-fig="3">
+      <h2><span class="n">03</span> Rodando sem ninguém olhando</h2>
+      <p>O Claude Code roda também em <b>modo headless</b> — sem interface, tocado por script (<code>claude -p "…"</code>), dentro de um pipeline de CI. E os <b>hooks continuam valendo</b>.</p>
+      <p>Ou seja: o formatador, a trava e o log que você montou pra usar no dia a dia <b>também protegem a automação</b>. O mesmo padrão vale pro humano e pro robô — você configura uma vez.</p>
+      <div class="mobfig" data-mobfig="3"></div>
+      <div class="quiz" data-answer="b">
+        <p class="qk">Teste-se</p>
+        <p class="q">No modo headless (CI), os hooks configurados:</p>
+        <button class="opt" data-k="a">são ignorados</button>
+        <button class="opt" data-k="b">continuam valendo</button>
+        <button class="opt" data-k="c">só rodam se você confirmar</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s3">marcar como lido</button>
+    </section>
+
+    <section class="step" id="s4" data-fig="4">
+      <h2><span class="n">04</span> Higiene: hook é poder</h2>
+      <p>Um hook roda comandos automaticamente — então trate com respeito:</p>
+      <ul>
+        <li><b>Rápido</b> — ele entra no caminho de cada ação; um hook lento trava seu fluxo.</li>
+        <li><b>Idempotente</b> — rodar duas vezes não pode quebrar nada.</li>
+        <li><b>Sem vazar segredo</b> — não imprima tokens/chaves; o output pode ir pro contexto ou pro log.</li>
+        <li><b>Falhe com clareza</b> — mensagem no <code>stderr</code> dizendo o porquê.</li>
+      </ul>
+      <p>Comece com um hook simples e seguro. O objetivo não é automatizar tudo — é tirar da sua cabeça as poucas coisas que você não devia precisar lembrar.</p>
+      <div class="mobfig" data-mobfig="4"></div>
+      <details>
+        <summary>Indo mais fundo</summary>
+        <p>Dá pra dar <b>timeout</b> aos comandos e escolher a ordem de execução quando há vários hooks no mesmo matcher. Mas isso é afinação — a base é: rápido, idempotente, silencioso sobre segredos.</p>
+      </details>
+      <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+  </div>
+
+  <aside class="rail"><div class="railsticky">
+    <div class="figstage">
+      <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> um settings versionado, todo o time herda">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <circle cx="50" cy="60" r="14" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+          <circle cx="110" cy="46" r="14" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+          <circle cx="170" cy="60" r="14" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+          <rect class="breathe" x="82" y="112" width="56" height="30" rx="8" fill="none" stroke="#F2B45C"/><text x="110" y="132" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#F2B45C">.claude</text>
+          <path d="M50 74 V128 H82 M170 74 V128 H138 M110 60 V112" stroke="#37324a" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> mesma entrada → mesmo resultado">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="24" y="82" width="44" height="36" rx="8" fill="#221f2e" stroke="#37324a"/><text x="46" y="105" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#C7C2D0">in</text>
+          <path class="breathe" d="M72 100 H104" stroke="#7CE0C6" stroke-width="2"/><path d="M104 94 l10 6 -10 6z" fill="#7CE0C6"/>
+          <rect x="112" y="82" width="40" height="36" rx="8" fill="none" stroke="#7CE0C6"/><text x="132" y="105" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">hook</text>
+          <path class="breathe" d="M156 100 H184" stroke="#7CE0C6" stroke-width="2" style="animation-delay:.4s"/><path d="M184 94 l10 6 -10 6z" fill="#7CE0C6"/>
+          <text x="200" y="105" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#948DA6">out</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="3" data-cap="<b>Fig.</b> headless / CI: hooks continuam">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect x="26" y="86" width="40" height="28" rx="7" fill="#221f2e" stroke="#37324a"/><text x="46" y="104" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#C7C2D0">push</text>
+          <path d="M68 100 H92" stroke="#37324a" stroke-width="2"/>
+          <rect class="breathe" x="94" y="82" width="44" height="36" rx="8" fill="none" stroke="#7CE0C6"/><text x="116" y="104" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#7CE0C6">claude -p</text>
+          <path d="M140 100 H164" stroke="#37324a" stroke-width="2"/>
+          <rect x="166" y="86" width="30" height="28" rx="7" fill="#221f2e" stroke="#37324a"/><text x="181" y="104" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#948DA6">✓</text>
+        </svg>
+      </div>
+      <div class="fig" data-fig="4" data-cap="<b>Fig.</b> rápido · idempotente · sem segredo">
+        <svg viewBox="0 0 220 200" fill="none" aria-hidden="true">
+          <rect class="breathe" x="40" y="40" width="140" height="26" rx="7" fill="none" stroke="#7CE0C6"/><text x="110" y="57" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">rápido</text>
+          <rect class="breathe" x="40" y="76" width="140" height="26" rx="7" fill="none" stroke="#7CE0C6" style="animation-delay:.3s"/><text x="110" y="93" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#7CE0C6">idempotente</text>
+          <rect class="breathe" x="40" y="112" width="140" height="26" rx="7" fill="none" stroke="#F2B45C" style="animation-delay:.6s"/><text x="110" y="129" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#F2B45C">sem vazar segredo</text>
+        </svg>
+      </div>
+    </div>
+    <p class="railcap" id="cap"></p>
+    <div class="steps-ind" id="ind"></div>
+    <p class="sidenote">Grife qualquer trecho do texto para virar um <b>flashcard</b> de revisão.</p>
+  </div></aside>
+</div>
+
+<footer>Aula 5 de 5 · Trilha 03 · Automação &amp; Hooks · fim da trilha · demo do formato-curso v4 (revisar antes de publicar).</footer>
+
+<script type="application/json" id="authored-cards">
+[
+  {"front":"Onde versionar hooks para o time herdar?","back":"No .claude/settings.json (vai pro Git); o .local.json fica só na sua máquina."},
+  {"front":"Por que dá pra confiar segurança a um hook?","back":"Ele é determinístico: mesma entrada, mesmo resultado — sempre executa, não é sugestão."},
+  {"front":"Os hooks valem no modo headless / CI?","back":"Sim — continuam valendo em claude -p e em pipeline."},
+  {"front":"Três regras de higiene de um hook?","back":"Rápido, idempotente e sem vazar segredo (e falhar com mensagem clara no stderr)."}
+]
+</script>
+<script src="assets/aula.js"></script>
+</body>
+</html>
