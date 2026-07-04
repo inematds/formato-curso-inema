@@ -247,6 +247,16 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 .wlist li b{color:var(--ink)}
 .welcome .big{margin-top:0}
 
+/* copiar em blocos de código (fora do pratique) */
+.codewrap{position:relative;margin:26px 0}
+.codewrap pre{margin:0}
+
+/* glossário sob demanda (termo com definição no hover/foco) */
+.gterm{position:relative;border-bottom:1px dotted currentColor;cursor:help}
+.gterm:focus{outline:none;color:var(--accent)}
+.gterm::after{content:attr(data-def);position:absolute;left:0;bottom:calc(100% + 8px);z-index:45;width:max-content;max-width:min(280px,72vw);background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-family:var(--sans);font-size:13px;font-weight:400;font-style:normal;line-height:1.45;color:var(--ink-soft);box-shadow:0 12px 34px rgba(0,0,0,.45);white-space:normal;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none}
+.gterm:hover::after,.gterm:focus::after{opacity:1;visibility:visible;transform:none}
+
 /* subnav (trilhas no topo) — usado quando presente */
 .subnav-inner{max-width:1160px;margin:0 auto;padding:2px clamp(24px,5vw,60px) 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .subnav-inner::-webkit-scrollbar{display:none}

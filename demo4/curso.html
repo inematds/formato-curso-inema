@@ -203,8 +203,8 @@
       <h2><span class="n">02</span> Os momentos (eventos)</h2>
       <p>Cada hook se pendura num <b>evento</b> — um momento do trabalho do Claude. Os que mais importam pra começar:</p>
       <ul>
-        <li><b>PreToolUse</b> — <i>antes</i> do Claude usar uma ferramenta (ex.: antes de rodar um comando no terminal).</li>
-        <li><b>PostToolUse</b> — <i>depois</i> (ex.: formatar o arquivo assim que ele é editado).</li>
+        <li><b class="gterm" tabindex="0" data-def="Evento de hook que dispara ANTES de o Claude usar uma ferramenta. Pode barrar a ação saindo com exit 2.">PreToolUse</b> — <i>antes</i> do Claude usar uma ferramenta (ex.: antes de rodar um comando no terminal).</li>
+        <li><b class="gterm" tabindex="0" data-def="Evento de hook que dispara DEPOIS de uma ferramenta rodar. Bom para formatar o arquivo recém-editado.">PostToolUse</b> — <i>depois</i> (ex.: formatar o arquivo assim que ele é editado).</li>
         <li><b>UserPromptSubmit</b> — quando <i>você</i> envia uma mensagem.</li>
         <li><b>Stop</b> — quando o Claude <i>termina</i> de responder.</li>
         <li><b>SessionStart</b> — quando a sessão <i>começa</i> (ótimo pra injetar contexto do projeto).</li>

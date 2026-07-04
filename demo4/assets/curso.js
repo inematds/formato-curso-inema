@@ -124,6 +124,9 @@
     refresh();
   });
 
+  // copiar em qualquer bloco de código
+  document.querySelectorAll('.view[data-aula] .col pre').forEach(function(pre){ if(pre.closest('.pcodewrap')||pre.closest('.codewrap')) return; var wrap=el('div','codewrap'); pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(pre); var b=el('button','pcopy'); b.type='button'; b.textContent='copiar'; wrap.insertBefore(b,pre); b.addEventListener('click',function(){ copyText(pre.textContent,b); }); });
+
   // ---- teste-se ----
   document.querySelectorAll('.quiz').forEach(function(q){ var ans=q.getAttribute('data-answer'), fb=q.querySelector('.qfb'), done=false;
     q.querySelectorAll('.opt').forEach(function(o){ o.addEventListener('click',function(){ if(done) return; done=true; var kk=o.getAttribute('data-k');
