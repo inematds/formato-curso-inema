@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v4 · Aula — arquitetura A (cold-open)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0D14; --bg2:#15131d; --panel:#1a1824; --panel2:#221f2e;
+    --ink:#ECE6D9; --ink-soft:#C7C2D0; --muted:#948DA6; --faint:#6C6580;
+    --line:#2A2637; --line2:#37324a;
+    --serif:"Newsreader",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+    --accent:#7CE0C6; --accent-dim:#4FB79E; --warm:#F2B45C;
+    --read:62ch;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75;-webkit-font-smoothing:antialiased}
+  ::selection{background:rgba(124,224,198,.24)}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* HERO cold-open */
+  .hero{position:relative;min-height:92vh;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;
+    padding:6vh clamp(24px,6vw,90px) 8vh;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(60% 50% at 78% 18%, rgba(124,224,198,.18) 0%, transparent 60%),
+      radial-gradient(55% 45% at 12% 88%, rgba(242,180,92,.14) 0%, transparent 55%),
+      radial-gradient(90% 90% at 50% 40%, var(--bg2) 0%, var(--bg) 70%);
+    animation:drift 22s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-2%,1.5%,0) scale(1.06)}}
+  .hero > *{position:relative;z-index:2}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 22px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(42px,7.4vw,82px);line-height:1.0;letter-spacing:-.025em;margin:0 0 24px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .lead{font-family:var(--serif);font-weight:400;font-size:clamp(19px,2.2vw,25px);line-height:1.5;color:var(--ink-soft);max-width:34ch;margin:0}
+  .cue{margin-top:40px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .cue .arw{display:inline-block;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* hero figure */
+  .herofig{display:grid;place-items:center}
+  .herofig svg{width:min(100%,440px);height:auto;filter:drop-shadow(0 24px 60px rgba(0,0,0,.5))}
+  .scan{animation:scan 3.4s ease-in-out infinite}
+  @keyframes scan{0%{transform:translateY(0);opacity:0}12%{opacity:1}50%{transform:translateY(150px)}88%{opacity:1}100%{transform:translateY(180px);opacity:0}}
+  .tok.on{animation:pop 3.4s ease-in-out infinite}
+  @keyframes pop{0%,40%{fill:var(--line2)}55%,100%{fill:var(--accent)}}
+
+  /* READER calm */
+  .reader{max-width:var(--read);margin:0 auto;padding:9vh clamp(22px,5vw,32px) 14vh;position:relative;z-index:2}
+  .sec{margin:0 0 8vh}
+  h2{font-family:var(--serif);font-weight:500;font-size:clamp(27px,3.6vw,37px);line-height:1.12;letter-spacing:-.015em;margin:0 0 20px}
+  .reader p{font-size:18px;color:var(--ink-soft);margin:0 0 22px}
+  .reader p b{color:var(--ink);font-weight:600}
+  .reader ul{margin:0 0 22px;padding:0;list-style:none}
+  .reader li{position:relative;padding-left:26px;margin:0 0 12px;color:var(--ink-soft);font-size:17.5px}
+  .reader li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+  code{font-family:var(--mono);font-size:.86em;background:rgba(124,224,198,.1);color:var(--accent);padding:2px 6px;border-radius:5px}
+  .sidenote{float:right;clear:right;width:210px;margin:6px -238px 18px 26px;font-size:13.5px;line-height:1.55;color:var(--muted);
+    border-left:2px solid var(--line2);padding-left:14px}
+  .sidenote b{color:var(--ink-soft);font-weight:600}
+  .infig{margin:34px 0;padding:26px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--bg2));text-align:center}
+  .infig svg{width:min(100%,360px);height:auto}
+  .infig figcaption{margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--faint)}
+  details{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin:30px 0}
+  summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);list-style:none;padding:10px 0}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"↓ ";color:var(--faint)}
+  details[open] summary::before{content:"↑ "}
+  details p{margin-top:8px}
+
+  footer{max-width:var(--read);margin:0 auto;padding:0 32px 16vh;color:var(--faint);font-size:14px;font-family:var(--serif);font-style:italic}
+
+  /* mock switcher */
+  .sw{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:30;display:flex;gap:6px;
+    background:rgba(20,19,29,.82);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:99px;padding:6px}
+  .sw a{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-decoration:none;color:var(--muted);padding:7px 13px;border-radius:99px}
+  .sw a.on{background:var(--accent);color:#0E0D14;font-weight:700}
+  .sw a:not(.on):hover{color:var(--ink)}
+  .badge{position:fixed;left:16px;top:14px;z-index:30;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+  @media(max-width:860px){
+    .hero{grid-template-columns:1fr;min-height:auto;padding-top:12vh}
+    .herofig{margin-top:36px}
+    .sidenote{float:none;width:auto;margin:0 0 22px;background:var(--bg2);border-radius:10px;padding:14px;border-left:2px solid var(--accent)}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="badge">mock · v4 · arquitetura A — cold-open</div>
+
+<header class="hero">
+  <div>
+    <p class="kicker">Fundamentos de IA · Aula 3</p>
+    <h1>A <em>janela</em><br>de contexto</h1>
+    <p class="lead">Todo modelo tem um limite de quanto texto consegue segurar de uma vez. Entender esse limite separa quem briga com a ferramenta de quem a conduz.</p>
+    <p class="cue"><span class="arw">↓</span> role para começar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 260" fill="none" aria-hidden="true">
+      <rect x="20" y="20" width="260" height="220" rx="18" stroke="#37324a" stroke-width="1.5"/>
+      <rect x="20" y="20" width="260" height="34" rx="18" fill="#221f2e"/>
+      <circle cx="42" cy="37" r="4" fill="#4FB79E"/><circle cx="58" cy="37" r="4" fill="#37324a"/><circle cx="74" cy="37" r="4" fill="#37324a"/>
+      <g>
+        <rect class="tok on" x="40"  y="74"  width="28" height="16" rx="4" fill="#37324a"/>
+        <rect class="tok on" x="76"  y="74"  width="46" height="16" rx="4" fill="#37324a" style="animation-delay:.2s"/>
+        <rect class="tok on" x="130" y="74"  width="34" height="16" rx="4" fill="#37324a" style="animation-delay:.4s"/>
+        <rect class="tok on" x="172" y="74"  width="60" height="16" rx="4" fill="#37324a" style="animation-delay:.6s"/>
+        <rect class="tok on" x="40"  y="100" width="52" height="16" rx="4" fill="#37324a" style="animation-delay:.8s"/>
+        <rect class="tok on" x="100" y="100" width="40" height="16" rx="4" fill="#37324a" style="animation-delay:1s"/>
+        <rect class="tok on" x="148" y="100" width="70" height="16" rx="4" fill="#37324a" style="animation-delay:1.2s"/>
+        <rect x="40"  y="126" width="44" height="16" rx="4" fill="#241f2b"/>
+        <rect x="92"  y="126" width="60" height="16" rx="4" fill="#241f2b"/>
+        <rect x="160" y="126" width="30" height="16" rx="4" fill="#241f2b"/>
+        <rect x="40"  y="152" width="72" height="16" rx="4" fill="#241f2b"/>
+        <rect x="120" y="152" width="38" height="16" rx="4" fill="#241f2b"/>
+      </g>
+      <line class="scan" x1="30" y1="70" x2="270" y2="70" stroke="#7CE0C6" stroke-width="1.5" opacity="0"/>
+      <text x="150" y="222" text-anchor="middle" font-family="Space Mono, monospace" font-size="11" fill="#6C6580" letter-spacing="1">200K tokens</text>
+    </svg>
+  </div>
+</header>
+
+<main class="reader">
+  <section class="sec">
+    <h2>O que cabe na cabeça do modelo</h2>
+    <p class="sidenote">≈ <b>4 caracteres</b> por token em inglês; em português rende um pouco menos texto por token.</p>
+    <p>A janela de contexto é o <b>espaço de trabalho</b> do modelo: tudo que ele enxerga naquele instante — a sua pergunta, os documentos que você colou, o histórico da conversa e a própria resposta enquanto está sendo escrita. Tudo disputa o mesmo espaço.</p>
+    <p>A medida não é palavras, é <b>tokens</b>. Um token é um pedaço de palavra: <code>contexto</code> pode virar <code>con·texto</code>, dois tokens. Um modelo de 200 mil tokens segura mais ou menos um livro inteiro — mas nem um byte além disso.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Por que ela te limita</h2>
+    <p>Quando a conversa passa do limite, algo precisa sair — e o modelo <b>não esquece com elegância</b>. Ele trunca, normalmente o começo. Aquela instrução importante que você deu lá no início some sem aviso, e a resposta passa a ignorar regras que "você já tinha dado".</p>
+    <figure class="infig">
+      <svg viewBox="0 0 320 150" fill="none" aria-hidden="true">
+        <rect x="16" y="16" width="288" height="118" rx="14" stroke="#37324a" stroke-width="1.5"/>
+        <rect x="34" y="8" width="40" height="14" rx="3" fill="#241f2b" opacity=".5"/>
+        <rect x="80" y="6" width="54" height="14" rx="3" fill="#241f2b" opacity=".3"/>
+        <rect x="34" y="40" width="60" height="15" rx="4" fill="#F2B45C" opacity=".85"/>
+        <rect x="100" y="40" width="44" height="15" rx="4" fill="#7CE0C6"/>
+        <rect x="150" y="40" width="70" height="15" rx="4" fill="#7CE0C6"/>
+        <rect x="34" y="64" width="52" height="15" rx="4" fill="#7CE0C6"/>
+        <rect x="92" y="64" width="80" height="15" rx="4" fill="#7CE0C6"/>
+        <rect x="34" y="88" width="46" height="15" rx="4" fill="#7CE0C6"/>
+        <rect x="86" y="88" width="58" height="15" rx="4" fill="#7CE0C6"/>
+        <path d="M232 40 l16 16 M248 40 l-16 16" stroke="#F2B45C" stroke-width="2" stroke-linecap="round"/>
+        <text x="264" y="56" font-family="Space Mono, monospace" font-size="10" fill="#F2B45C">sai</text>
+      </svg>
+      <figcaption>contexto cheio → o começo é descartado</figcaption>
+    </figure>
+    <p>O sintoma clássico: no fim de uma sessão longa o modelo parece <b>mais burro</b>. Não é você. É a janela cheia empurrando o começo pra fora.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Como ganhar espaço</h2>
+    <p>Você não aumenta a janela; <b>administra o que entra nela</b>. Três movimentos resolvem quase tudo:</p>
+    <ul>
+      <li><b>Resumir</b> em vez de acumular — troque 20 mensagens antigas por um parágrafo de estado.</li>
+      <li><b>Referenciar</b> em vez de colar — aponte para o arquivo, não despeje ele inteiro.</li>
+      <li><b>Quebrar em etapas</b> — cada tarefa numa sessão limpa, com só o que ela precisa.</li>
+    </ul>
+    <details>
+      <summary>Indo mais fundo</summary>
+      <p>Ferramentas de agente fazem parte disso por baixo dos panos — compactação automática, RAG, sumarização de histórico. Mas a régua continua sua: <b>contexto é orçamento, não depósito.</b></p>
+    </details>
+  </section>
+</main>
+
+<footer>Mockup descartável para escolher a direção do v4 — conteúdo de exemplo.</footer>
+
+<nav class="sw">
+  <a href="a-coldopen.html" class="on">A · cold-open</a>
+  <a href="b-margem-viva.html">B · margem viva</a>
+  <a href="c-ambiente.html">C · ambiente</a>
+  <a href="ab-blend.html">AB · blend</a>
+</nav>
+</body>
+</html>

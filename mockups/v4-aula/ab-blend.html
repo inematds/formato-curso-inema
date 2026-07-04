@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v4 · Aula — blend (cold-open enxuto + margem viva)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0D14; --bg2:#15131d; --panel:#1a1824; --panel2:#221f2e;
+    --ink:#ECE6D9; --ink-soft:#C7C2D0; --muted:#948DA6; --faint:#6C6580;
+    --line:#2A2637; --line2:#37324a;
+    --serif:"Newsreader",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+    --accent:#7CE0C6; --accent-dim:#4FB79E; --warm:#F2B45C;
+    --read:60ch;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75;-webkit-font-smoothing:antialiased}
+  ::selection{background:rgba(124,224,198,.24)}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .prog{position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0;z-index:40;transition:width .1s linear}
+
+  /* ===== COLD-OPEN enxuto (do A) ===== */
+  .hero{position:relative;min-height:92vh;display:grid;place-items:center;
+    padding:7vh clamp(24px,5vw,60px);overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero-inner{position:relative;z-index:2;width:100%;max-width:1040px;margin:0 auto;
+    display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:44px}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(55% 48% at 80% 20%, rgba(124,224,198,.16) 0%, transparent 60%),
+      radial-gradient(50% 42% at 10% 90%, rgba(242,180,92,.11) 0%, transparent 55%),
+      radial-gradient(90% 90% at 50% 40%, var(--bg2) 0%, var(--bg) 72%);
+    animation:drift 24s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-1.5%,1.2%,0) scale(1.05)}}
+  .hero > *{position:relative;z-index:2}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 20px}
+  .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.6vw,74px);line-height:1.0;letter-spacing:-.025em;margin:0 0 22px}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .lead{font-family:var(--serif);font-weight:400;font-size:clamp(19px,2.1vw,24px);line-height:1.5;color:var(--ink-soft);max-width:36ch;margin:0}
+  .cue{margin-top:34px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .cue .arw{display:inline-block;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  .herofig{display:grid;place-items:center}
+  .herofig svg{width:min(100%,340px);height:auto;filter:drop-shadow(0 20px 50px rgba(0,0,0,.5))}
+  .scan{animation:scan 3.6s ease-in-out infinite}
+  @keyframes scan{0%{transform:translateY(0);opacity:0}12%{opacity:1}50%{transform:translateY(120px)}88%{opacity:1}100%{transform:translateY(146px);opacity:0}}
+  .tok{animation:pop 3.6s ease-in-out infinite}
+  @keyframes pop{0%,40%{fill:var(--line2)}55%,100%{fill:var(--accent)}}
+
+  /* ===== CORPO: leitura + margem viva (do B) ===== */
+  .layout{max-width:1160px;margin:0 auto;padding:2vh clamp(24px,5vw,60px) 14vh;
+    display:grid;grid-template-columns:minmax(0,var(--read)) 360px;gap:64px;position:relative;z-index:2}
+  .col p{font-size:18px;color:var(--ink-soft);margin:0 0 22px}
+  .col p b{color:var(--ink);font-weight:600}
+  .step{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:4vh 0}
+  h2{font-family:var(--serif);font-weight:500;font-size:clamp(27px,3.6vw,38px);line-height:1.12;letter-spacing:-.015em;margin:0 0 20px}
+  .col ul{margin:6px 0 22px;padding:0;list-style:none}
+  .col li{position:relative;padding-left:26px;margin:0 0 12px;color:var(--ink-soft);font-size:17.5px}
+  .col li::before{content:"";position:absolute;left:2px;top:11px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+  code{font-family:var(--mono);font-size:.86em;background:rgba(124,224,198,.1);color:var(--accent);padding:2px 6px;border-radius:5px}
+  .colfig{margin:26px 0;text-align:center}
+  .colfig svg{width:min(100%,300px);height:auto}
+  .colfig figcaption{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--faint)}
+  details{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0;margin:14px 0 0}
+  summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);list-style:none;padding:10px 0}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"↓ ";color:var(--faint)} details[open] summary::before{content:"↑ "}
+
+  .rail{position:relative}
+  .railsticky{position:sticky;top:calc(50vh - 200px)}
+  .figstage{position:relative;height:300px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--panel),var(--bg2));overflow:hidden}
+  .figstage::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 35%,rgba(124,224,198,.08),transparent 70%);pointer-events:none}
+  .fig{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(.96) translateY(10px);transition:opacity .5s ease,transform .5s ease}
+  .fig.on{opacity:1;transform:none}
+  .fig svg{width:78%;height:auto}
+  .railcap{margin-top:16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--muted);min-height:34px;transition:opacity .3s}
+  .railcap b{color:var(--accent);font-weight:400}
+  .steps-ind{margin-top:14px;display:flex;gap:7px}
+  .steps-ind i{width:22px;height:3px;border-radius:2px;background:var(--line2);transition:background .3s}
+  .steps-ind i.on{background:var(--accent)}
+  .sidenote{margin-top:22px;font-size:13.5px;line-height:1.55;color:var(--muted);border-left:2px solid var(--line2);padding-left:14px}
+  .sidenote b{color:var(--ink-soft);font-weight:600}
+  .breathe{animation:breathe 4s ease-in-out infinite} @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+
+  footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 16vh;color:var(--faint);font-size:14px;font-family:var(--serif);font-style:italic}
+
+  .sw{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:30;display:flex;gap:6px;
+    background:rgba(20,19,29,.82);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:99px;padding:6px}
+  .sw a{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-decoration:none;color:var(--muted);padding:7px 12px;border-radius:99px}
+  .sw a.on{background:var(--accent);color:#0E0D14;font-weight:700}
+  .sw a:not(.on):hover{color:var(--ink)}
+  .badge{position:fixed;left:16px;top:14px;z-index:30;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+  @media(max-width:940px){
+    .hero{min-height:auto;padding:12vh 24px 8vh}
+    .hero-inner{grid-template-columns:1fr;gap:24px}
+    .herofig{margin-top:26px}
+    .layout{grid-template-columns:1fr;gap:0}
+    .rail{display:none}
+    .step{min-height:auto;padding:5vh 0}
+    .mobfig{display:block!important;margin:22px 0;border:1px solid var(--line);border-radius:16px;background:var(--bg2);padding:20px;text-align:center}
+    .mobfig svg{width:min(100%,320px)}
+  }
+  .mobfig{display:none}
+  @media(prefers-reduced-motion:reduce){.fig{transition:none} *{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="prog" id="prog"></div>
+<div class="badge">mock · v4 · blend — cold-open enxuto + margem viva</div>
+
+<!-- COLD-OPEN enxuto -->
+<header class="hero">
+  <div class="hero-inner">
+  <div>
+    <p class="kicker">Fundamentos de IA · Aula 3</p>
+    <h1>A <em>janela</em><br>de contexto</h1>
+    <p class="lead">Todo modelo tem um limite de quanto texto consegue segurar de uma vez. Entender esse limite separa quem briga com a ferramenta de quem a conduz.</p>
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <div class="herofig">
+    <svg viewBox="0 0 300 240" fill="none" aria-hidden="true">
+      <rect x="20" y="18" width="260" height="204" rx="18" stroke="#37324a" stroke-width="1.5"/>
+      <rect x="20" y="18" width="260" height="32" rx="18" fill="#221f2e"/>
+      <circle cx="42" cy="34" r="4" fill="#4FB79E"/><circle cx="58" cy="34" r="4" fill="#37324a"/><circle cx="74" cy="34" r="4" fill="#37324a"/>
+      <g>
+        <rect class="tok" x="40"  y="70"  width="28" height="15" rx="4" fill="#37324a"/>
+        <rect class="tok" x="76"  y="70"  width="46" height="15" rx="4" fill="#37324a" style="animation-delay:.2s"/>
+        <rect class="tok" x="130" y="70"  width="34" height="15" rx="4" fill="#37324a" style="animation-delay:.4s"/>
+        <rect class="tok" x="172" y="70"  width="60" height="15" rx="4" fill="#37324a" style="animation-delay:.6s"/>
+        <rect class="tok" x="40"  y="95"  width="52" height="15" rx="4" fill="#37324a" style="animation-delay:.8s"/>
+        <rect class="tok" x="100" y="95"  width="40" height="15" rx="4" fill="#37324a" style="animation-delay:1s"/>
+        <rect class="tok" x="148" y="95"  width="70" height="15" rx="4" fill="#37324a" style="animation-delay:1.2s"/>
+        <rect x="40"  y="120" width="44" height="15" rx="4" fill="#241f2b"/>
+        <rect x="92"  y="120" width="60" height="15" rx="4" fill="#241f2b"/>
+        <rect x="160" y="120" width="30" height="15" rx="4" fill="#241f2b"/>
+        <rect x="40"  y="145" width="72" height="15" rx="4" fill="#241f2b"/>
+        <rect x="120" y="145" width="38" height="15" rx="4" fill="#241f2b"/>
+      </g>
+      <line class="scan" x1="30" y1="66" x2="270" y2="66" stroke="#7CE0C6" stroke-width="1.5" opacity="0"/>
+      <text x="150" y="204" text-anchor="middle" font-family="Space Mono, monospace" font-size="11" fill="#6C6580" letter-spacing="1">200K tokens</text>
+    </svg>
+  </div>
+  </div>
+</header>
+
+<!-- CORPO: leitura + margem viva -->
+<div class="layout">
+  <div class="col">
+    <section class="step" data-fig="1">
+      <h2>O que cabe na cabeça do modelo</h2>
+      <p>A janela de contexto é o <b>espaço de trabalho</b> do modelo: tudo que ele enxerga naquele instante — a sua pergunta, os documentos que você colou, o histórico da conversa e a própria resposta enquanto está sendo escrita. Tudo disputa o mesmo espaço.</p>
+      <p>A medida não é palavras, é <b>tokens</b>. Um token é um pedaço de palavra: <code>contexto</code> pode virar <code>con·texto</code>. Um modelo de 200 mil tokens segura mais ou menos um livro inteiro — mas nem um byte além disso.</p>
+      <figure class="colfig">
+        <svg viewBox="0 0 300 92" fill="none" aria-hidden="true">
+          <text x="150" y="26" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-size="21" fill="#C7C2D0">"contexto"</text>
+          <path d="M150 34 V42 M110 42 H190 M110 42 V52 M190 42 V52" stroke="#37324a" stroke-width="1.5"/>
+          <rect x="86" y="54" width="58" height="28" rx="7" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+          <text x="115" y="73" text-anchor="middle" font-family="Space Mono, monospace" font-size="13" fill="#7CE0C6">con</text>
+          <rect x="156" y="54" width="66" height="28" rx="7" fill="none" stroke="#7CE0C6" stroke-width="1.5"/>
+          <text x="189" y="73" text-anchor="middle" font-family="Space Mono, monospace" font-size="13" fill="#7CE0C6">texto</text>
+        </svg>
+        <figcaption>1 palavra → 2 tokens · e o rail mostra a janela ao lado (dois visuais ao mesmo tempo)</figcaption>
+      </figure>
+      <div class="mobfig" data-mobfig="1"></div>
+    </section>
+
+    <section class="step" data-fig="2">
+      <h2>Por que ela te limita</h2>
+      <p>Quando a conversa passa do limite, algo precisa sair — e o modelo <b>não esquece com elegância</b>. Ele trunca, normalmente o começo. Aquela instrução que você deu lá no início some sem aviso, e a resposta passa a ignorar regras que "você já tinha dado".</p>
+      <p>O sintoma clássico: no fim de uma sessão longa o modelo parece <b>mais burro</b>. Não é você. É a janela cheia empurrando o começo pra fora.</p>
+      <div class="mobfig" data-mobfig="2"></div>
+    </section>
+
+    <section class="step" data-fig="3">
+      <h2>Como ganhar espaço</h2>
+      <p>Você não aumenta a janela; <b>administra o que entra nela</b>. Três movimentos resolvem quase tudo:</p>
+      <ul>
+        <li><b>Resumir</b> em vez de acumular — 20 mensagens antigas viram um parágrafo de estado.</li>
+        <li><b>Referenciar</b> em vez de colar — aponte para o arquivo, não despeje ele inteiro.</li>
+        <li><b>Quebrar em etapas</b> — cada tarefa numa sessão limpa, com só o que precisa.</li>
+      </ul>
+      <div class="mobfig" data-mobfig="3"></div>
+      <details>
+        <summary>Indo mais fundo</summary>
+        <p>Ferramentas de agente fazem parte disso por baixo dos panos — compactação automática, RAG, sumarização. Mas a régua continua sua: <b>contexto é orçamento, não depósito.</b></p>
+      </details>
+    </section>
+  </div>
+
+  <aside class="rail">
+    <div class="railsticky">
+      <div class="figstage" id="stage">
+        <div class="fig on" data-fig="1">
+          <svg viewBox="0 0 220 220" fill="none" aria-hidden="true">
+            <rect x="18" y="24" width="184" height="172" rx="16" stroke="#37324a" stroke-width="1.5"/>
+            <rect x="18" y="24" width="184" height="28" rx="16" fill="#221f2e"/>
+            <circle cx="36" cy="38" r="3.5" fill="#4FB79E"/><circle cx="49" cy="38" r="3.5" fill="#37324a"/><circle cx="62" cy="38" r="3.5" fill="#37324a"/>
+            <g>
+              <rect x="34" y="70" width="30" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="70" y="70" width="48" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="124" y="70" width="36" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="34" y="92" width="52" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="92" y="92" width="40" height="14" rx="4" fill="#7CE0C6"/>
+              <rect class="breathe" x="34" y="114" width="60" height="14" rx="4" fill="#4FB79E"/>
+              <rect class="breathe" x="100" y="114" width="44" height="14" rx="4" fill="#4FB79E" style="animation-delay:.4s"/>
+            </g>
+            <text x="110" y="180" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#6C6580" letter-spacing="1">200K tokens</text>
+          </svg>
+        </div>
+        <div class="fig" data-fig="2">
+          <svg viewBox="0 0 220 220" fill="none" aria-hidden="true">
+            <g opacity=".4"><rect x="40" y="6" width="46" height="12" rx="3" fill="#F2B45C"/><rect x="94" y="2" width="36" height="12" rx="3" fill="#F2B45C"/></g>
+            <path d="M96 20 l10 10 M106 20 l-10 10" stroke="#F2B45C" stroke-width="2" stroke-linecap="round"/>
+            <rect x="18" y="34" width="184" height="162" rx="16" stroke="#37324a" stroke-width="1.5"/>
+            <g>
+              <rect x="34" y="56" width="60" height="14" rx="4" fill="#241f2b"/>
+              <rect x="100" y="56" width="44" height="14" rx="4" fill="#241f2b"/>
+              <rect x="34" y="80" width="48" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="88" y="80" width="72" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="34" y="104" width="56" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="96" y="104" width="40" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="34" y="128" width="70" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="110" y="128" width="50" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="34" y="152" width="44" height="14" rx="4" fill="#7CE0C6"/>
+              <rect x="84" y="152" width="60" height="14" rx="4" fill="#7CE0C6"/>
+            </g>
+            <text x="110" y="184" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#F2B45C" letter-spacing="1">o começo caiu fora</text>
+          </svg>
+        </div>
+        <div class="fig" data-fig="3">
+          <svg viewBox="0 0 220 220" fill="none" aria-hidden="true">
+            <g>
+              <rect x="20" y="60" width="20" height="10" rx="2" fill="#4FB79E"/><rect x="20" y="76" width="20" height="10" rx="2" fill="#4FB79E"/>
+              <rect x="20" y="92" width="20" height="10" rx="2" fill="#4FB79E"/><rect x="20" y="108" width="20" height="10" rx="2" fill="#4FB79E"/>
+              <rect x="20" y="124" width="20" height="10" rx="2" fill="#4FB79E"/><rect x="20" y="140" width="20" height="10" rx="2" fill="#4FB79E"/>
+            </g>
+            <path d="M52 105 C80 105, 92 105, 112 105" stroke="#37324a" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <path d="M104 99 l10 6 -10 6" fill="#7CE0C6"/>
+            <rect class="breathe" x="128" y="82" width="66" height="20" rx="5" fill="#7CE0C6"/>
+            <rect class="breathe" x="128" y="110" width="66" height="20" rx="5" fill="#7CE0C6" style="animation-delay:.5s"/>
+            <text x="161" y="150" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#6C6580">resumo</text>
+          </svg>
+        </div>
+      </div>
+      <p class="railcap" id="cap"><b>Fig.</b> a janela como espaço de trabalho</p>
+      <div class="steps-ind" id="ind"><i class="on"></i><i></i><i></i></div>
+      <p class="sidenote">≈ <b>4 caracteres</b> por token em inglês; em português rende um pouco menos texto por token.</p>
+    </div>
+  </aside>
+</div>
+
+<footer>Mockup descartável para escolher a direção do v4 — conteúdo de exemplo.</footer>
+
+<nav class="sw">
+  <a href="a-coldopen.html">A</a>
+  <a href="b-margem-viva.html">B</a>
+  <a href="c-ambiente.html">C</a>
+  <a href="ab-blend.html" class="on">AB · blend</a>
+</nav>
+
+<script>
+  var caps={
+    "1":"<b>Fig.</b> a janela como espaço de trabalho",
+    "2":"<b>Fig.</b> lotou → o começo é truncado",
+    "3":"<b>Fig.</b> resumir para caber mais"
+  };
+  var figs=[].slice.call(document.querySelectorAll('.figstage .fig'));
+  var inds=[].slice.call(document.querySelectorAll('#ind i'));
+  var cap=document.getElementById('cap');
+  var cur=null;
+  function activate(n){
+    if(n===cur) return; cur=n;
+    figs.forEach(function(f){ f.classList.toggle('on', f.getAttribute('data-fig')===n); });
+    inds.forEach(function(i,ix){ i.classList.toggle('on', String(ix+1)===n); });
+    cap.innerHTML=caps[n]||"";
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting) activate(e.target.getAttribute('data-fig')); });
+  },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  document.querySelectorAll('.step').forEach(function(s){ io.observe(s); });
+
+  document.querySelectorAll('.mobfig').forEach(function(m){
+    var n=m.getAttribute('data-mobfig');
+    var src=document.querySelector('.figstage .fig[data-fig="'+n+'"] svg');
+    if(src){ m.appendChild(src.cloneNode(true)); }
+  });
+
+  var prog=document.getElementById('prog');
+  function onScroll(){
+    var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+    prog.style.width=(max>0?(h.scrollTop/max*100):0)+"%";
+  }
+  document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+</script>
+</body>
+</html>

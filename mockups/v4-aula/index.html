@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v4 · página de aula — 3 arquiteturas de atração</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0E0D14;--bg2:#15131d;--panel:#1a1824;--ink:#ECE6D9;--ink-soft:#C7C2D0;--muted:#948DA6;--faint:#6C6580;--line:#2A2637;--line2:#37324a;--accent:#7CE0C6;--warm:#F2B45C;
+    --serif:"Newsreader",Georgia,serif;--sans:"Inter",system-ui,sans-serif;--mono:"Space Mono",ui-monospace,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(60% 50% at 80% 0%,rgba(124,224,198,.1),transparent 55%),radial-gradient(50% 40% at 0% 100%,rgba(242,180,92,.08),transparent 55%),var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.65;min-height:100vh}
+  .wrap{max-width:1080px;margin:0 auto;padding:12vh 24px 8vh}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5.5vw,58px);line-height:1.05;letter-spacing:-.02em;margin:0 0 16px}
+  h1 em{font-style:italic;color:var(--accent)}
+  .lead{font-family:var(--serif);font-size:clamp(18px,2vw,22px);color:var(--ink-soft);max-width:60ch;margin:0 0 48px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  .card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:18px;padding:24px;transition:border-color .2s,background .2s}
+  .card:hover{border-color:var(--accent);background:linear-gradient(180deg,#201d2b,var(--bg2))}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--warm);margin:0 0 12px}
+  .card h2{font-family:var(--serif);font-weight:500;font-size:23px;margin:0 0 10px;letter-spacing:-.01em}
+  .card p{font-size:14.5px;color:var(--muted);margin:0 0 18px;flex:1}
+  .go{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--accent)}
+  .note{margin-top:40px;font-size:14px;color:var(--faint);border-left:2px solid var(--line2);padding-left:14px;max-width:64ch}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">formato-curso v4 · exploração</p>
+  <h1>Página de aula — <em>três</em> arquiteturas de atração</h1>
+  <p class="lead">Mesma paleta, tipografia e conteúdo nas três. O que muda é <em>onde mora o movimento/impacto</em> sem atrapalhar a leitura. Abra, role até o fim e sinta cada uma. Há um switcher [A][B][C] no rodapé de cada página.</p>
+  <div class="grid">
+    <a class="card" href="a-coldopen.html">
+      <p class="tag">A</p>
+      <h2>Cold-open</h2>
+      <p>Abre com um hero cinematográfico de tela cheia (título serifão, fundo vivo, figura com micro-motion); depois desagua na coluna calma. Drama concentrado na entrada.</p>
+      <span class="go">abrir →</span>
+    </a>
+    <a class="card" href="b-margem-viva.html">
+      <p class="tag">B</p>
+      <h2>Margem viva</h2>
+      <p>Coluna de texto calma + trilho lateral com uma figura que se transforma conforme você rola (uma por ideia). O texto conduz, a figura reage. Movimento que ajuda a estudar.</p>
+      <span class="go">abrir →</span>
+    </a>
+    <a class="card" href="ab-blend.html" style="border-color:var(--accent)">
+      <p class="tag" style="color:var(--accent)">AB · recomendado</p>
+      <h2>Blend — cold-open + margem viva</h2>
+      <p>A entrada é um cold-open enxuto do A (o "uau" ao chegar); ao rolar, entra o corpo de estudo do B (leitura calma + margem viva). Gancho imediato + estudo vivo o resto todo.</p>
+      <span class="go">abrir →</span>
+    </a>
+    <a class="card" href="c-ambiente.html">
+      <p class="tag">C</p>
+      <h2>Ambiente</h2>
+      <p>Sem hero nem sticky: o fundo respira, há parallax leve e cada bloco surge ao entrar na tela. Atração difusa e constante, movimento discreto.</p>
+      <span class="go">abrir →</span>
+    </a>
+  </div>
+  <p class="note">Exploração descartável para decidir a direção do v4 — não é a skill ainda. A paleta (ink escuro + creme quente + acento água-menta + âmbar) e o conteúdo ("janela de contexto") são só de exemplo; tudo isso é ajustável depois.</p>
+</div>
+</body>
+</html>
