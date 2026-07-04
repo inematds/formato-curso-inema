@@ -192,7 +192,7 @@
         <p class="qk">Teste-se</p>
         <p class="q">Um hook, na prática, é:</p>
         <button class="opt" data-k="a">um tema visual novo do editor</button>
-        <button class="opt" data-k="b">uma ordem automática: quando um evento acontece, roda um comando seu</button>
+        <button class="opt" data-k="b" data-fb="É isso: um evento dispara um comando seu. Não é tema visual nem modelo de IA.">uma ordem automática: quando um evento acontece, roda um comando seu</button>
         <button class="opt" data-k="c">um modelo de IA mais rápido</button>
         <p class="qfb"></p>
       </div>
@@ -237,7 +237,7 @@
         <p class="q">O <code>matcher</code> "Edit|Write" serve pra:</p>
         <button class="opt" data-k="a">escolher a cor do hook</button>
         <button class="opt" data-k="b">rodar o comando duas vezes</button>
-        <button class="opt" data-k="c">dizer em quais ferramentas o hook pega</button>
+        <button class="opt" data-k="c" data-fb="O matcher filtra por ferramenta; 'Edit|Write' pega edição ou escrita de arquivo.">dizer em quais ferramentas o hook pega</button>
         <p class="qfb"></p>
       </div>
       <button class="readbtn" data-read="s3">marcar como lido</button>
@@ -256,7 +256,7 @@ exit 0</pre>
         <p class="q">Para o hook PreToolUse <i>barrar</i> um comando, ele deve sair com código:</p>
         <button class="opt" data-k="a">0</button>
         <button class="opt" data-k="b">1</button>
-        <button class="opt" data-k="c">2</button>
+        <button class="opt" data-k="c" data-fb="exit 2 barra a ação, e o que você imprime no stderr vira o motivo. exit 0 libera.">2</button>
         <p class="qfb"></p>
       </div>
       <button class="readbtn" data-read="s4">marcar como lido</button>
@@ -420,7 +420,7 @@ exit 0</pre>
         <p class="q">Qual arquivo é pessoal e NÃO vai pro Git?</p>
         <button class="opt" data-k="a">~/.claude/settings.json</button>
         <button class="opt" data-k="b">.claude/settings.json</button>
-        <button class="opt" data-k="c">.claude/settings.local.json</button>
+        <button class="opt" data-k="c" data-fb="O .local.json fica no .gitignore, é só seu. Os outros dois vão pro time (projeto) ou pra todos (global).">.claude/settings.local.json</button>
         <p class="qfb"></p>
       </div>
       <button class="readbtn" data-read="s1">marcar como lido</button>
@@ -460,7 +460,7 @@ exit 0</pre>
         <p class="qk">Teste-se</p>
         <p class="q">Para um hook pegar tanto Edit quanto Write, o matcher é:</p>
         <button class="opt" data-k="a">"Edit,Write"</button>
-        <button class="opt" data-k="b">"Edit|Write"</button>
+        <button class="opt" data-k="b" data-fb="A barra vertical | é alternância: pega Edit OU Write. Vírgula ou 'e' não funcionam.">"Edit|Write"</button>
         <button class="opt" data-k="c">"Edit e Write"</button>
         <p class="qfb"></p>
       </div>
@@ -481,6 +481,31 @@ file=$(jq -r '.tool_input.file_path')</pre>
         <p>O JSON traz mais campos (<code>session_id</code>, <code>cwd</code>, <code>hook_event_name</code>…). Você raramente precisa de todos — <code>tool_name</code> e <code>tool_input</code> resolvem a maioria dos hooks.</p>
       </details>
       <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+
+    <section class="practice" data-practice="p2">
+      <p class="pk">Pratique agora <span class="pcount">0/4 feito</span></p>
+      <h3 class="ph">Veja o que o hook recebe</h3>
+      <p class="pgoal">Registre o JSON que o Claude entrega ao hook — e leia com seus olhos o <code>tool_input</code>. ~5 min, seguro (só observa).</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PostToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: "Edit|Write",
+        <span class="k">"hooks"</span>: [
+          { "type": "command", "command": "cat &gt;&gt; .claude/edits.log" }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Coloque o bloco no seu <code>.claude/settings.json</code> e salve.</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Peça ao Claude pra editar qualquer arquivo.</label></li>
+        <li><label><input type="checkbox" data-ptask="3"> Rode <code>cat .claude/edits.log</code> no terminal.</label></li>
+        <li><label><input type="checkbox" data-ptask="4"> Ache o <code>file_path</code> dentro do <code>tool_input</code> — é daí que o <code>jq</code> tira o valor.</label></li>
+      </ol>
+      <p class="pdone">✓ Você viu o payload real. O matcher <code>Edit|Write</code> e o stdin deixam de ser abstração: é este JSON que o hook lê.</p>
     </section>
   </div>
 
@@ -578,7 +603,7 @@ file=$(jq -r '.tool_input.file_path')</pre>
         <p class="q">Qual código de saída BARRA a ação no PreToolUse?</p>
         <button class="opt" data-k="a">exit 0</button>
         <button class="opt" data-k="b">exit 1</button>
-        <button class="opt" data-k="c">exit 2</button>
+        <button class="opt" data-k="c" data-fb="No PreToolUse, exit 2 barra a ação antes de rodar; exit 0 deixa seguir.">exit 2</button>
         <p class="qfb"></p>
       </div>
       <button class="readbtn" data-read="s1">marcar como lido</button>
@@ -613,7 +638,7 @@ exit 0</pre>
         <p class="qk">Teste-se</p>
         <p class="q">Onde o hook lê o comando que o Bash ia rodar?</p>
         <button class="opt" data-k="a">numa variável de ambiente $COMMAND</button>
-        <button class="opt" data-k="b">no JSON do stdin (ex.: .tool_input.command)</button>
+        <button class="opt" data-k="b" data-fb="O comando chega no JSON do stdin; você lê com jq. Não é variável de ambiente nem o settings.json.">no JSON do stdin (ex.: .tool_input.command)</button>
         <button class="opt" data-k="c">no arquivo settings.json</button>
         <p class="qfb"></p>
       </div>
@@ -634,6 +659,32 @@ exit 0</pre>
         <p>O <code>exit 2</code> é o caminho rápido; a saída JSON é a versão fina, com motivo estruturado. Comece pelo exit code — migre pro JSON quando precisar de "ask" ou mensagens mais ricas.</p>
       </details>
       <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+
+    <section class="practice" data-practice="p3">
+      <p class="pk">Pratique agora <span class="pcount">0/4 feito</span></p>
+      <h3 class="ph">Sua primeira trava</h3>
+      <p class="pgoal">Faça um hook <b>barrar um comando de verdade</b> — testando com um token inofensivo, sem chegar perto de um <code>rm -rf</code>.</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"PreToolUse"</span>: [
+      {
+        <span class="k">"matcher"</span>: "Bash",
+        <span class="k">"hooks"</span>: [
+          { "type": "command",
+            "command": "grep -q BLOQUEIATESTE &amp;&amp; { echo 'trava: comando de teste barrado' &gt;&amp;2; exit 2; }; exit 0" }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Ponha o bloco no <code>.claude/settings.json</code> e salve.</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Peça ao Claude pra rodar <code>echo BLOQUEIATESTE</code>.</label></li>
+        <li><label><input type="checkbox" data-ptask="3"> Veja o Claude ser <b>barrado</b> com o seu motivo ("trava: comando de teste barrado").</label></li>
+        <li><label><input type="checkbox" data-ptask="4"> Troque <code>BLOQUEIATESTE</code> pelo padrão que você quer travar de verdade.</label></li>
+      </ol>
+      <p class="pdone">✓ Você transformou uma regra em <b>trava real</b>: foi barrado antes de rodar, não é sugestão que o modelo pode ignorar.</p>
     </section>
   </div>
 
@@ -726,7 +777,7 @@ exit 0</pre>
         <p class="qk">Teste-se</p>
         <p class="q">Qual evento roda DEPOIS de um arquivo ser editado?</p>
         <button class="opt" data-k="a">PreToolUse</button>
-        <button class="opt" data-k="b">PostToolUse</button>
+        <button class="opt" data-k="b" data-fb="Post = depois. Ideal pra formatar o arquivo assim que ele é editado.">PostToolUse</button>
         <button class="opt" data-k="c">SessionStart</button>
         <p class="qfb"></p>
       </div>
@@ -755,7 +806,7 @@ exit 0</pre>
       <div class="quiz" data-answer="a">
         <p class="qk">Teste-se</p>
         <p class="q">Um hook que só registra (sem barrar) deve sair com:</p>
-        <button class="opt" data-k="a">exit 0</button>
+        <button class="opt" data-k="a" data-fb="Só observar (logar) não pode bloquear: saia com exit 0 pra o comando seguir.">exit 0</button>
         <button class="opt" data-k="b">exit 2</button>
         <button class="opt" data-k="c">nenhum, ele não sai</button>
         <p class="qfb"></p>
@@ -776,6 +827,29 @@ echo "Últimos commits:"; git log --oneline -5</pre>
         <p><code>UserPromptSubmit</code> faz parecido a cada mensagem sua (injeta contexto ou registra o prompt). Combine os quatro e o ambiente inteiro passa a se cuidar sozinho.</p>
       </details>
       <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+
+    <section class="practice" data-practice="p4">
+      <p class="pk">Pratique agora <span class="pcount">0/3 feito</span></p>
+      <h3 class="ph">Um aviso quando o Claude terminar</h3>
+      <p class="pgoal">Deixe o Claude carimbar um arquivo toda vez que terminar de responder — o gancho do evento <code>Stop</code>. Portável: não depende de desktop.</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"Stop"</span>: [
+      {
+        <span class="k">"hooks"</span>: [
+          { "type": "command", "command": "date &gt;&gt; .claude/done.log" }
+        ]
+      }
+    ]
+  }
+}</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Ponha o bloco no <code>.claude/settings.json</code> e salve.</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Deixe o Claude terminar um turno qualquer.</label></li>
+        <li><label><input type="checkbox" data-ptask="3"> Rode <code>cat .claude/done.log</code> — uma linha nova a cada término.</label></li>
+      </ol>
+      <p class="pdone">✓ <code>Stop</code> virou um sinal seu. Troque o <code>date</code> por um <code>notify-send</code> ou um som e você para de vigiar o terminal.</p>
     </section>
   </div>
 
@@ -868,7 +942,7 @@ echo "Últimos commits:"; git log --oneline -5</pre>
       <div class="quiz" data-answer="a">
         <p class="qk">Teste-se</p>
         <p class="q">Onde colocar um hook para TODO o time herdar?</p>
-        <button class="opt" data-k="a">.claude/settings.json (versionado)</button>
+        <button class="opt" data-k="a" data-fb="Vai pro Git, então quem clonar herda os mesmos hooks. O .local e o global não viajam com o projeto.">.claude/settings.json (versionado)</button>
         <button class="opt" data-k="b">.claude/settings.local.json</button>
         <button class="opt" data-k="c">~/.claude/settings.json</button>
         <p class="qfb"></p>
@@ -893,7 +967,7 @@ echo "Últimos commits:"; git log --oneline -5</pre>
         <p class="qk">Teste-se</p>
         <p class="q">No modo headless (CI), os hooks configurados:</p>
         <button class="opt" data-k="a">são ignorados</button>
-        <button class="opt" data-k="b">continuam valendo</button>
+        <button class="opt" data-k="b" data-fb="Hooks valem em headless (claude -p) e CI — o mesmo padrão protege humano e robô.">continuam valendo</button>
         <button class="opt" data-k="c">só rodam se você confirmar</button>
         <p class="qfb"></p>
       </div>
@@ -916,6 +990,24 @@ echo "Últimos commits:"; git log --oneline -5</pre>
         <p>Dá pra dar <b>timeout</b> aos comandos e escolher a ordem de execução quando há vários hooks no mesmo matcher. Mas isso é afinação — a base é: rápido, idempotente, silencioso sobre segredos.</p>
       </details>
       <button class="readbtn" data-read="s4">marcar como lido</button>
+    </section>
+
+    <section class="practice" data-practice="p5">
+      <p class="pk">Pratique agora <span class="pcount">0/4 feito</span></p>
+      <h3 class="ph">Versione pro time <span style="color:var(--faint)">· capstone</span></h3>
+      <p class="pgoal">Consolide os hooks que você montou e faça o padrão <b>viajar com o repositório</b> — quem clonar herda tudo.</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode"><span class="c"># suas travas/formatadores vão no arquivo versionado</span>
+git add .claude/settings.json
+git status
+<span class="c"># o que é pessoal (só seu) fica de fora do Git:</span>
+echo ".claude/settings.local.json" &gt;&gt; .gitignore</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Garanta que a trava e o formatador estão em <code>.claude/settings.json</code> (não no <code>.local</code>).</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Rode <code>git add .claude/settings.json</code>.</label></li>
+        <li><label><input type="checkbox" data-ptask="3"> Rode <code>git status</code> — o arquivo aparece rastreado.</label></li>
+        <li><label><input type="checkbox" data-ptask="4"> Deixe seus atalhos pessoais no <code>.local.json</code> (no <code>.gitignore</code>).</label></li>
+      </ol>
+      <p class="pdone">✓ O padrão do time agora viaja junto com o código — rápido, idempotente, sem vazar segredo. Vale pro humano e pro CI. Fim da trilha. 🎉</p>
     </section>
   </div>
 

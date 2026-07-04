@@ -145,7 +145,8 @@
   document.querySelectorAll('.quiz').forEach(function(q){ var ans=q.getAttribute('data-answer'), fb=q.querySelector('.qfb'), done=false;
     q.querySelectorAll('.opt').forEach(function(o){ o.addEventListener('click',function(){ if(done) return; done=true; var kk=o.getAttribute('data-k');
       q.querySelectorAll('.opt').forEach(function(x){ if(x.getAttribute('data-k')===ans) x.classList.add('right'); });
-      if(kk===ans) fb.textContent='Certo.'; else { o.classList.add('wrong'); fb.textContent='Quase. A resposta certa está destacada.'; } fb.classList.add('on');
+      var rt=q.querySelector('.opt[data-k="'+ans+'"]'), rfb=rt?(rt.getAttribute('data-fb')||''):'', mine=o.getAttribute('data-fb')||'';
+      if(kk===ans){ fb.innerHTML='<b>Certo.</b> '+rfb; } else { o.classList.add('wrong'); fb.innerHTML='<b>Quase.</b> '+(mine?mine+' ':'')+'A certa está destacada.'+(rfb?' '+rfb:''); } fb.classList.add('on');
     }); }); });
 
   // ---- trilho vivo (IO global, escopo por view) ----
