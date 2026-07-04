@@ -135,6 +135,12 @@
     rb.parentNode.insertBefore(d, rb.nextSibling);
   });
 
+  // ---- recap ativo no fim da aula (fecha com recordação) ----
+  document.querySelectorAll('.view[data-aula] .col').forEach(function(col){ var k=aulaOf(col); if(!k||col.querySelector('.recap')) return;
+    var box=el('div','recap'); box.innerHTML='<p class="rk">Feche a aula</p><p class="rtext">Revise agora, com recorda&ccedil;&atilde;o ativa &mdash; depois estes cart&otilde;es voltam sozinhos na hora certa. A revis&atilde;o da trilha (bot&atilde;o <b>revisar</b> no topo) mistura as perguntas de <b>todas</b> as aulas.</p>';
+    var b=el('button','big'); b.textContent='revisar os cartões desta aula'; b.addEventListener('click',function(){ reviewAula(k); }); box.appendChild(b); col.appendChild(box);
+  });
+
   // ---- teste-se ----
   document.querySelectorAll('.quiz').forEach(function(q){ var ans=q.getAttribute('data-answer'), fb=q.querySelector('.qfb'), done=false;
     q.querySelectorAll('.opt').forEach(function(o){ o.addEventListener('click',function(){ if(done) return; done=true; var kk=o.getAttribute('data-k');
@@ -198,6 +204,7 @@
   function grade(c,g){ if(g==='again'){ c.reps=0; c.interval=0; c.due=today; } else { c.reps=(c.reps||0)+1; if(c.reps===1) c.interval=1; else if(c.reps===2) c.interval=3; else c.interval=Math.round((c.interval||1)*(c.ease||2.5)); if(g==='easy'){ c.interval=Math.max(1,Math.round(c.interval*1.3)); c.ease=(c.ease||2.5)+0.15; } c.due=today+c.interval; } }
   var rq=[], ri=0;
   function openReview(){ rq=allDue(); ri=0; renderReview(); openPanel('revisar'); }
+  function reviewAula(k){ rq=[]; var cs=state.aulas[k].cards; for(var id in cs){ rq.push({k:k,id:id}); } ri=0; renderReview(); openPanel('revisar'); }
   function renderReview(){ var body=$('revbody'); if(ri>=rq.length){ body.innerHTML='<p class="revempty">Nada para revisar agora. Volte amanhã &mdash; ou grife mais trechos.</p>'; refreshRevn(); return; }
     var ref=rq[ri], c=state.aulas[ref.k].cards[ref.id]; body.innerHTML='';
     var card=el('div','card'), fr=el('div','side'); fr.textContent=c.front; card.appendChild(fr);
