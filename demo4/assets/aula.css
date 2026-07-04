@@ -257,6 +257,17 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 .gterm::after{content:attr(data-def);position:absolute;left:0;bottom:calc(100% + 8px);z-index:45;width:max-content;max-width:min(280px,72vw);background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-family:var(--sans);font-size:13px;font-weight:400;font-style:normal;line-height:1.45;color:var(--ink-soft);box-shadow:0 12px 34px rgba(0,0,0,.45);white-space:normal;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .18s,transform .18s,visibility .18s;pointer-events:none}
 .gterm:hover::after,.gterm:focus::after{opacity:1;visibility:visible;transform:none}
 
+/* reflexão / nota por seção */
+.reflect{border-top:1px solid var(--line);border-bottom:none;padding:0;margin:18px 0 0}
+.reflect summary{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 0;cursor:pointer;list-style:none}
+.reflect summary::-webkit-details-marker{display:none}
+.reflect summary::before{content:"✍ ";color:var(--faint)}
+.reflect[open] summary::before{content:"✍ ";color:var(--accent)}
+.reflect.has summary{color:var(--accent)}
+.reflect.has summary::after{content:" ●";color:var(--accent);font-size:9px;vertical-align:middle}
+.reflecta{width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:10px;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;padding:12px 14px;resize:vertical;min-height:72px;margin:0 0 14px}
+.reflecta:focus{outline:none;border-color:var(--accent)}
+
 /* subnav (trilhas no topo) — usado quando presente */
 .subnav-inner{max-width:1160px;margin:0 auto;padding:2px clamp(24px,5vw,60px) 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .subnav-inner::-webkit-scrollbar{display:none}

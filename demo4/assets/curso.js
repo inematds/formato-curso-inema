@@ -51,7 +51,7 @@
   function load(){ try{ var s=JSON.parse(localStorage.getItem(CK)); if(s&&typeof s==='object') return norm(s); }catch(e){} return norm({}); }
   function norm(s){
     s.prefs=s.prefs||{}; if(!s.prefs.theme) s.prefs.theme='dark'; if(!s.prefs.read) s.prefs.read={size:2,width:2,leading:2}; s.aulas=s.aulas||{};
-    KEYS.forEach(function(k){ var total=aulaEls[k].querySelectorAll('.step').length; var a=s.aulas[k]=s.aulas[k]||{}; a.read=a.read||{}; a.marks=a.marks||[]; a.cards=a.cards||{}; a.tasks=a.tasks||{}; a.total=total; });
+    KEYS.forEach(function(k){ var total=aulaEls[k].querySelectorAll('.step').length; var a=s.aulas[k]=s.aulas[k]||{}; a.read=a.read||{}; a.marks=a.marks||[]; a.cards=a.cards||{}; a.tasks=a.tasks||{}; a.reflect=a.reflect||{}; a.total=total; });
     return s;
   }
   function save(){ try{ localStorage.setItem(CK, JSON.stringify(state)); }catch(e){} }
@@ -126,6 +126,14 @@
 
   // copiar em qualquer bloco de código
   document.querySelectorAll('.view[data-aula] .col pre').forEach(function(pre){ if(pre.closest('.pcodewrap')||pre.closest('.codewrap')) return; var wrap=el('div','codewrap'); pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(pre); var b=el('button','pcopy'); b.type='button'; b.textContent='copiar'; wrap.insertBefore(b,pre); b.addEventListener('click',function(){ copyText(pre.textContent,b); }); });
+
+  // ---- reflexão / nota por seção (self-explanation) ----
+  document.querySelectorAll('.view[data-aula] .step').forEach(function(s){ var rb=s.querySelector('.readbtn'); if(!rb||s.querySelector('.reflect')) return; var k=aulaOf(s), key=rb.getAttribute('data-read'); if(!k||!key) return;
+    var d=el('details','reflect'), sum=el('summary'); sum.textContent='Reflita — explique com suas palavras, ou anote uma dúvida'; d.appendChild(sum);
+    var ta=el('textarea','reflecta'); ta.setAttribute('placeholder','Escrever com suas palavras fixa mais do que reler.'); ta.value=state.aulas[k].reflect[key]||''; if(ta.value.trim()) d.classList.add('has'); d.appendChild(ta);
+    ta.addEventListener('input',function(){ state.aulas[k].reflect[key]=ta.value; save(); d.classList.toggle('has',!!ta.value.trim()); });
+    rb.parentNode.insertBefore(d, rb.nextSibling);
+  });
 
   // ---- teste-se ----
   document.querySelectorAll('.quiz').forEach(function(q){ var ans=q.getAttribute('data-answer'), fb=q.querySelector('.qfb'), done=false;
