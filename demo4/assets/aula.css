@@ -281,6 +281,8 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 html[data-theme="papel"] .subnav a,html[data-theme="sepia"] .subnav a{background:rgba(255,255,255,.5)}
 .subnav a:hover{color:var(--ink);border-color:var(--accent)}
 .subnav a.cur{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+/* restaura o fundo/cor do chip atual nos temas claros — senão o override de .subnav a (papel/sépia) clobbera o fundo e o texto (accent-ink=branco) some */
+html[data-theme="papel"] .subnav a.cur,html[data-theme="sepia"] .subnav a.cur{background:var(--accent);color:var(--accent-ink)}
 .subnav a.soon{opacity:.55}
 
 @media(max-width:940px){
