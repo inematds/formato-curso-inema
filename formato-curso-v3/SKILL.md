@@ -39,7 +39,11 @@ O `learn.css` e o `learn.js` so reconhecem estes atributos/classes. Mudar nomes 
 
 ### Identidade e manifesto (em TODA pagina)
 - `<meta name="inema-course" content="demo3">` no `<head>` — courseId estavel.
-- `<script type="application/json" data-inema-manifest>{course, tracks[].modules[]{id,title,topics,href}}</script>` — estrutura COMPLETA do curso, no `<head>` de **toda** pagina. O progresso cross-pagina ("N de M" do curso/trilha, "minha jornada") agrega o read-map sobre o `total` do manifesto; `topics` deve bater com os `data-inema-topic` reais de cada modulo.
+- `<script type="application/json" data-inema-manifest>{course, tracks[].modules[]{id,title,topics,href}}</script>` — estrutura COMPLETA do curso, no `<head>` de **toda** pagina. O progresso cross-pagina ("N de M" do curso/trilha, "minha jornada") agrega o read-map sobre o `total` do manifesto; `topics` deve bater com os `data-inema-topic` reais de cada modulo. O manifesto e a fonte-de-verdade da **hierarquia** curso -> trilhas -> modulos -> secoes; a landing lista as **trilhas**, o indice da trilha lista os **modulos**, e a aula lista os modulos irmaos (ver "Nesta trilha").
+
+### Barra de leitura + marca (em TODA pagina)
+- Topo fixo `.reader-bar` com o **wordmark** `INEMA.CLUB` + os controles de aparencia (`data-inema-appearance`). O wordmark **linka o portal externo** em **todas** as paginas (igual ao v2): `<a class="wordmark" href="https://inema.club" target="_blank" rel="noopener">`.
+- O **"voltar ao curso"** mora no **breadcrumb** `.wayfind` do `.masthead` (link para o `index.html` do curso), **nao** no wordmark.
 
 ### Layout: coluna de leitura + trilho de margem
 - Coluna de leitura central **`.reading`** (62-70ch) + trilho de margem a direita **`.margin-rail`**. A largura restrita da coluna **cria** a margem; a margem **vira** a camada de profundidade.
@@ -64,6 +68,20 @@ Profundidade editorial escrita por quem fez a aula, sem JS:
 - `data-kind="definicao|fonte|fundo"` (tres generos visuais).
 - Ancoradas via numero/marcador inline `<a class="sidenote-ref">`.
 - No desktop ficam na margem (mesma altura); no mobile colapsam inline abaixo do paragrafo (CSS).
+
+### Nesta trilha — mapa de modulos na margem (estatico, paginas de AULA)
+Toda pagina de aula lista, no **topo do trilho de margem**, os modulos irmaos da trilha — para o aluno se situar e pular sem voltar ao indice. **Estatico (le sem JS)**, indice tipografico calmo, **nunca cards/cores**:
+```html
+<nav class="rail-modules" aria-label="Modulos da Trilha 1">
+  <p class="rail-modules__head">Trilha 1 · Fundamentos</p>
+  <ol>
+    <li aria-current="page"><span class="n">1.1</span><span class="t">Titulo do modulo atual</span></li>
+    <li><a href="modulo-1-2.html"><span class="n">1.2</span><span class="t">Proximo modulo</span></a></li>
+  </ol>
+  <a class="rail-modules__index" href="index.html">Indice da trilha →</a>
+</nav>
+```
+- O modulo **atual** leva `aria-current="page"` (sem link); os irmaos sao `<a>`. A lista deve bater com o manifesto (`tracks[].modules[]`).
 
 ### Painel do ALUNO por secao (dinamico, montado pelo learn.js)
 Cada secao tem, no trilho, um ponto de montagem:
@@ -113,6 +131,8 @@ Escopos aceitos: `curso`, `trilha:N`, `modulo:X-Y`. **Um** marcador discreto por
 | 7 | **Progressive disclosure** | Caminho-feliz no corpo; o resto em camada sob demanda (sidenote / `<details>` / def inline) | Tudo na dobra; essencial escondido atras de clique |
 | 8 | **NUNCA dashboard / 3-barras / cards-na-licao / gamificacao** | "N de M" + barra fina unica; cards so em catalogo/indice; recall por "pare e preveja" + knowledge check | 3 barras lado a lado, aneis, chips de stat; cards coloridos dentro da licao; streak/XP/badge/leaderboard/confete |
 | 9 | **Manifesto em TODA pagina** | `<script data-inema-manifest>` + `<meta name="inema-course">` no `<head>` de cada pagina | Manifesto so em algumas paginas; `topics` divergindo do DOM |
+| 10 | **Conteudo integral** | Cada modulo do manifesto tem **pagina real e completa** (aula escrita ponta a ponta), cada secao com texto integral | Placeholder/lorem/"resumo", esqueleto, modulo listado sem pagina, secao vazia |
+| 11 | **Marca + navegacao de trilha** | Wordmark `INEMA.CLUB` -> portal externo (`https://inema.club`) em toda pagina; toda aula com o mapa `.rail-modules` na margem | Wordmark apontando so pro index do curso; aula sem a lista dos modulos irmaos |
 
 ## EVITAR (anexo do V3-DESIGN.md — anti-padrao "curso online")
 

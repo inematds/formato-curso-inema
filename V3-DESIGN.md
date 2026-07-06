@@ -382,6 +382,9 @@ animacao/foco como **progressive enhancement** respeitando `prefers-reduced-moti
 - [ ] Toggle de tema (claro/sepia/escuro), tamanho e **Atkinson Hyperlegible** presentes.
 - [ ] `prefers-reduced-motion` e `prefers-color-scheme` respeitados; foco-visivel acessivel.
 - [ ] Pagina **le perfeita com JS desligado** (tudo e progressive enhancement).
+- [ ] Wordmark `INEMA.CLUB` da `.reader-bar` linka o **portal externo** (`https://inema.club`) em toda pagina; "voltar ao curso" no breadcrumb.
+- [ ] Toda **aula** lista os modulos irmaos da trilha na margem (`.rail-modules`, estatico); landing lista as trilhas; indice da trilha lista os modulos.
+- [ ] **Conteudo integral**: todo modulo do manifesto tem pagina real e completa; nenhuma secao com placeholder/lorem/esqueleto.
 - [ ] 1 `.html`, sem build, sem backend, abre em `file://`.
 
 ---
@@ -404,6 +407,12 @@ maioria o que EVITAR — os agentes pivotaram para referencias reais.
   de transformacao ("domine X em 30 dias" esta PROIBIDO).
 - **Curriculo como indice real**: cada trilha/modulo com titulo + 1 paragrafo do
   "porque" (densidade = prova de seriedade), nao bullets de beneficio com check verde.
+- **Hierarquia navegavel** (dirigida pelo manifesto): a landing lista as **trilhas**;
+  o indice de cada trilha lista seus **modulos**; cada **aula** repete os modulos irmaos
+  no topo da margem (`.rail-modules`, estatico) para o aluno pular sem voltar. Curso
+  multi-trilha = uma entrada por `tracks[]` do manifesto.
+- **Marca no topo** (`.reader-bar`): wordmark `INEMA.CLUB` -> portal externo
+  `https://inema.club` (igual ao v2); o link de volta ao curso vive no breadcrumb.
 - **Prova social sobria**: citacao textual estatica (nome + contexto), sem carrossel,
   sem estrelinhas, sem "+10.000 alunos".
 - **CTA unico** sem urgencia fabricada + uma saida de baixo risco ("ler o Modulo 1").
