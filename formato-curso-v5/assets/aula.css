@@ -140,8 +140,8 @@ html[data-theme="papel"] .practice .pdone,html[data-theme="sepia"] .practice .pd
 .railsticky{position:sticky;top:calc(50vh - 200px)}
 .figstage{position:relative;height:300px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--figbg1),var(--figbg2));overflow:hidden}
 .figstage::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 35%,rgba(124,224,198,.08),transparent 70%);pointer-events:none}
-.fig{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(.96) translateY(10px);transition:opacity .5s ease,transform .5s ease}
-.fig.on{opacity:1;transform:none}
+.fig{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(.96) translateY(10px);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+.fig.on{opacity:1;transform:none;pointer-events:auto}
 .fig svg{width:80%;height:auto}
 .railcap{margin-top:16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--muted);min-height:34px}
 .railcap b{color:var(--accent);font-weight:400}
@@ -273,6 +273,8 @@ footer{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px) 14vh;color:
 .recap .rk{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
 .recap .rtext{font-size:16px;color:var(--ink-soft);margin:0 0 16px;line-height:1.6}
 .recap .big{margin-top:0}
+.recap-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:0}
+.recap-actions .big{width:auto;flex:1;margin-top:0}
 
 /* subnav (trilhas no topo) — usado quando presente */
 .subnav-inner{max-width:1160px;margin:0 auto;padding:2px clamp(24px,5vw,60px) 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}

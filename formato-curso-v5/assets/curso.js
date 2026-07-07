@@ -223,10 +223,12 @@
   // ---- recap ativo no fim da aula (fecha com recordação) ----
   document.querySelectorAll('.view[data-aula] .col').forEach(function(col){ var k=aulaOf(col); if(!k||col.querySelector('.recap')) return;
     var box=el('div','recap'); box.innerHTML='<p class="rk">Feche a aula</p><p class="rtext">Revise agora, com recorda&ccedil;&atilde;o ativa &mdash; depois estes cart&otilde;es voltam sozinhos na hora certa. A revis&atilde;o da trilha (bot&atilde;o <b>revisar</b> no topo) mistura as perguntas de <b>todas</b> as aulas.</p>';
-    var b=el('button','big'); b.textContent='revisar os cartões desta aula'; b.addEventListener('click',function(){ reviewAula(k); }); box.appendChild(b);
+    var actions=el('div','recap-actions');
+    var b=el('button','big'); b.textContent='revisar os cartões desta aula'; b.addEventListener('click',function(){ reviewAula(k); }); actions.appendChild(b);
     if(aulaEls[k]&&aulaEls[k].querySelector('.practice')){
-      var b2=el('button','big'); b2.style.marginLeft='10px'; b2.textContent='refazer exercício desta aula'; b2.addEventListener('click',function(){ resetPractice(k,true); }); box.appendChild(b2);
+      var b2=el('button','big'); b2.textContent='refazer exercício desta aula'; b2.addEventListener('click',function(){ resetPractice(k,true); }); actions.appendChild(b2);
     }
+    box.appendChild(actions);
     col.appendChild(box);
   });
 
