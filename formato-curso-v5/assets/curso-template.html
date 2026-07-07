@@ -52,6 +52,7 @@
   <a class="back" href="#trilha" style="display:none">← trilha</a>
   <button id="pill" class="pill" style="display:none">0 lido</button>
   <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="exbtn">exercícios</button>
   <button id="jorbtn">jornada</button>
   <button id="helpbtn" aria-label="Como funciona">?</button>
   <button id="prefsbtn" aria-label="Preferências de leitura">Aa</button>
@@ -124,7 +125,25 @@
         <p class="qk">Erro comum</p>
         <p class="qerr-txt"><b>O erro em 1 frase.</b> Por que costuma acontecer, e como evitar da próxima vez.</p>
       </div>
-      <div class="mobfig" data-mobfig="2"></div>
+      <!-- cópia mobile do .termdemo acima — mesmo markup, sem a classe "fig" (não é posicionado em rail aqui) -->
+      <div class="mobfig">
+        <div class="termdemo">
+          <button class="termdemo-reveal" type="button">ver o que acontece →</button>
+          <div class="termdemo-body" hidden>
+            <div class="termdemo-cmd on" data-variant="ok">
+              <p class="termdemo-k">comando certo</p>
+              <pre class="termdemo-in">$ comando --certo</pre>
+              <pre class="termdemo-out">saída esperada</pre>
+            </div>
+            <div class="termdemo-cmd" data-variant="erro">
+              <p class="termdemo-k">erro comum</p>
+              <pre class="termdemo-in">$ comando --errado</pre>
+              <pre class="termdemo-out termdemo-err">a mensagem de erro real, e por que ela aparece</pre>
+            </div>
+            <button class="termdemo-toggle" type="button">ver o erro comum</button>
+          </div>
+        </div>
+      </div>
 
       <!-- teste-se: obrigatório em aula FUNDAMENTO -->
       <div class="quiz" data-answer="b">
@@ -156,7 +175,23 @@
     <div class="figstage">
       <!-- registro DIAGRAMA-DE-MECANISMO — nunca metáfora aqui (DV-1) -->
       <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> legenda que ensina — diz o que olhar e o que significa"><svg viewBox="0 0 220 200" fill="none" aria-hidden="true"><!-- diagrama conceitual --></svg></div>
-      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> legenda que ensina da 2ª ideia"><svg viewBox="0 0 220 200" fill="none" aria-hidden="true"><!-- diagrama conceitual --></svg></div>
+      <!-- .termdemo — 2ª opção pro slot de figura: use quando o step tiver um comando real. Sempre com par certo+erro quando fizer sentido (senão, 1 só .termdemo-cmd sem o botão de toggle). -->
+      <div class="fig termdemo" data-fig="2" data-cap="<b>Fig.</b> rode o comando e veja a diferença entre o certo e o erro comum">
+        <button class="termdemo-reveal" type="button">ver o que acontece →</button>
+        <div class="termdemo-body" hidden>
+          <div class="termdemo-cmd on" data-variant="ok">
+            <p class="termdemo-k">comando certo</p>
+            <pre class="termdemo-in">$ comando --certo</pre>
+            <pre class="termdemo-out">saída esperada</pre>
+          </div>
+          <div class="termdemo-cmd" data-variant="erro">
+            <p class="termdemo-k">erro comum</p>
+            <pre class="termdemo-in">$ comando --errado</pre>
+            <pre class="termdemo-out termdemo-err">a mensagem de erro real, e por que ela aparece</pre>
+          </div>
+          <button class="termdemo-toggle" type="button">ver o erro comum</button>
+        </div>
+      </div>
     </div>
     <p class="railcap"></p>
     <div class="steps-ind"></div>
@@ -168,6 +203,7 @@
 <footer>Aula 1 · INEMA.CLUB PRO</footer>
 
 <!-- FECHO — ordem fixa: recap-autor → next-action → cards-N → (motor injeta o resto depois) -->
+<div class="fecho-wrap">
 <div class="recap-autor">
   <p class="rak">Resumo</p>
   <ul>
@@ -182,6 +218,7 @@
   <p class="na-win">Você acabou de conseguir [microvitória nomeada].</p>
   <p class="na-action">Nos próximos 15 minutos, no seu trabalho de verdade: [microação concreta].</p>
   <p class="na-hook">Na próxima aula, você resolve [a próxima dor real que trava quem já passou por esta].</p>
+</div>
 </div>
 
 <!-- cartões: recuperação ativa, NUNCA resumo do recap acima (contrato §11 / RETENCAO-V5.md) -->
