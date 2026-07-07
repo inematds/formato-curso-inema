@@ -25,6 +25,7 @@
       '<div class="btnrow"><button id="expbtn">exportar .json</button><button id="impbtn">importar</button><button id="resetbtn">zerar</button></div>'+
       '<input type="file" id="impfile" accept="application/json" style="display:none"></div></aside>'+
     '<aside class="panel" id="revisar"><button class="close" data-close>&#10005;</button><h3>Revisar</h3><div class="rev" id="revbody"></div></aside>'+
+    '<aside class="panel" id="exercicios"><button class="close" data-close>&#10005;</button><h3>Exerc&iacute;cios</h3><div class="exlist" id="exlist"></div></aside>'+
     '<div class="cedit" id="cedit"><button class="close" data-close>&#10005;</button><h3>Novo cart&atilde;o</h3>'+
       '<label>Frente (pergunta)</label><textarea id="cefront"></textarea>'+
       '<label>Verso (resposta)</label><textarea id="ceback"></textarea>'+
@@ -340,6 +341,29 @@
     var mk=$('jmarks'), all=[]; KEYS.forEach(function(k){ state.aulas[k].marks.forEach(function(m){ all.push(m); }); });
     if(!all.length) mk.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhum grifo ainda.</p>'; else { mk.innerHTML=''; all.slice().reverse().forEach(function(m){ var d=el('div','mk'); d.textContent='“'+m.text+'”'; mk.appendChild(d); }); }
   }
+
+  // ---- exercícios (refazer, trilha inteira) ----
+  function renderExercicios(){
+    var box=$('exlist'); if(!box) return; box.innerHTML='';
+    KEYS.forEach(function(k){
+      var v=aulaEls[k], pr=v&&v.querySelector('.practice'); if(!pr) return;
+      var h=pr.querySelector('.ph'), title=h?h.textContent.trim():('Aula '+k);
+      var row=el('div','exrow');
+      var info=el('div','exinfo');
+      var t=el('p','ext'); t.textContent='Aula '+k+' — '+title; info.appendChild(t);
+      var done=praticaDone(k);
+      var st=el('p','exstat'+(done?' done':'')); st.textContent=done?'feito':'pendente'; info.appendChild(st);
+      row.appendChild(info);
+      var actions=el('div','exactions');
+      var go=el('button','exgo'); go.type='button'; go.textContent='ir até ela'; go.addEventListener('click',function(){ closePanels(); location.hash='aula-'+k; });
+      var rs=el('button','exreset'); rs.type='button'; rs.textContent='resetar'; rs.addEventListener('click',function(){ resetPractice(k,false); renderExercicios(); });
+      actions.appendChild(go); actions.appendChild(rs);
+      row.appendChild(actions);
+      box.appendChild(row);
+    });
+    if(!box.children.length) box.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhum exercício nesta trilha.</p>';
+  }
+  if($('exbtn')) $('exbtn').addEventListener('click',function(){ renderExercicios(); openPanel('exercicios'); });
 
   // ---- painéis ----
   var scrim=$('scrim');
