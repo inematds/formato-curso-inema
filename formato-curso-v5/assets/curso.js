@@ -181,6 +181,27 @@
   // copiar em qualquer bloco de código
   document.querySelectorAll('.view[data-aula] .col pre').forEach(function(pre){ if(pre.closest('.pcodewrap')||pre.closest('.codewrap')) return; var wrap=el('div','codewrap'); pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(pre); var b=el('button','pcopy'); b.type='button'; b.textContent='copiar'; wrap.insertBefore(b,pre); b.addEventListener('click',function(){ copyText(pre.textContent,b); }); });
 
+  // ---- termdemo (demo real de comando: clique-pra-revelar + toggle certo/erro) ----
+  document.querySelectorAll('.termdemo-reveal').forEach(function(b){
+    b.addEventListener('click',function(){
+      var body=b.nextElementSibling; if(!body) return;
+      body.hidden=false; b.style.display='none';
+    });
+  });
+  document.querySelectorAll('.termdemo-toggle').forEach(function(b){
+    b.addEventListener('click',function(){
+      var body=b.closest('.termdemo-body'); if(!body) return;
+      var cmds=[].slice.call(body.querySelectorAll('.termdemo-cmd'));
+      var okCmd=cmds.filter(function(c){ return c.getAttribute('data-variant')==='ok'; })[0];
+      var errCmd=cmds.filter(function(c){ return c.getAttribute('data-variant')==='erro'; })[0];
+      if(!okCmd||!errCmd) return;
+      var showingOk=okCmd.classList.contains('on');
+      cmds.forEach(function(c){ c.classList.remove('on'); });
+      if(showingOk){ errCmd.classList.add('on'); b.textContent='ver o certo'; }
+      else { okCmd.classList.add('on'); b.textContent='ver o erro comum'; }
+    });
+  });
+
   // ---- reflexão / nota por seção (self-explanation) ----
   document.querySelectorAll('.view[data-aula] .step').forEach(function(s){ var rb=s.querySelector('.readbtn'); if(!rb||s.querySelector('.reflect')) return; var k=aulaOf(s), key=rb.getAttribute('data-read'); if(!k||!key) return;
     var d=el('details','reflect'), sum=el('summary'); sum.textContent='Reflita — explique com suas palavras, ou anote uma dúvida'; d.appendChild(sum);
