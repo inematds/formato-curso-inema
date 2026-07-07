@@ -438,3 +438,7 @@ html[data-theme="papel"] .next-action,html[data-theme="sepia"] .next-action{back
 .termdemo-out.termdemo-err{color:var(--warm)}
 .termdemo-toggle{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);background:none;border:1px solid var(--line2);border-radius:99px;padding:8px 14px;cursor:pointer;transition:border-color .2s,color .2s}
 .termdemo-toggle:hover{border-color:var(--accent);color:var(--ink)}
+
+/* ---- fecho-wrap: alinha recap-autor/next-action com a largura do .layout (fix desalinhamento) ---- */
+.fecho-wrap{max-width:1160px;margin:0 auto;padding:0 clamp(24px,5vw,60px)}
+.fecho-wrap .recap-autor,.fecho-wrap .next-action{max-width:var(--read)}
