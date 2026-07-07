@@ -171,12 +171,21 @@
   function flashBtn(btn,msg){ var o=btn.getAttribute('data-o'); if(o===null){ o=btn.textContent; btn.setAttribute('data-o',o); } btn.textContent=msg; setTimeout(function(){ btn.textContent=btn.getAttribute('data-o'); },1400); }
   function execCopy(t,btn){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); flashBtn(btn,'copiado ✓'); }catch(e){} document.body.removeChild(ta); }
   function copyText(t,btn){ try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){ flashBtn(btn,'copiado ✓'); },function(){ execCopy(t,btn); }); return; } }catch(e){} execCopy(t,btn); }
+  var practiceRefreshers={};
   document.querySelectorAll('.practice').forEach(function(pr){ var k=aulaOf(pr); if(!k) return; var tasks=state.aulas[k].tasks, boxes=[].slice.call(pr.querySelectorAll('input[data-ptask]')), cnt=pr.querySelector('.pcount');
     function refresh(){ var done=0; boxes.forEach(function(b){ var id=b.getAttribute('data-ptask'); b.checked=!!tasks[id]; if(tasks[id]) done++; }); if(cnt) cnt.textContent=done+'/'+boxes.length+' feito'; pr.classList.toggle('done', boxes.length>0&&done===boxes.length); }
     boxes.forEach(function(b){ b.addEventListener('change',function(){ tasks[b.getAttribute('data-ptask')]=b.checked; save(); refresh(); }); });
     var cp=pr.querySelector('.pcopy'), code=pr.querySelector('.pcode'); if(cp&&code) cp.addEventListener('click',function(){ copyText(code.textContent,cp); });
+    practiceRefreshers[k]=refresh;
     refresh();
   });
+  function resetPractice(k,scroll){
+    var tasks=state.aulas[k].tasks; if(!tasks) return;
+    Object.keys(tasks).forEach(function(id){ tasks[id]=false; });
+    save();
+    if(practiceRefreshers[k]) practiceRefreshers[k]();
+    if(scroll){ var v=aulaEls[k], pr=v&&v.querySelector('.practice'); if(pr) pr.scrollIntoView({behavior:'smooth',block:'start'}); }
+  }
 
   // copiar em qualquer bloco de código
   document.querySelectorAll('.view[data-aula] .col pre').forEach(function(pre){ if(pre.closest('.pcodewrap')||pre.closest('.codewrap')) return; var wrap=el('div','codewrap'); pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(pre); var b=el('button','pcopy'); b.type='button'; b.textContent='copiar'; wrap.insertBefore(b,pre); b.addEventListener('click',function(){ copyText(pre.textContent,b); }); });
@@ -213,7 +222,11 @@
   // ---- recap ativo no fim da aula (fecha com recordação) ----
   document.querySelectorAll('.view[data-aula] .col').forEach(function(col){ var k=aulaOf(col); if(!k||col.querySelector('.recap')) return;
     var box=el('div','recap'); box.innerHTML='<p class="rk">Feche a aula</p><p class="rtext">Revise agora, com recorda&ccedil;&atilde;o ativa &mdash; depois estes cart&otilde;es voltam sozinhos na hora certa. A revis&atilde;o da trilha (bot&atilde;o <b>revisar</b> no topo) mistura as perguntas de <b>todas</b> as aulas.</p>';
-    var b=el('button','big'); b.textContent='revisar os cartões desta aula'; b.addEventListener('click',function(){ reviewAula(k); }); box.appendChild(b); col.appendChild(box);
+    var b=el('button','big'); b.textContent='revisar os cartões desta aula'; b.addEventListener('click',function(){ reviewAula(k); }); box.appendChild(b);
+    if(aulaEls[k]&&aulaEls[k].querySelector('.practice')){
+      var b2=el('button','big'); b2.style.marginLeft='10px'; b2.textContent='refazer exercício desta aula'; b2.addEventListener('click',function(){ resetPractice(k,true); }); box.appendChild(b2);
+    }
+    col.appendChild(box);
   });
 
   // ---- teste-se ----
