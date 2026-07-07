@@ -1,0 +1,216 @@
+<!doctype html>
+<!-- TEMPLATE formato-curso v5 — página única, herdado do v4 + contrato pedagógico 40+.
+     Troque os PLACEHOLDER, o meta[name=curso], e preencha o protocolo de descoberta abaixo
+     ANTES de escrever qualquer conteúdo (SKILL.md, Passo 0 — bloqueante). -->
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="curso" content="MEUCURSOV5">
+<title>Título do curso · INEMA.CLUB PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<script>(function(){try{var m=document.querySelector('meta[name=curso]');var CK=(m&&m.content)||'v5:curso';var s=JSON.parse(localStorage.getItem(CK));if(s&&s.prefs&&s.prefs.theme)document.documentElement.setAttribute('data-theme',s.prefs.theme);}catch(e){}})();</script>
+<!--
+  PROTOCOLO DE DESCOBERTA (SKILL.md, Passo 0 — bloqueante, registrado como metadado):
+  - Público específico: PLACEHOLDER (quem exatamente).
+  - Profissões-alvo (≥2): PLACEHOLDER · PLACEHOLDER.
+  - Familiaridade com tecnologia: PLACEHOLDER.
+  - Resultado prático esperado: PLACEHOLDER.
+  - Tempo por sessão: PLACEHOLDER.
+-->
+<style>
+  /* Router + estilos da view da trilha (escopados sob #v-trilha). Idêntico ao v4 — copie do demo4 se preferir. */
+  .view{display:none}.view.active{display:block}
+  .lnav{max-width:1160px;margin:0 auto 5vh;padding:0 clamp(24px,5vw,60px);display:flex;justify-content:space-between;gap:12px}
+  .lnav a{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line2);border-radius:12px;padding:12px 16px}
+  .lnav a:hover{border-color:var(--accent);color:var(--ink)}
+  #v-trilha .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(24px,5vw,60px)}
+  #v-trilha .t-hero{position:relative;overflow:hidden;padding:20vh 0 8vh;border-bottom:1px solid var(--line)}
+  #v-trilha h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6.4vw,72px);line-height:1;letter-spacing:-.025em;margin:0 0 22px}
+  #v-trilha h1 em{font-style:italic;color:var(--accent)}
+  #v-trilha .lead{font-family:var(--serif);font-size:clamp(19px,2.1vw,24px);line-height:1.5;color:var(--ink-soft);max-width:46ch;margin:0 0 30px}
+  #v-trilha section{padding:8vh 0}
+  #v-trilha .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+  #v-trilha h2{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(26px,3.6vw,38px);margin:0 0 28px}
+  #v-trilha .aulas{display:grid;gap:14px}
+  #v-trilha .au{display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 24px}
+  #v-trilha .au .num{font-family:var(--serif);font-size:30px;color:var(--accent);text-align:center}
+  #v-trilha .au h3{font-family:var(--serif);font-weight:500;font-size:21px;margin:0 0 5px}
+  #v-trilha .au p{margin:0;color:var(--muted);font-size:14.5px}
+  #v-trilha .au .meta{font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap;text-align:right}
+  #v-trilha .au .prog{position:static;margin-top:10px;height:5px;border-radius:99px;background:var(--line);overflow:hidden;max-width:220px;width:auto}
+  #v-trilha .au .prog i{display:block;height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .5s}
+  #v-trilha footer{max-width:1080px;margin:0 auto;padding:6vh clamp(24px,5vw,60px) 12vh;color:var(--faint);text-align:center;font-family:var(--serif);font-style:italic;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><a class="course" href="landing.html">Nome do curso</a></span>
+  <a class="back" href="#trilha" style="display:none">← trilha</a>
+  <button id="pill" class="pill" style="display:none">0 lido</button>
+  <button id="revbtn">revisar <span id="revn">0</span></button>
+  <button id="jorbtn">jornada</button>
+  <button id="helpbtn" aria-label="Como funciona">?</button>
+  <button id="prefsbtn" aria-label="Preferências de leitura">Aa</button>
+  <button id="themebtn">tema: escuro</button>
+</div></div>
+
+<!-- ===== TRILHA ===== -->
+<section class="view" id="v-trilha">
+  <header class="t-hero"><div class="wrap">
+    <p class="kicker">Trilha 01</p>
+    <h1>Título da <em>trilha</em></h1>
+    <p class="lead">Uma frase que promete o resultado prático — o que a pessoa SAI sabendo fazer, não um resumo de tópicos.</p>
+  </div></header>
+  <section><div class="wrap">
+    <!-- statcards dinâmicos (AD-8) — o motor preenche "você já fez N/M · faltam ~Xmin" -->
+    <div class="statcards"></div>
+    <p class="eyebrow">Aulas</p>
+    <h2>Do início ao fim</h2>
+    <div class="aulas">
+      <a class="au on" data-aula="1" href="#aula-1">
+        <div class="num">1</div>
+        <div><h3>Título da aula 1</h3><p>Descrição = resultado, não sumário: "saia sabendo escrever seu primeiro X pronto para usar".</p><div class="prog"><i></i></div></div>
+        <div class="meta">18 min · abrir →</div>
+      </a>
+    </div>
+  </div></section>
+  <footer><div class="wrap">Curso · INEMA.CLUB PRO</div></footer>
+</section>
+
+<!-- ===== AULA 1 (exemplo: tipo FUNDAMENTO) ===== -->
+<section class="view" id="v-aula-1" data-aula="1" data-tempo="18min">
+<header class="hero"><div class="hero-inner">
+  <div>
+    <p class="kicker">Trilha 01 · Aula 1</p>
+    <h1>Título da<br><em>aula</em></h1>
+
+    <!-- 1: promessa — 1 frase verificável, nunca vaga -->
+    <p class="promise">Ao fim desta aula você consegue [ação observável e concreta] — sem precisar de mais nada além do que já tem hoje.</p>
+
+    <!-- tempo renderizado pelo motor logo após a promessa (mudança 5) -->
+
+    <!-- 2: por que importa — problema real + por que agora -->
+    <p class="why">O problema real do profissional, em 2–4 linhas, ligado ao que ele sente hoje no trabalho — não uma justificativa abstrata sobre o futuro da tecnologia.</p>
+
+    <p class="cue"><span class="arw">↓</span> role para estudar</p>
+  </div>
+  <!-- herofig: registro METÁFORA-DO-MUNDO-REAL (nunca diagrama aqui — DV-1) -->
+  <div class="herofig"><svg viewBox="0 0 300 240" fill="none" aria-hidden="true"><!-- metáfora concreta do mundo do leitor --></svg></div>
+</div></header>
+
+<div class="layout">
+  <div class="col">
+    <!-- step classificado (item 8): data-kind + data-versao só em bloco-ferramenta -->
+    <section class="step" data-fig="1" data-kind="fundamento">
+      <h2><span class="n">01</span> Título-afirmação da primeira ideia</h2>
+      <p>Conceito em linguagem simples, sem jargão de plataforma presumido. Se precisar de um termo do domínio, defina inline: <span class="gterm" tabindex="0" data-def="Definição curta e concreta.">termo-de-domínio</span>.</p>
+      <p><!-- exemplo-profissão, obrigatório em 100% dos steps, contável --> Exemplo aplicado: [profissão 1 do protocolo de descoberta] numa situação concreta do próprio trabalho.</p>
+      <!-- rampa de acesso — só quando o próximo bloco for tecnicamente opaco -->
+      <p>Isto é uma receita: quando o campo pedir X, você escreve Y — o resto ele resolve sozinho.</p>
+      <div class="mobfig" data-mobfig="1"></div>
+      <button class="readbtn" data-read="s1">marcar como lido</button>
+    </section>
+
+    <!-- exemplo de quadro funcional: erro comum (dosagem, §10) -->
+    <section class="step" data-fig="2" data-kind="fundamento">
+      <h2><span class="n">02</span> Título-afirmação da segunda ideia</h2>
+      <p>Mais conceito, sempre uma ideia por seção.</p>
+      <p>Exemplo aplicado: [profissão 2 do protocolo de descoberta] numa situação diferente da anterior.</p>
+      <div class="qerr">
+        <p class="qk">Erro comum</p>
+        <p class="qerr-txt"><b>O erro em 1 frase.</b> Por que costuma acontecer, e como evitar da próxima vez.</p>
+      </div>
+      <div class="mobfig" data-mobfig="2"></div>
+
+      <!-- teste-se: obrigatório em aula FUNDAMENTO -->
+      <div class="quiz" data-answer="b">
+        <p class="qk">Teste-se</p><p class="q">Pergunta de checagem sobre o que acabou de ler?</p>
+        <button class="opt" data-k="a">alternativa errada</button>
+        <button class="opt" data-k="b" data-fb="Por que esta é a certa, em 1 frase.">alternativa certa</button>
+        <button class="opt" data-k="c">alternativa errada</button>
+        <p class="qfb"></p>
+      </div>
+      <button class="readbtn" data-read="s2">marcar como lido</button>
+    </section>
+
+    <!-- 5: prática multi-modo — troque data-mode conforme o protocolo de descoberta (nunca "codigo" p/ leigo) -->
+    <section class="practice" data-practice="p1" data-mode="prompt">
+      <p class="pk">Pratique agora <span class="pcount">0/2 feito</span></p>
+      <h3 class="ph">Título da tarefa — realiza a .promise desta aula</h3>
+      <p class="pgoal">Meta observável + "~10 min".</p>
+      <p class="psafe">Nada aqui apaga ou quebra nada de verdade. Não gostou do resultado? Apague e recomece.</p>
+      <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">bloco colável, com &lt;isto você troca&gt; marcado</pre></div>
+      <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> Passo verificável pelo próprio aluno.</label></li>
+        <li><label><input type="checkbox" data-ptask="2"> Outro passo, com "o que você deve ver" como referência.</label></li>
+      </ol>
+      <p class="pdone">Você acabou de conseguir [a mesma capacidade da promessa] — sem depender de mais ninguém.</p>
+    </section>
+  </div>
+
+  <aside class="rail"><div class="railsticky">
+    <div class="figstage">
+      <!-- registro DIAGRAMA-DE-MECANISMO — nunca metáfora aqui (DV-1) -->
+      <div class="fig on" data-fig="1" data-cap="<b>Fig.</b> legenda que ensina — diz o que olhar e o que significa"><svg viewBox="0 0 220 200" fill="none" aria-hidden="true"><!-- diagrama conceitual --></svg></div>
+      <div class="fig" data-fig="2" data-cap="<b>Fig.</b> legenda que ensina da 2ª ideia"><svg viewBox="0 0 220 200" fill="none" aria-hidden="true"><!-- diagrama conceitual --></svg></div>
+    </div>
+    <p class="railcap"></p>
+    <div class="steps-ind"></div>
+    <p class="sidenote">Grife qualquer trecho para virar um cartão de revisão.</p>
+  </div></aside>
+</div>
+
+<nav class="lnav"><a href="#trilha">← trilha</a><a href="#trilha">concluir ✓ →</a></nav>
+<footer>Aula 1 · INEMA.CLUB PRO</footer>
+
+<!-- FECHO — ordem fixa: recap-autor → next-action → cards-N → (motor injeta o resto depois) -->
+<div class="recap-autor">
+  <p class="rak">Resumo</p>
+  <ul>
+    <li>Síntese afirmativa da ideia 1, em linguagem humana — nunca em forma de pergunta.</li>
+    <li>Síntese afirmativa da ideia 2, conectando com a primeira.</li>
+    <li>Nuance importante que dá segurança ao aluno.</li>
+  </ul>
+</div>
+
+<div class="next-action">
+  <p class="nak">Seu próximo passo</p>
+  <p class="na-win">Você acabou de conseguir [microvitória nomeada].</p>
+  <p class="na-action">Nos próximos 15 minutos, no seu trabalho de verdade: [microação concreta].</p>
+  <p class="na-hook">Na próxima aula, você resolve [a próxima dor real que trava quem já passou por esta].</p>
+</div>
+
+<!-- cartões: recuperação ativa, NUNCA resumo do recap acima (contrato §11 / RETENCAO-V5.md) -->
+<script type="application/json" id="cards-1">
+[
+  {"front":"Pergunta que exige recuperar (não reconhecer) a ideia 1?","back":"Resposta curta."},
+  {"front":"Decisão: dado um cenário novo, o que você faria?","back":"Resposta com o porquê."},
+  {"front":"Contraste: qual a diferença entre X e Y?","back":"Resposta que distingue os dois."}
+]
+</script>
+
+<!--
+COMPLETUDE aula-1 | tipo=FUNDAMENTO | steps=2
+  [OK] promise            .promise no cold-open (1)
+  [OK] why                .why após a promessa (1)
+  [OK] tempo              data-tempo no view + render no cold-open (1)
+  [OK] exemplo-profissao  exemplo aplicado em 100% dos steps (2/2)
+  [OK] apoio-visual       figura conceitual legendada em 100% dos steps (2/2)
+  [OK] practice           .practice[data-mode] (exatamente 1)
+  [OK] psafe              .psafe dentro da prática (1)
+  [OK] pgoal-tempo        .pgoal com tempo declarado (1)
+  [OK] recap-autor        .recap-autor no fecho (1)
+  [OK] next-action        .next-action no fecho (1)
+  [OK] cards              <script id="cards-1"> presente (1)
+  [OK] anti-duplicacao    §11.3 — 3 testes passam (substring / forma / operação)
+  [OK] teste-se-FUND      tipo=FUNDAMENTO: presente (1 quiz data-fb)
+-->
+</section>
+
+<script src="assets/curso.js"></script>
+</body>
+</html>
