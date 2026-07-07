@@ -4,3 +4,4 @@ Thumbs.db
 *.swp
 
 # nada de build aqui (projeto self-contained)
+.superpowers/
