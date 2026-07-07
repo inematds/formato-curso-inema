@@ -68,6 +68,19 @@ Página única, roteamento por hash (`#trilha`, `#aula-1`…`#aula-9`), 1 estado
 
 **Dosagem (detalhe completo em `RETENCAO-V5.md`):** espinha estrutural (`.recap-autor`·`.practice`·`.next-action`·exemplo-por-profissão, sempre 1×, fora do teto) + pool dosado (teto ≤5/aula: FUNDAMENTO 4 obrig.+1 opcional, FERRAMENTA 2+3, PRÁTICA 2+3). **Teste-se em FUNDAMENTO é obrigatório**, não uma célula opcional. Densidade visual (`≤1 quadro funcional/2 steps`) é régua **independente** do teto de dosagem — as duas se checam juntas.
 
+## Terceiro registro visual: `.termdemo` (demo real de comando)
+
+Todo step já tem 1 slot de figura na rail (`data-fig`, ver contrato herdado do v4). `.termdemo`
+é uma **segunda opção de conteúdo pra esse mesmo slot** — não é um componente novo sujeito ao
+teto de 9 componentes + 3 quadros nem à regra de contenção AD-7. Use `.termdemo` (classe
+`fig termdemo` na rail, `class="mobfig"` com cópia idêntica sem a classe `fig` no corpo do
+step, pro mobile) **só quando o step tiver um comando real** — nos demais, use o `.fig` de
+diagrama-de-mecanismo normalmente. Interação: clique-pra-revelar (`.termdemo-reveal`) mostra
+primeiro o par `data-variant="ok"`; um `.termdemo-toggle` alterna pra `data-variant="erro"` —
+só um visível por vez. **Use o par certo+erro só quando existir um erro comum real e
+plausível** (mesmo critério do `.qerr`, `RETENCAO-V5.md` §4) — senão, omita o segundo
+`.termdemo-cmd` e o botão de toggle, deixando só o comando certo.
+
 ## Prática multi-modo
 
 | Modo | Para quem | Critério de pronto |
@@ -100,6 +113,15 @@ Página única, roteamento por hash (`#trilha`, `#aula-1`…`#aula-9`), 1 estado
 **Último passo antes de finalizar CADA aula:** emitir, dentro do view da aula, o comentário abaixo e conferir item a item (não "segui as regras" — confira cada linha contra o conteúdo real). Aula sem manifesto 100% conforme **não está finalizada**. Template verbatim e grep prontos em `references/CHECKLIST-V5.md`.
 
 Lista fechada dos 13 itens (nesta ordem): `promise` · `why` · `tempo` · `exemplo-profissao` · `apoio-visual` · `practice` · `psafe` · `pgoal-tempo` · `recap-autor` · `next-action` · `cards` · `anti-duplicacao` · `teste-se-FUND` (único condicional: `[OK]` se `tipo=FUNDAMENTO`, senão `[N/A]` — nunca `[OK]` fora da FUNDAMENTO). Qualquer `[AUSENTE]` (ou manifesto ausente) ⇒ a aula reprova em Fixação, e a linha nomeia o defeito.
+
+## Refazer exercícios (por aula e pra trilha inteira)
+
+Herdado do motor, ao lado da revisão de cartões (que já existia): (1) **por aula**, um botão
+"refazer exercício desta aula" na mesma caixa de fim de aula onde já mora "revisar os cartões
+desta aula" — zera o progresso da `.practice` daquela aula e rola até ela; (2) **pra trilha
+inteira**, um botão novo na barra do topo ("exercícios") abre um painel listando toda
+`.practice` do curso, com "ir até ela" (navega e fecha o painel) e "resetar" (individual, sem
+"resetar tudo") por linha. Sem estado novo — reaproveita `state.aulas[k].tasks`.
 
 ## Painel D-09 (jornada estendida)
 

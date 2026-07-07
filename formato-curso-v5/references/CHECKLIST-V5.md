@@ -77,6 +77,15 @@ Nunca:
 - **Densidade ≤1 quadro funcional/2 steps:** contar `.qerr`+`.qbefore-after`+`.qapply`+`.qsteps`+`.qanchor` por aula e mapear a posição de cada um contra os steps — não bastam os números totais, confira também a posição (ver `V5-DESIGN.md` §5).
 - **`.qapply` ≥2 profissões:** `grep -A5 'class="qapply"'` e contar nomes de profissão distintos dentro do bloco — menos de 2 é falha.
 
+## 5.1. `.termdemo` — cobertura nos steps com comando real
+
+Todo step com `<div class="pcodewrap">` ou um comando citado no corpo do texto deve ter
+`.termdemo` (não `.fig` de diagrama) no mesmo `data-fig`, com cópia idêntica em `.mobfig`
+(sem a classe `fig`). Verificação: `grep -c 'pcodewrap'` vs `grep -c 'class="fig termdemo"'`
+por aula — todo step com `pcodewrap` deve ter um `.termdemo` correspondente, **exceto**
+quando não existir erro comum plausível nem a demonstração fizer sentido isolada (julgamento
+do autor, registrado como decisão, não omissão silenciosa).
+
 ## 6. `.gterm` — cobertura do glossário (item herdado do v4, auditoria explícita)
 
 **Ressalva do gate humano final (achado Fase 9-T3):** um piloto testado não usou `.gterm` nenhuma vez em todo o curso — item herdado do contrato v4 (glossário sob demanda para reforço de jargão de domínio) que nenhum manifesto formal cobria até agora. **Verificação obrigatória a partir desta versão do checklist:** `grep -c 'class="gterm"' curso.html` deve ser ≥1 sempre que houver jargão de domínio no curso (o que é quase sempre — todo curso tem ao menos 1 termo específico do assunto). Zero `.gterm` num curso inteiro é sinal de alerta: ou o curso não tem nenhum jargão de domínio (raro) ou o reforço de glossário foi esquecido.

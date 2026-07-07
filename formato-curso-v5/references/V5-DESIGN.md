@@ -47,6 +47,8 @@ A v5 formaliza **dois registros visuais distintos e nunca misturados** (achado L
 
 **Zero itens da lista proibida de metáfora:** robô humanoide, cérebro-circuito, matrix-rain (chuva de código), aperto de mão humano-robô — são os clichês visuais de IA que não passam no "teste de metáfora" (um profissional de 50 anos se reconhece nessa imagem? não, se reconhece num estagiário, numa gaveta de ferramentas, num molde de costura).
 
+**Terceiro registro — `.termdemo` (demonstração literal de comando):** nem metáfora-do-mundo-real, nem diagrama-de-mecanismo — é a tela real, o comando e a saída tal como aparecem no terminal do aluno. Vive no mesmo slot de figura por step (rail + cópia mobile), só nos steps com comando real, nunca misturado com os outros dois registros no mesmo step.
+
 **Repertório de metáforas candidatas** (adaptar ao tema do curso, nunca copiar verbatim entre cursos): estagiário novo que não conhece a empresa · molde de costura reutilizável · gaveta de ferramentas organizada · receita de bolo com variações · assistente que precisa de contexto para ajudar bem · caderno de receitas de família · placa de sinalização num caminho conhecido. Banco completo de analogias por profissão vive em `EXEMPLOS-PROFISSOES.md`.
 
 ## 5. Anti-poluição — réguas que medem coisas diferentes, nunca se substituem
