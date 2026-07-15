@@ -135,15 +135,25 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 6. `guia/index.html` + `guia/assets/`; **deploy via GitHub Actions** (`.github/workflows/pages.yml` + `build_type=workflow`) — NAO legacy. `.nojekyll` na raiz por garantia. Nenhum `{{PLACEHOLDER}}` solto no HTML.
 7. Pages no ar (HTTP 200, run do Actions verde) e repo publico (com consentimento + sem segredos).
 
-## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+## Capa oficial + imagem hero — SEMPRE gerar (via skill `capa-inema`)
 
-Ao terminar de montar o guia, gere a capa 1280×720 do projeto chamando a engine da skill `capa-inema`:
+Rode isto **antes** de escrever `guia/index.html`, pra já ter a imagem pronta pro
+`<figure>` da hero (linha `assets/hero.png` do template) — o template reserva um
+retângulo arredondado à direita da hero exatamente pra essa imagem, então não invente
+SVG ilustrativo nem troque por bloco de código: gere a imagem de verdade.
 
 ```bash
 node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
-  --title "<título do projeto>" --cat "<categoria>"
+  --title "<título do projeto>" --cat "<categoria>" \
+  --save-raw <pasta-do-repo>/guia/assets/hero.png
 ```
 
+Isso grava **duas coisas na mesma chamada** (uma única geração de imagem, sem desperdiçar
+uma segunda chamada ao gerador):
+- `<repo>/capa/capa.png` — a capa oficial do catálogo (com marca/título por cima).
+- `<repo>/guia/assets/hero.png` — a MESMA imagem, sem texto, pra usar no `<figure>` da
+  hero da própria página de guia (o template já referencia esse caminho).
+
 - **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
-- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png` (ao lado da pasta `guia/`, na raiz do repo).
+- Requer o **inemaimg** no ar (`localhost:8000`).
 - Detalhes, opções e uso em lote: skill `capa-inema`.

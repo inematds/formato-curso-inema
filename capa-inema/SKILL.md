@@ -46,6 +46,10 @@ node <skill>/assets/gerar-capa.cjs --repo <caminho-do-repo> \
 - **`--layout`** — `split` (default) ou `fb`.
 - **`--cena`** — sobrescreve a descrição visual mandada pro gerador (por padrão vem de um
   mapa por categoria; temas desconhecidos usam o próprio título como assunto).
+- **`--save-raw <caminho>`** — também grava a imagem-base **sem texto** (a mesma usada na
+  capa) nesse caminho. Use pra reaproveitar a mesma imagem como hero da página de guia
+  (`guia/assets/hero.png`) sem gerar uma segunda vez — mantém a identidade visual
+  consistente entre a capa do catálogo e a hero da própria página.
 
 ## Dependências (checar antes)
 

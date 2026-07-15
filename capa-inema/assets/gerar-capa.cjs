@@ -179,6 +179,15 @@ async function main(){
     const out = path.join(capaDir, 'capa.png');
     await page.screenshot({ path: out, type:'png' });
     console.log(`[capa] gravada -> ${out}`);
+
+    // Mesma imagem-base (SEM texto), reaproveitada como hero da página de guia —
+    // evita gerar uma segunda imagem e mantém a mesma identidade visual da capa.
+    if (args['save-raw']) {
+      const rawOut = path.resolve(String(args['save-raw']));
+      fs.mkdirSync(path.dirname(rawOut), { recursive:true });
+      fs.writeFileSync(rawOut, Buffer.from(b64, 'base64'));
+      console.log(`[capa] imagem crua (hero) -> ${rawOut}`);
+    }
   } finally { await browser.close(); }
 }
 main().catch(e => { console.error('[capa] ERRO', e.message); process.exit(1); });
