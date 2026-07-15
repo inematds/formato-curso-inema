@@ -107,6 +107,31 @@ Aspect ratios prontos (high): `1:1`=1024², `16:9`=1536×1024, `9:16`=1024×1536
 
 ---
 
+## Aprendizagem visual e didatica (orientacao obrigatoria)
+
+**Principio:** o curso ensina pelo OLHO e pela MAO, nao so pelo texto. Um aluno que aprende visual tem que conseguir entender o modulo pelos apoios visuais + legendas, sem ler todo o corpo; e um aluno pratico tem que conseguir COPIAR E RODAR um exemplo. Sao tres regras (viram os erros criticos #29-#31):
+
+### 1. Visual-first — ilustre cada conceito-chave (SVG / hyperframe / inemaimg, uso ILIMITADO)
+
+- O minimo do erro #17 (≥1 SVG por modulo de conteudo, 1 hero SVG por index) e **PISO, nao teto**. Em modulo profundo, ilustre **CADA conceito-chave** / cada secao que introduz uma ideia nova. Quantidade de visuais e **ilimitada** — use a vontade.
+- Tres meios, escolha o que melhor EXPLICA aquele ponto (pode misturar no mesmo modulo):
+  - **SVG futurista inline** (backbone, sempre offline) — diagramas conceituais: ciclo, fan-out, escada, fluxo de decisao, comparacao, aninhamento. Continua sendo o meio **obrigatorio** do diagrama conceitual. Ver erro #17 + `references/SVG-FUTURISTA.md`.
+  - **inemaimg** (PNG raster, local, default `flux2-klein`) — heros, cenas tematicas, metaforas visuais, texturas. Pode usar **generosamente e de forma didatica** (nao so decorativo). Ver a secao acima.
+  - **hyperframe** (visual animado) — quando o MOVIMENTO ensina (um ciclo girando, um antes/depois, um loop rodando passo a passo): um clipe curto renderizado via **HyperFrames (HTML->MP4)** embutido por caminho relativo com `<video muted loop playsinline class="w-full h-auto rounded-xl">`, OU uma mini-animacao **SVG/CSS inline** self-contained. Sempre sob `prefers-reduced-motion` (parar/estatico se o usuario pediu menos movimento).
+- **Toda ilustracao precisa de legenda/`alt` que ENSINA** (uma frase dizendo o que olhar e o que aquilo significa), nunca decorativa-muda. O par **"visual + legenda"** e a unidade de aprendizado visual: o aluno visual segue o modulo so por esses pares.
+
+### 2. Exemplos praticos copy-run em cada modulo pratico (prompt/codigo pronto)
+
+- Todo modulo pratico traz **≥1 exemplo copia-e-cola que o aluno roda de verdade** (prompt pronto pro Claude Code, comando de terminal, trecho de codigo), em **code box** (ver Sec. 7.x do MASTER), com tres coisas: **objetivo** (o que isso faz) · **o bloco copiavel** · **como verificar** o resultado.
+- Prompts/codigo **reais e completos** — o aluno cola e funciona, nao "exemplo de prompt: voce poderia pedir...". Marque o que e variavel com `<isto voce troca>`.
+
+### 3. Fundamento define os termos inline (base de verdade)
+
+- Modulo/topico de **FUNDAMENTO** esclarece **CADA termo tecnico na PRIMEIRA vez que aparece**, ali na propria explicacao — nunca assume que o aluno ja sabe. Estilo **"Novo aqui?"**: frase curta e concreta (ex.: *"Um LLM e so um modelo de IA, do tipo que roda atras do ChatGPT. 'Ferramentas' sao coisas que ele faz sozinho: buscar na web, rodar codigo, editar um arquivo."*).
+- Use um **glossario-inline** (tip box / aside "O que e X?") pro termo nao quebrar a leitura. A secao "Conceitos-chave" (erro #3) LISTA; o fundamento DEFINE na hora. **Sem jargao orfao** — nenhum termo novo aparece sem definicao antes ou junto.
+
+---
+
 ## Erros Criticos — NUNCA Cometer
 
 Estes sao os erros mais frequentes. Verifique sempre antes de entregar:
@@ -117,6 +142,7 @@ Estes sao os erros mais frequentes. Verifique sempre antes de entregar:
 | 2 | Indicador de topico | Numero em circulo `<span class="w-6 h-6 rounded-full ...">1</span>` | Seta `▶` |
 | 3 | Secoes por topico | 3 secoes: "O que e / Por que aprender / Conceitos-chave" | Menos de 3 |
 | 4 | Link INEMA.CLUB | Presente em TODAS as paginas com `text-sky-400` | Ausente |
+| 4b | Link PRO | Presente ao lado do INEMA.CLUB (separado por `-`), linkando `https://inema.pro`, dourado no light (`text-amber-700`) / prateado no dark (`dark:text-slate-300`) | Ausente |
 | 5 | Light mode CSS | Bloco completo: base + cores acento + sem gradiente + especiais + nav | Apenas base sem cores de acento |
 | 6 | Titulo do modulo | `text-2xl font-bold` | `text-lg` |
 | 7 | Modal | Usa `<iframe src="modulo-X-X.html">` | Conteudo duplicado |
@@ -125,7 +151,7 @@ Estes sao os erros mais frequentes. Verifique sempre antes de entregar:
 | 11 | Quantidade de topicos | MINIMO 6 topicos por modulo | Menos de 6 |
 | 10 | Botao "Ver Completo" no index | CADA card de modulo no index da trilha DEVE ter `<a href="modulo-X-X.html" ...>Ver Completo</a>` | Card sem link para a pagina do modulo |
 | 12 | **Mapa da trilha no index** | OBRIGATORIA: secao com h2 `Mapa da trilha` + grid de cards-ancora (#modulo-X-Y). Cada card: header `justify-between` (X.Y esq + duracao dir) + emoji+titulo + subtitulo PUNCHY. Ver Sec. 7.4b do MASTER. | "Navegacao Rapida" (nome errado), circulo numerado extra, subtitulo descritivo, ausencia da secao |
-| 13 | **Nav completo em todas paginas** | TODAS as paginas (landing + curso/index + trilhas + modulos) tem o mesmo nav: Logo + INEMA.CLUB + 4-6 botoes de trilha + theme toggle. Trilha ativa destacada. Ver Sec. 1.6 do MASTER. | Nav simplificado tipo `← Trilha X | Curso` nas paginas internas |
+| 13 | **Nav completo em todas paginas** | TODAS as paginas (landing + curso/index + trilhas + modulos) tem o mesmo nav: Logo + INEMA.CLUB + PRO + 4-6 botoes de trilha + theme toggle. Trilha ativa destacada. Ver Sec. 1.6 do MASTER. | Nav simplificado tipo `← Trilha X | Curso` nas paginas internas |
 | 14 | **Profundidade dos modulos** | 500-800 linhas, 6-8 secoes com VARIEDADE de componentes (≥2 grids ✓/✗, ≥1 timeline, ≥2 tip boxes, ≥1 code box quando pratico). Ver Sec. 1.8 do MASTER. | 428 linhas com template repetido 6x; mesma estrutura "O que é/Por que/Conceitos" em todas secoes |
 | 15 | **Bordas suavizadas (dark)** | CSS dark mode: `.dark .border-dark-600 { border-color: #374151 }` E `.dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151 }`. Ver Sec. 1.5 Parte 5 do MASTER. | Apenas border, esquece divide — linhas entre topicos ficam fortes |
 | 16 | **Divisor "Conteudo detalhado"** | `<h2 class="text-2xl font-bold mb-6">Conteudo detalhado</h2>` simples | 2 linhas horizontais (`flex-1 h-px`) com span no meio |
@@ -149,6 +175,16 @@ Estes 11 erros sao especificos da camada nova. Os #1-#17 acima continuam valendo
 | 27 | **Modos efemero/orfa de degradacao** | Probe de storage no boot: indisponivel ⇒ **modo efemero** (estado em memoria) + aviso discreto nao-bloqueante, curso segue legivel. Nota que nao re-ancora vira **orfa** (`quote` preservado, listada na jornada) e NAO derruba as outras. Ver §1.6/§2.4. | Storage indisponivel quebra a pagina; aviso bloqueante; uma nota que nao ancora derruba todas; texto da nota se perde |
 | 28 | **Manifesto do curso presente em TODAS as paginas** (progresso cross-pagina depende dele) | `<script type="application/json" data-inema-manifest>` com a estrutura COMPLETA do curso (course + tracks[].modules[] com `id`/`title`/`topics`/`href`) no `<head>` de TODA pagina. `progress()` agrega `done` (read-map persistido) sobre `total` (manifesto); `topics` bate com os `data-inema-topic` reais de cada modulo. Ver §1.7/§3.9 do LEARN-LAYER + Sec. 11.5.h do MASTER. | Sem manifesto (progresso curso/trilha so conta o modulo da pagina atual e a "minha jornada" nao mostra o curso inteiro); `topics` divergindo do DOM (% errado); manifesto so em algumas paginas |
 
+### Erros Criticos didaticos (v2) — #29 a #31
+
+Estes 3 erros sao a orientacao de **aprendizagem visual + base de fundamentos** (ver secao "Aprendizagem visual e didatica"). Os #1-#28 acima continuam valendo intactos.
+
+| # | Regra | Correto | Errado |
+|---|-------|---------|--------|
+| 29 | **Visual-first — ilustrar cada conceito-chave (uso ILIMITADO de SVG/inemaimg/hyperframe)** | O minimo do #17 e PISO: em modulo profundo, CADA conceito/secao que introduz ideia nova ganha apoio visual (SVG inline, PNG inemaimg, ou hyperframe animado), sem limite de quantidade. Toda ilustracao tem legenda/`alt` que ENSINA (diz o que olhar e o que significa). Aluno visual entende o modulo pelos pares visual+legenda. Hyperframe = clipe HTML->MP4 (`<video muted loop playsinline>`) ou animacao SVG/CSS inline, sob `prefers-reduced-motion`. | Um unico SVG no modulo inteiro tratado como teto; imagens decorativas-mudas sem legenda; blocos longos de texto sem apoio visual do conceito; video sem `prefers-reduced-motion` |
+| 30 | **Exemplos praticos copy-run em cada modulo pratico (prompt/codigo pronto)** | ≥1 exemplo copia-e-cola REAL que o aluno roda (prompt pronto pro Claude Code, comando, codigo) em code box, com objetivo + bloco copiavel + como verificar. Partes variaveis marcadas (`<isto voce troca>`). | "Exemplo de prompt: voce poderia pedir..." (descrito, nao colavel); code box sem o que rodar nem como verificar; modulo pratico so com teoria |
+| 31 | **Fundamento define os termos inline (base de verdade)** | Modulo/topico de fundamento esclarece CADA termo tecnico na 1a vez que aparece, ali na explicacao, estilo "Novo aqui?": frase curta e concreta + glossario-inline (aside/tip "O que e X?") pra nao quebrar a leitura. Sem jargao orfao. | Usar "ReAct", "harness", "tool-calling", "ground truth" etc. sem definir; assumir que o aluno ja sabe; jogar a definicao so num glossario no fim |
+
 ---
 
 ## Cores por Trilha
@@ -165,6 +201,7 @@ Estes 11 erros sao especificos da camada nova. Os #1-#17 acima continuam valendo
 Cores especiais:
 - **Primary (Yellow):** `#FACC15` / `text-primary` — Logo, CTAs, dicas (light mode: `#a16207`)
 - **Sky:** `text-sky-400` — Link INEMA.CLUB (light mode: `#0369a1`)
+- **PRO:** `text-amber-700 dark:text-slate-300` — Link PRO ao lado do INEMA.CLUB, linkando `https://inema.pro` (dourado no light, prateado no dark)
 - **Red:** `text-red-400` — "Nao fazer", erros, alertas
 - **Ciano (diagramas):** `#38bdf8` — cor SECUNDARIA dos SVGs futuristas (agentes, ramo paralelo, fluxo de volta). A cor PRIMARIA do diagrama e sempre a cor da trilha. Ver `references/SVG-FUTURISTA.md`.
 
@@ -203,6 +240,7 @@ Antes de entregar qualquer pagina, confirmar:
 2. Numeros em circulo (nao setas)
 3. 3 secoes por topico (O que e / Por que / Conceitos-chave)
 4. INEMA.CLUB presente (`text-sky-400`)
+4b. PRO presente ao lado do INEMA.CLUB, linkando `https://inema.pro` (dourado no light / prateado no dark)
 5. Light mode CSS completo (base + cores acento + sem gradiente + especiais + nav)
 6. Titulo do modulo com `text-2xl`
 7. Cores corretas da trilha
@@ -210,7 +248,7 @@ Antes de entregar qualquer pagina, confirmar:
 9. Botao "Ver Completo" em CADA card de modulo no index da trilha
 10. MINIMO 6 topicos por modulo — nunca menos de 6
 11. **MAPA DA TRILHA OBRIGATORIO** no index da trilha — h2 `Mapa da trilha` (NAO "Navegacao Rapida") + grid de cards. Cards com `justify-between` (X.Y esq + duracao dir), emoji no titulo, subtitulo PUNCHY. SEM circulo numerado adicional.
-12. **NAV COMPLETO** em TODAS paginas: Logo + INEMA.CLUB + 4-6 botoes de trilha + theme toggle. Nunca simplificar.
+12. **NAV COMPLETO** em TODAS paginas: Logo + INEMA.CLUB + PRO + 4-6 botoes de trilha + theme toggle. Nunca simplificar.
 13. **PROFUNDIDADE**: 500-800 linhas por modulo com VARIEDADE de componentes — nao template repetido 6x.
 14. **BORDAS SUAVIZADAS no dark**: 2 regras CSS (`border-dark-600` E `divide-dark-600 > :not...`) ambas com `#374151`.
 15. **"Conteudo detalhado"**: h2 simples, NAO divisor ornado de 2 linhas com span.
@@ -229,3 +267,9 @@ Antes de entregar qualquer pagina, confirmar:
 25. **ARIA NOS ACCORDIONS**: `<button aria-expanded aria-controls>` + `id` no painel; estado ARIA acompanha aberto/fechado (mantendo `toggleTopic(this)`).
 26. **MODOS EFEMERO/ORFA**: probe de storage no boot → modo efemero + aviso nao-bloqueante se indisponivel (curso segue legivel); nota sem ancora vira orfa (texto preservado, listada na jornada) e nao derruba as outras.
 27. **MANIFESTO DO CURSO EM TODAS AS PAGINAS**: `<script type="application/json" data-inema-manifest>` com a estrutura completa (tracks/modules/topics/href) no `<head>` de TODA pagina; `topics` bate com os `data-inema-topic` reais de cada modulo. Sem ele, progresso curso/trilha so conta o modulo da pagina atual e a "minha jornada" nao mostra o curso inteiro.
+
+### Aprendizagem visual e didatica (v2) — itens novos #29-#31
+
+28. **VISUAL-FIRST**: cada conceito-chave do modulo tem apoio visual (SVG inline / inemaimg / hyperframe), uso ILIMITADO — o ≥1 SVG do #17 e piso, nao teto. Toda ilustracao com legenda/`alt` que ensina. Hyperframe (clipe HTML->MP4 ou animacao SVG/CSS inline) sob `prefers-reduced-motion`. Aluno visual entende o modulo so pelos pares visual+legenda.
+29. **EXEMPLOS COPY-RUN**: cada modulo pratico tem ≥1 exemplo colavel que roda de verdade (prompt/comando/codigo) com objetivo + bloco + como verificar; partes variaveis marcadas (`<isto voce troca>`).
+30. **FUNDAMENTO DEFINE OS TERMOS**: em modulo de fundamento, todo termo tecnico e definido inline na 1a aparicao (estilo "Novo aqui?", com glossario-inline), sem jargao orfao.
