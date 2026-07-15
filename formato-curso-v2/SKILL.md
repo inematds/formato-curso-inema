@@ -273,3 +273,16 @@ Antes de entregar qualquer pagina, confirmar:
 28. **VISUAL-FIRST**: cada conceito-chave do modulo tem apoio visual (SVG inline / inemaimg / hyperframe), uso ILIMITADO — o ≥1 SVG do #17 e piso, nao teto. Toda ilustracao com legenda/`alt` que ensina. Hyperframe (clipe HTML->MP4 ou animacao SVG/CSS inline) sob `prefers-reduced-motion`. Aluno visual entende o modulo so pelos pares visual+legenda.
 29. **EXEMPLOS COPY-RUN**: cada modulo pratico tem ≥1 exemplo colavel que roda de verdade (prompt/comando/codigo) com objetivo + bloco + como verificar; partes variaveis marcadas (`<isto voce troca>`).
 30. **FUNDAMENTO DEFINE OS TERMOS**: em modulo de fundamento, todo termo tecnico e definido inline na 1a aparicao (estilo "Novo aqui?", com glossario-inline), sem jargao orfao.
+
+## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+
+Ao terminar de montar o curso, gere a capa 1280×720 chamando a engine da skill `capa-inema`:
+
+```bash
+node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
+  --title "<título do curso>" --cat "<categoria>"
+```
+
+- **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
+- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png`.
+- Detalhes, opções e uso em lote: skill `capa-inema`.

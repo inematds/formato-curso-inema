@@ -111,3 +111,16 @@ Reflexão por seção · recap de fim de aula · botão copiar nos blocos · map
 
 ## Checklist de aceitação
 1. Cold-open cabe em ~1 tela. 2. Corpo lê calmo (≤60ch, serifa). 3. Trilho troca a fig certa por seção + mapa nomeado. 4. Progresso instantâneo na trilha (página única). 5. Teste-se com feedback elaborado. 6. Grifo → editor de cartão → revisão espaçada. 7. Pratique-agora verificável por aula. 8. Reflexão por seção salva. 9. Recap dispara revisão da aula. 10. Prefs de leitura (Aa), glossário, onboarding, mapa, atalhos, a11y (foco+aria-live) ligados. 11. Contraste AAA nos 3 temas. 12. Offline em `file://`, estado por `<meta name="curso">`.
+
+## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+
+Ao terminar de montar o curso, gere a capa 1280×720 chamando a engine da skill `capa-inema`:
+
+```bash
+node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
+  --title "<título do curso>" --cat "<categoria>"
+```
+
+- **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
+- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png`.
+- Detalhes, opções e uso em lote: skill `capa-inema`.

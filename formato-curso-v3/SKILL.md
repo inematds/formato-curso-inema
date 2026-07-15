@@ -163,3 +163,16 @@ Dashboard de XP / streak / ranking · mascote / confete / badges · cards colori
 ```
 
 Toda pagina precisa, no `<head>`: anti-FOUC PRIMEIRO, depois fontes, depois `learn.css`; `<meta name="inema-course">` + `data-inema-manifest`. No fim: `learn.js` + `INEMA.init()`.
+
+## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+
+Ao terminar de montar o curso, gere a capa 1280×720 chamando a engine da skill `capa-inema`:
+
+```bash
+node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
+  --title "<título do curso>" --cat "<categoria>"
+```
+
+- **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
+- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png`.
+- Detalhes, opções e uso em lote: skill `capa-inema`.

@@ -173,3 +173,16 @@ Antes de entregar qualquer pagina, confirmar:
 14. **BORDAS SUAVIZADAS no dark**: 2 regras CSS (`border-dark-600` E `divide-dark-600 > :not...`) ambas com `#374151`.
 15. **"Conteudo detalhado"**: h2 simples, NAO divisor ornado de 2 linhas com span.
 16. **SVG FUTURISTA**: ≥1 diagrama SVG por modulo de conteudo + 1 hero SVG no index da trilha (cor da trilha + ciano, glow, `role="img"`+`aria-label`, `w-full h-auto`, animacao sob `prefers-reduced-motion`). Ver `references/SVG-FUTURISTA.md`.
+
+## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+
+Ao terminar de montar o curso, gere a capa 1280×720 chamando a engine da skill `capa-inema`:
+
+```bash
+node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
+  --title "<título do curso>" --cat "<categoria>"
+```
+
+- **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
+- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png`.
+- Detalhes, opções e uso em lote: skill `capa-inema`.

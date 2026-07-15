@@ -134,3 +134,16 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 5. So o que existe no projeto e descrito (sem features inventadas).
 6. `guia/index.html` + `guia/assets/`; **deploy via GitHub Actions** (`.github/workflows/pages.yml` + `build_type=workflow`) — NAO legacy. `.nojekyll` na raiz por garantia. Nenhum `{{PLACEHOLDER}}` solto no HTML.
 7. Pages no ar (HTTP 200, run do Actions verde) e repo publico (com consentimento + sem segredos).
+
+## Capa oficial — SEMPRE gerar (via skill `capa-inema`)
+
+Ao terminar de montar o guia, gere a capa 1280×720 do projeto chamando a engine da skill `capa-inema`:
+
+```bash
+node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
+  --title "<título do projeto>" --cat "<categoria>"
+```
+
+- **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
+- Requer o **inemaimg** no ar (`localhost:8000`). A capa é gravada em `<repo>/capa/capa.png` (ao lado da pasta `guia/`, na raiz do repo).
+- Detalhes, opções e uso em lote: skill `capa-inema`.
