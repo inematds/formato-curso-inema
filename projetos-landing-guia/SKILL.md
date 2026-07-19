@@ -33,8 +33,27 @@ O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e 
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
 4. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
 5. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
-6. **Publique no GitHub Pages** (veja "Publicar" abaixo).
-7. **Verifique** que ficou no ar e que o nav tem o link INEMA.CLUB.
+6. **Referencie o guia no README** (veja "Referencia no README" abaixo) — obrigatorio.
+7. **Publique no GitHub Pages** (veja "Publicar" abaixo).
+8. **Verifique** que ficou no ar e que o nav tem o link INEMA.CLUB.
+
+## Referencia no README (obrigatorio)
+
+Sempre que gerar `guia/index.html`, adicione (ou atualize) no **`README.md`** do
+proprio projeto um link para o guia publicado. Assim quem chega pelo repo acha a
+pagina de uso.
+
+- Se ja existir um `README.md`, insira uma linha/secao proxima ao topo apontando
+  para a URL do Pages: `https://inematds.github.io/<nome-da-pasta>/guia/`.
+  Nao duplique se ja houver o link; atualize a URL se estiver diferente.
+- Se **nao** existir README, crie um minimo com titulo do projeto + a linha do guia.
+- Formato sugerido:
+
+  ```markdown
+  ## 📖 Guia de uso
+
+  Guia completo (landing + passo a passo): **https://inematds.github.io/<nome-da-pasta>/guia/**
+  ```
 
 ## Invariantes de design (nao quebrar)
 
@@ -134,6 +153,7 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 5. So o que existe no projeto e descrito (sem features inventadas).
 6. `guia/index.html` + `guia/assets/`; **deploy via GitHub Actions** (`.github/workflows/pages.yml` + `build_type=workflow`) — NAO legacy. `.nojekyll` na raiz por garantia. Nenhum `{{PLACEHOLDER}}` solto no HTML.
 7. Pages no ar (HTTP 200, run do Actions verde) e repo publico (com consentimento + sem segredos).
+8. **README do projeto tem link para o guia** (`https://inematds.github.io/<nome-da-pasta>/guia/`).
 
 ## Capa oficial + imagem hero — SEMPRE gerar (via skill `capa-inema`)
 
