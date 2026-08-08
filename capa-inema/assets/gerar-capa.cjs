@@ -44,23 +44,23 @@ function parseArgs(argv) {
 
 // ── cena visual por categoria (assunto pro flux, SEM texto) ─────────────────
 const CENA = {
-  'design':     'concept art, diverse stylized characters and design boards, illustration studio',
-  'vídeo':      'cinematic film set, movie camera on a dolly, director monitor, dramatic volumetric light',
-  'video':      'cinematic film set, movie camera on a dolly, director monitor, dramatic volumetric light',
-  'marketing':  'dynamic viral marketing energy, bold abstract shapes bursting, advertising motion',
-  'agentes':    'futuristic operations room of AI agents, holographic dashboards, network of glowing nodes',
-  'ia':         'abstract artificial intelligence core, glowing neural network, data streams, sci-fi',
-  'conteúdo':   'short-form video content creation, phone screens, bold social media energy',
-  'conteudo':   'short-form video content creation, phone screens, bold social media energy',
-  'produtividade':'clean futuristic workspace, holographic task boards, focused flow, soft light',
-  'negócios':   'modern business strategy, abstract growth arrows, city skyline at dusk',
-  'negocios':   'modern business strategy, abstract growth arrows, city skyline at dusk',
-  'código':     'abstract software architecture, glowing code streams, terminals, dark tech',
-  'codigo':     'abstract software architecture, glowing code streams, terminals, dark tech',
+  'design':     'concept art, diverse stylized characters and colorful design boards, sunlit illustration studio',
+  'vídeo':      'bright cinematic film set, movie camera on a dolly, director monitor, radiant golden studio light',
+  'video':      'bright cinematic film set, movie camera on a dolly, director monitor, radiant golden studio light',
+  'marketing':  'dynamic viral marketing energy, bold colorful shapes bursting outward, celebratory advertising motion',
+  'agentes':    'bright futuristic operations room of AI agents, luminous holographic dashboards, glowing network of nodes',
+  'ia':         'radiant artificial intelligence core, glowing neural network blooming with light, flowing data streams, optimistic sci-fi',
+  'conteúdo':   'short-form video content creation, colorful phone screens, vibrant upbeat social media energy',
+  'conteudo':   'short-form video content creation, colorful phone screens, vibrant upbeat social media energy',
+  'produtividade':'clean futuristic workspace bathed in morning light, holographic task boards, effortless focused flow',
+  'negócios':   'modern business strategy, soaring growth arrows, sunrise over a bright city skyline',
+  'negocios':   'modern business strategy, soaring growth arrows, sunrise over a bright city skyline',
+  'código':     'abstract software architecture, luminous code streams, glowing terminals, bright optimistic tech',
+  'codigo':     'abstract software architecture, luminous code streams, glowing terminals, bright optimistic tech',
 };
 function cenaFor(cat, title) {
   const key = String(cat || '').trim().toLowerCase();
-  return CENA[key] || `abstract premium illustration about "${title}", thematic, editorial`;
+  return CENA[key] || `bright uplifting premium illustration about "${title}", thematic, editorial, full of light`;
 }
 
 // ── resolver título/categoria ────────────────────────────────────────────────
@@ -93,10 +93,14 @@ function seedFrom(s){ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0)
 function splitTitle(t){ const p=String(t).split(/\s+—\s+|\s+–\s+|\s+-\s+/); return p.length>=2?{main:p[0].trim(),sub:p.slice(1).join(' — ').trim()}:{main:String(t).trim(),sub:''}; }
 
 async function gerarImagem(cena, seed, w, h) {
-  const prompt = `${cena}. Cinematic dark premium, moody amber and teal cinematic lighting, `
-    + `depth of field, high detail, atmospheric. NO TEXT, no words, no letters, no watermark, no logo.`;
+  const prompt = `${cena}. Bright, vibrant and uplifting: warm golden amber key light with fresh cyan `
+    + `accents, luminous glow, high-key optimistic mood, rich saturated colors, crisp high contrast, `
+    + `energetic and inspiring, clean premium finish, high detail, sharp focus. `
+    + `NO TEXT, no words, no letters, no watermark, no logo.`;
   const body = { model:'flux2-klein', prompt, width:w, height:h, seed,
-    negative_prompt:'text, words, letters, typography, caption, watermark, logo, signature, frame, border, ui' };
+    negative_prompt:'text, words, letters, typography, caption, watermark, logo, signature, frame, border, ui, '
+      + 'dark, gloomy, murky, washed out, desaturated, dull, faded, muddy colors, low contrast, '
+      + 'grim, depressing, heavy shadows, underexposed, grainy, hazy' };
   const r = await fetch(IMG_API, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body) });
   if (!r.ok) throw new Error(`inemaimg ${r.status}: ${(await r.text()).slice(0,180)}`);
   return (await r.json()).image; // base64 PNG
