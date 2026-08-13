@@ -107,7 +107,11 @@ async function gerarImagem(cena, seed, w, h) {
   // fundo claro, humor ou paleta. A imagem é só o CONTEXTO do projeto — o modelo escolhe
   // o resto. A única restrição que fica é a técnica: sem texto e sem virar screenshot,
   // porque a camada de texto INEMA entra por cima depois.
-  const prompt = `${cena}. `
+  // A ÚNICA licença artística permitida é ÓPTICA, não de estilo: lente clara e foco raso.
+  // Dá profundidade e destaca o sujeito (a capa é vista pequena, num card ao lado do texto)
+  // sem ditar luz, cor nem humor. Não acrescente nada além disto aqui.
+  const prompt = `${cena}, shot with a fast prime lens, shallow depth of field, `
+    + `the subject sharp in focus and the background softly out of focus. `
     + `NO TEXT of any kind: no words, no letters, no captions, no watermark, no logo, `
     + `no user interface, not a screenshot.`;
   const body = { model:'flux2-klein', prompt, width:w, height:h, seed };
