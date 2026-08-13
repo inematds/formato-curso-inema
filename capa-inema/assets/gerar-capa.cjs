@@ -43,24 +43,29 @@ function parseArgs(argv) {
 }
 
 // ── cena visual por categoria (assunto pro flux, SEM texto) ─────────────────
+// Só o ASSUNTO. Nada de luz, humor, paleta ou acabamento — a imagem é uma imagem normal
+// do contexto (decidido em 2026-08-13). Adjetivos como "bright", "radiant golden light",
+// "luminous", "optimistic" já moraram aqui e eram a razão de toda capa sair âmbar mesmo
+// depois de o sufixo de estilo ser removido. Não recoloque: se quiser mudar o resultado,
+// mude o ASSUNTO, não a iluminação.
 const CENA = {
-  'design':     'concept art, diverse stylized characters and colorful design boards, sunlit illustration studio',
-  'vídeo':      'bright cinematic film set, movie camera on a dolly, director monitor, radiant golden studio light',
-  'video':      'bright cinematic film set, movie camera on a dolly, director monitor, radiant golden studio light',
-  'marketing':  'dynamic viral marketing energy, bold colorful shapes bursting outward, celebratory advertising motion',
-  'agentes':    'bright futuristic operations room of AI agents, luminous holographic dashboards, glowing network of nodes',
-  'ia':         'radiant artificial intelligence core, glowing neural network blooming with light, flowing data streams, optimistic sci-fi',
-  'conteúdo':   'short-form video content creation, colorful phone screens, vibrant upbeat social media energy',
-  'conteudo':   'short-form video content creation, colorful phone screens, vibrant upbeat social media energy',
-  'produtividade':'clean futuristic workspace bathed in morning light, holographic task boards, effortless focused flow',
-  'negócios':   'modern business strategy, soaring growth arrows, sunrise over a bright city skyline',
-  'negocios':   'modern business strategy, soaring growth arrows, sunrise over a bright city skyline',
-  'código':     'abstract software architecture, luminous code streams, glowing terminals, bright optimistic tech',
-  'codigo':     'abstract software architecture, luminous code streams, glowing terminals, bright optimistic tech',
+  'design':     'concept art characters and design boards in an illustration studio',
+  'vídeo':      'a film set with a movie camera on a dolly and a director monitor',
+  'video':      'a film set with a movie camera on a dolly and a director monitor',
+  'marketing':  'advertising campaign materials and audience reach spreading outward',
+  'agentes':    'an operations room of AI agents with dashboards and a network of nodes',
+  'ia':         'an artificial intelligence core with a neural network and data streams',
+  'conteúdo':   'short-form video content creation on phone screens',
+  'conteudo':   'short-form video content creation on phone screens',
+  'produtividade':'a workspace with task boards and an organized workflow',
+  'negócios':   'business strategy with growth charts and a city skyline',
+  'negocios':   'business strategy with growth charts and a city skyline',
+  'código':     'software architecture with code on terminals and screens',
+  'codigo':     'software architecture with code on terminals and screens',
 };
 function cenaFor(cat, title) {
   const key = String(cat || '').trim().toLowerCase();
-  return CENA[key] || `bright uplifting premium illustration about "${title}", thematic, editorial, full of light`;
+  return CENA[key] || `an image about "${title}"`;
 }
 
 // ── resolver título/categoria ────────────────────────────────────────────────
