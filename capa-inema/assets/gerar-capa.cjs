@@ -93,14 +93,18 @@ function seedFrom(s){ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0)
 function splitTitle(t){ const p=String(t).split(/\s+—\s+|\s+–\s+|\s+-\s+/); return p.length>=2?{main:p[0].trim(),sub:p.slice(1).join(' — ').trim()}:{main:String(t).trim(),sub:''}; }
 
 async function gerarImagem(cena, seed, w, h) {
-  const prompt = `${cena}. Bright, vibrant and uplifting: warm golden amber key light with fresh cyan `
-    + `accents, luminous glow, high-key optimistic mood, rich saturated colors, crisp high contrast, `
-    + `energetic and inspiring, clean premium finish, high detail, sharp focus. `
+  const prompt = `${cena}. Premium editorial illustration for a marketing cover: confident and inviting `
+    + `and positive mood on a light airy background, even mid-key daylight with a warm amber key and `
+    + `subtle cyan rim accents, well exposed with no blown-out whites and no heavy shadows, colorful but `
+    + `natural, one clear focal subject, clean uncluttered `
+    + `composition with breathing room, tasteful depth of field, refined finish, high detail, sharp focus. `
     + `NO TEXT, no words, no letters, no watermark, no logo.`;
   const body = { model:'flux2-klein', prompt, width:w, height:h, seed,
     negative_prompt:'text, words, letters, typography, caption, watermark, logo, signature, frame, border, ui, '
-      + 'dark, gloomy, murky, washed out, desaturated, dull, faded, muddy colors, low contrast, '
-      + 'grim, depressing, heavy shadows, underexposed, grainy, hazy' };
+      + 'overexposed, blown-out highlights, harsh glare, excessive bloom, neon overload, oversaturated, '
+      + 'washed out, desaturated, dull, faded, muddy colors, low contrast, dark, dark background, '
+      + 'black background, night, dim, moody, gloomy, murky, grim, sad, underexposed, cluttered, '
+      + 'chaotic, busy background, grainy, hazy' };
   const r = await fetch(IMG_API, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body) });
   if (!r.ok) throw new Error(`inemaimg ${r.status}: ${(await r.text()).slice(0,180)}`);
   return (await r.json()).image; // base64 PNG
