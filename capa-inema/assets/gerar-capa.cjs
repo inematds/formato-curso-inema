@@ -92,19 +92,21 @@ function resolveMeta(repo, args) {
 function seedFrom(s){ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0))>>>0; return h%2000000; }
 function splitTitle(t){ const p=String(t).split(/\s+—\s+|\s+–\s+|\s+-\s+/); return p.length>=2?{main:p[0].trim(),sub:p.slice(1).join(' — ').trim()}:{main:String(t).trim(),sub:''}; }
 
+// ATENÇÃO: o flux2-klein IGNORA `negative_prompt` — o pipeline FLUX.2 não suporta (ver
+// inemaimg/loaders/flux2_klein.py, que recebe o campo e não repassa). Mandar negative
+// aqui é no-op: verificado em 2026-08-13, a mesma seed com e sem negative gerou imagens
+// byte a byte idênticas. Por isso TODA restrição — sem texto, sem escuro/triste, sem
+// estouro — precisa estar no prompt POSITIVO abaixo.
 async function gerarImagem(cena, seed, w, h) {
-  const prompt = `${cena}. Premium editorial illustration for a marketing cover: confident and inviting `
-    + `and positive mood on a light airy background, even mid-key daylight with a warm amber key and `
+  const prompt = `${cena}. Premium editorial illustration for a marketing cover: confident and `
+    + `inviting mood on a light airy background, even mid-key daylight with a warm amber key and `
     + `subtle cyan rim accents, well exposed with no blown-out whites and no heavy shadows, colorful but `
     + `natural, one clear focal subject, clean uncluttered `
     + `composition with breathing room, tasteful depth of field, refined finish, high detail, sharp focus. `
-    + `NO TEXT, no words, no letters, no watermark, no logo.`;
-  const body = { model:'flux2-klein', prompt, width:w, height:h, seed,
-    negative_prompt:'text, words, letters, typography, caption, watermark, logo, signature, frame, border, ui, '
-      + 'overexposed, blown-out highlights, harsh glare, excessive bloom, neon overload, oversaturated, '
-      + 'washed out, desaturated, dull, faded, muddy colors, low contrast, dark, dark background, '
-      + 'black background, night, dim, moody, gloomy, murky, grim, sad, underexposed, cluttered, '
-      + 'chaotic, busy background, grainy, hazy' };
+    + `Never dark, never gloomy, never sad. `
+    + `NO TEXT of any kind: no words, no letters, no captions, no watermark, no logo, `
+    + `no user interface, not a screenshot.`;
+  const body = { model:'flux2-klein', prompt, width:w, height:h, seed };
   const r = await fetch(IMG_API, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body) });
   if (!r.ok) throw new Error(`inemaimg ${r.status}: ${(await r.text()).slice(0,180)}`);
   return (await r.json()).image; // base64 PNG
