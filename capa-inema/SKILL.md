@@ -1,7 +1,10 @@
 ---
 name: capa-inema
+disable-model-invocation: true
 description: >-
-  Gera a capa oficial INEMA (1280x720) de um repo de curso ou projeto — imagem gerada por IA (flux2-klein via inemaimg) + faixa de título/marca INEMA por cima, gravada em `capa/capa.png`. Use SEMPRE que precisar criar, gerar, refazer ou padronizar a CAPA/thumbnail/cover de um curso ou projeto INEMA — quando o usuário disser "gera a capa", "cria a capa desse curso", "faz a thumbnail", "capa do projeto", "capa split", "capa fb", ou ao criar/publicar um curso (formato-curso v1–v5) ou uma página de guia (projetos-landing-guia), que devem SEMPRE produzir a capa via esta skill. Dois layouts: split (texto à esquerda + imagem à direita, DEFAULT) e fb (full-bleed, imagem preenchendo o quadro + título por cima). Acione também para rodar capas em lote em vários repos.
+  Gera a capa oficial INEMA (1280x720) de um repo de curso ou projeto — imagem por IA + faixa de
+  título/marca — em `capa/capa.png`. Layouts split (default) e fb. Todo curso ou página de guia
+  novo deve produzir a capa por aqui. Também roda em lote em vários repos.
 ---
 
 # capa-inema
