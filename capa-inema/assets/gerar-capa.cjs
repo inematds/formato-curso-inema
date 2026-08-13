@@ -98,12 +98,11 @@ function splitTitle(t){ const p=String(t).split(/\s+—\s+|\s+–\s+|\s+-\s+/); 
 // byte a byte idênticas. Por isso TODA restrição — sem texto, sem escuro/triste, sem
 // estouro — precisa estar no prompt POSITIVO abaixo.
 async function gerarImagem(cena, seed, w, h) {
-  const prompt = `${cena}. Premium editorial illustration for a marketing cover: confident and `
-    + `inviting mood on a light airy background, even mid-key daylight with a warm amber key and `
-    + `subtle cyan rim accents, well exposed with no blown-out whites and no heavy shadows, colorful but `
-    + `natural, one clear focal subject, clean uncluttered `
-    + `composition with breathing room, tasteful depth of field, refined finish, high detail, sharp focus. `
-    + `Never dark, never gloomy, never sad. `
+  // SEM direção de estilo (decidido em 2026-08-13): nada de "editorial premium", luz,
+  // fundo claro, humor ou paleta. A imagem é só o CONTEXTO do projeto — o modelo escolhe
+  // o resto. A única restrição que fica é a técnica: sem texto e sem virar screenshot,
+  // porque a camada de texto INEMA entra por cima depois.
+  const prompt = `${cena}. `
     + `NO TEXT of any kind: no words, no letters, no captions, no watermark, no logo, `
     + `no user interface, not a screenshot.`;
   const body = { model:'flux2-klein', prompt, width:w, height:h, seed };

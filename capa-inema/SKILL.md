@@ -71,10 +71,16 @@ título/categoria pelo `catalog.json`. Lembre: cada repo é um git separado sob 
 1280×720 · dark premium · acento âmbar `#f5a623` · fonte Montserrat · marca `INEMA.CLUB`
 + chip da categoria · imagem gerada SEM texto (o texto é a camada por cima).
 
-**A imagem é SEMPRE luminosa e alto astral** — clara, colorida, saturada, contraste alto,
-luz âmbar dourada com acentos ciano, clima otimista e energético. **Nunca dark/moody/
-atmosférico/apagado na imagem** (o dark premium é só a moldura e a camada de texto). Se
-uma capa sair apagada, o problema é a cena — descreva-a com luz e cor, não com sombra.
+**A imagem NÃO leva direção de estilo** (decidido em 2026-08-13). O prompt manda só a
+**cena** — o contexto do projeto — e o modelo decide luz, paleta, fundo e acabamento.
+Não acrescente "editorial premium", "luminoso", "fundo claro", "alto astral" nem
+qualquer adjetivo de humor/iluminação: é uma imagem normal do assunto. A única
+restrição que fica no prompt é técnica — **sem texto e sem virar screenshot** — porque a
+camada de texto INEMA entra por cima depois. Quer mudar o resultado? Mude a cena.
+
+O `negative_prompt` **não existe** neste caminho: o flux2-klein ignora (o pipeline FLUX.2
+não suporta — verificado com a mesma seed, imagens byte a byte idênticas com e sem). Toda
+restrição precisa estar no prompt positivo.
 
 A imagem é
 gerada na proporção certa do layout (4:3 pro card do split, 16:9 pro fb) e exibida com

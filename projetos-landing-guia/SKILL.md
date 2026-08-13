@@ -157,6 +157,9 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 
 ## Capa oficial + imagem hero — SEMPRE gerar (via skill `capa-inema`)
 
+**Invoque direto, não por linguagem natural** — rode o comando abaixo (ou
+`Skill(skill="capa-inema", args="<repo>")`), sem descrever o pedido em prosa.
+
 Rode isto **antes** de escrever `guia/index.html`, pra já ter a imagem pronta pro
 `<figure>` da hero (linha `assets/hero.png` do template) — o template reserva um
 retângulo arredondado à direita da hero exatamente pra essa imagem, então não invente
