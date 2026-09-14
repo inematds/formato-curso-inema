@@ -1,12 +1,9 @@
 ---
 name: projetos-landing-guia
 description: >-
-  Cria uma pagina unica (self-contained, publicada na pasta guia/) de LANDING + GUIA DE USO para um projeto, pronta pra GitHub Pages,
-  no padrao visual INEMA (dark premium ambar, nav com logo + INEMA.CLUB em sky + theme toggle, secoes hero/o-que-e/como-funciona/pre-requisitos/guia-passo-a-passo/exemplos/roadmap/footer).
-  Use SEMPRE que o usuario pedir "pagina do projeto", "landing", "landing page", "guia de uso", "pagina de uso", "como usar este projeto",
-  "site do projeto", "pagina de documentacao", "github pages", "gh pages", "pagina explicando o projeto", "readme em pagina",
-  ou quiser publicar uma pagina/site explicando ou ensinando a usar um projeto/ferramenta/repo. Acione tambem quando o usuario
-  mencionar GitHub Pages para um repo, mesmo sem dizer "landing". Cobre tanto gerar o HTML quanto publicar no GitHub Pages.
+  Pagina unica de LANDING + GUIA DE USO de um projeto, self-contained em guia/index.html, padrao
+  INEMA dark ambar, pronta pra GitHub Pages. Gatilho: "pagina/landing/site/guia de uso do projeto",
+  ou GitHub Pages para um repo.
 ---
 
 # projetos-landing-guia
@@ -31,11 +28,12 @@ O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e 
 1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
 2. **Copie o template.** Use `assets/template.html` como base — ele ja traz todo o CSS, o nav INEMA, o theme toggle e a estrutura de secoes. **Nao reescreva o CSS.** Edite so o conteudo e os `{{PLACEHOLDERS}}`.
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
-4. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
-5. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
-6. **Referencie o guia no README** (veja "Referencia no README" abaixo) — obrigatorio.
-7. **Publique no GitHub Pages** (veja "Publicar" abaixo).
-8. **Verifique** que ficou no ar e que o nav tem o link INEMA.CLUB.
+4. **Banner hero (padrao desde 2026-09-14).** Gere o banner promocional com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo) — ele vai no `<figure>` da hero E no topo do README. Se falhar, o `<figure>` usa `assets/hero.png` (flux, da capa).
+5. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
+6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
+7. **Referencie o guia no README** (veja "Referencia no README" abaixo) — obrigatorio.
+8. **Publique no GitHub Pages** (veja "Publicar" abaixo).
+9. **Verifique** que ficou no ar e que o nav tem o link INEMA.CLUB.
 
 ## Referencia no README (obrigatorio)
 
@@ -47,6 +45,9 @@ pagina de uso.
   para a URL do Pages: `https://inematds.github.io/<nome-da-pasta>/guia/`.
   Nao duplique se ja houver o link; atualize a URL se estiver diferente.
 - Se **nao** existir README, crie um minimo com titulo do projeto + a linha do guia.
+- **Banner no topo do README (padrao):** se `guia/assets/banner.jpg` existe, a primeira
+  linha depois do `# titulo` e o banner clicavel apontando pro guia:
+  `[![<titulo>](guia/assets/banner.jpg)](https://inematds.github.io/<nome-da-pasta>/guia/)`.
 - Formato sugerido:
 
   ```markdown
@@ -160,10 +161,10 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 **Invoque direto, não por linguagem natural** — rode o comando abaixo (ou
 `Skill(skill="capa-inema", args="<repo>")`), sem descrever o pedido em prosa.
 
-Rode isto **antes** de escrever `guia/index.html`, pra já ter a imagem pronta pro
-`<figure>` da hero (linha `assets/hero.png` do template) — o template reserva um
-retângulo arredondado à direita da hero exatamente pra essa imagem, então não invente
-SVG ilustrativo nem troque por bloco de código: gere a imagem de verdade.
+Rode isto **antes** de escrever `guia/index.html`. A capa continua obrigatoria (o portal e
+o PRO leem `capa/capa.png`). O `hero.png` que sai junto e o **fallback** da hero: desde
+2026-09-14 a hero usa o **banner promocional** (secao seguinte); so use `hero.png` no
+`<figure>` se o banner falhar. Nunca invente SVG ilustrativo nem troque por bloco de codigo.
 
 ```bash
 node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
@@ -180,3 +181,36 @@ uma segunda chamada ao gerador):
 - **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
 - Requer o **inemaimg** no ar (`localhost:8000`).
 - Detalhes, opções e uso em lote: skill `capa-inema`.
+
+## Banner hero + README — padrao desde 2026-09-14 (via Codex CLI)
+
+A hero do guia e o topo do README usam um **banner promocional 16:9 no estilo INEMA.PRO**
+(fundo preto-azulado, tipografia 3D dourada + ciano, tiles com icones neon, faixa
+`INEMA.CLUB · inematds.github.io/<repo>`). E gerado pelo **Codex CLI** (`codex exec` +
+`image_gen`), porque ele escreve texto em portugues corretamente — o flux2-klein nao, por
+isso a capa continua sem texto. **A capa do catalogo NAO muda** (segue `capa-inema`).
+
+Rode **depois** da capa e **antes** de escrever o `guia/index.html`:
+
+```bash
+bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
+  --repo <pasta-do-repo> \
+  --title "<TITULO CURTO EM CAIXA ALTA>" \
+  --sub "<SUBTITULO / PROMESSA>" \
+  --line "<uma frase de apoio>" \
+  --tiles "<4 a 6 legendas separadas por virgula, tiradas das secoes do guia>" \
+  [--sides "<o que vai a esquerda | a direita | no centro>"]
+```
+
+- Saida: `<repo>/guia/assets/banner.jpg` (1400px, JPG leve). O template ja aponta
+  `<figure><img src="assets/banner.jpg">` na hero.
+- **README:** logo abaixo do `# titulo`, insira `[![<titulo>](guia/assets/banner.jpg)](<url do guia>)`.
+- **Confira a imagem** (Read no arquivo) antes de publicar: o Codex acerta o texto principal,
+  mas pode inventar frases decorativas pequenas nas bordas. Se algum texto principal saiu
+  errado, rode de novo ajustando `--title/--sub/--tiles`.
+- **Fallback:** o script sai com 1 e nao cria arquivo se o `codex` nao existir ou a geracao
+  falhar. Nesse caso troque o `<figure>` pra `assets/hero.png` (a imagem crua da capa) e nao
+  ponha banner no README.
+- **Custo:** uma geracao de imagem na conta OpenAI do Codex por chamada (autorizado pelo
+  usuario em 2026-09-14 como custo padrao por guia).
+- Exemplo real: `inematds/agente-claude-codex` (guia + README).
