@@ -47,7 +47,13 @@ Registre em `context/curriculo.md` do curso, com a promessa, o tipo e o gancho d
 Montar: `python3 ~/.claude/skills/formato-curso-v6/scripts/montar-curso.py <curso>` (gera a trilha sozinho).
 Auditar: `node ~/.claude/skills/formato-curso-v6/scripts/auditar-curso.cjs <curso>/curso.html`.
 Testar o motor: `node ~/.claude/skills/formato-curso-v6/scripts/testar-motor.cjs <curso>/curso.html`.
-Gerar cena: `python3 ~/.claude/skills/formato-curso-v6/scripts/gerar-cena.py <curso>/assets/img/aula-N.webp "<cena em inglês>" --seed N`.
+Gerar cena: `python3 ~/.claude/skills/formato-curso-v6/scripts/gerar-cena.py <curso>/assets/img/aula-N.webp "<cena>"`
+— **padrão = Codex image_gen (imagem 2.5 da conta OpenAI)**; sem crédito ou com erro, cai sozinho no inemaimg
+com o modelo padrão (flux2-klein). `--gerador flux --seed N` força o local. Olhe cada imagem antes de aceitar.
+Traduzir (EN/ES): `python3 ~/.claude/skills/formato-curso-v6/scripts/traduzir-curso.py <curso> en es` — depois de montar;
+gera `en/` e `es/` (GPT-5.4 nano via OpenRouter, cache em `i18n/`, custo em `i18n/usage.jsonl`) e o seletor de idioma.
+Sempre na ordem: montar → traduzir (a montagem reescreve o `curso.html` PT e apaga os links de idioma). Depois audite e
+teste também `en/curso.html` e `es/curso.html`. Glossário do curso: `i18n/glossario.json`.
 
 ## A aula (ordem fixa)
 
@@ -94,6 +100,11 @@ no teste-se a alternativa certa não é a mais longa. Leia também as regras 9�
 
 ## Publicação e capa
 
-Publicar = commit + push do repo do curso (GitHub Pages na raiz). Capa: skill `capa-inema`
-(`node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta> --title "<título>" --cat "<categoria>"`).
-Portal: skill `atualiza-portal`. Rodapé da landing com o backlink do inema.club (já no template).
+Publicar = commit + push do repo do curso (GitHub Pages na raiz). Capa: skill `capa-inema` usando a arte da trilha
+(já gerada pelo Codex, no estilo do curso): converta `assets/img/trilha.webp` para PNG e rode
+`node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta> --title "<Nome vN: título>" --cat "<categoria>" --raw-in trilha.png`.
+Sem `--raw-in` a capa inventa a própria cena (já saiu mão de robô — proibido no v6).
+**Versão no nome:** o curso mostra a versão (ex.: "OSWork v6") no `<title>`, na barra (`curso_curto`), no kicker da trilha,
+na landing e no rodapé das aulas — igual ao card do portal.
+Portal: skill `atualiza-portal` (e, para EN/ES, a seção "Versão traduzida" dela).
+Rodapé da landing com o backlink do inema.club (já no template).

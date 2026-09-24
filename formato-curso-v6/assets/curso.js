@@ -5,32 +5,37 @@
    telas simuladas com alternância vago × bom; textos do motor em L (traduzíveis). */
 (function(){
   "use strict";
+  /*L-INICIO — textos do motor; o traduzir-curso.py troca este bloco inteiro por idioma. {n} = número. */
   var L={
-    lido:'lido', concluida:'concluída ✓', andamento:'em andamento', comecar:'começar →',
-    continuar:'Continuar de onde parou', comecarCurso:'Começar pela aula 1', revisao:'Revisar',
-    revisarN:function(n){ return 'revisar '+n; },
-    aulasConcluidas:'aulas concluídas', faltam:'para terminar',
-    dica:'Dica: o botão <b>Aa</b> aumenta a letra. Seu progresso fica salvo sozinho neste navegador.', entendi:'entendi',
-    fechoTit:'Fechar a aula', fechoTxt:'Em uma frase: o que desta aula você vai usar primeiro no seu trabalho? (opcional, fica só com você)',
-    concluir:'concluir aula', concluidaTit:'Aula concluída.',
-    concluidaTxt:function(n){ return n? (n+' perguntas desta aula foram para o <b>revisar</b>. Elas voltam sozinhas nos próximos dias, na hora certa de lembrar.') : 'Seu progresso foi salvo.'; },
-    revisarAgora:'revisar agora', refazer:'refazer a prática',
-    mostrar:'mostrar resposta', deNovo:'errei', bom:'lembrei', facil:'fácil',
-    nadaRevisar:'Nada para revisar agora. As perguntas voltam sozinhas nos próximos dias.',
-    menu:'Menu', jornada:'Minha jornada', exercicios:'Práticas do curso', tema:'Tema', temas:{papel:'papel',escuro:'escuro',sepia:'sépia'},
-    tamanho:'Tamanho da letra', entrelinha:'Espaço entre linhas', restaurar:'restaurar padrão',
-    jProg:'Progresso', jCap:'O que você já consegue fazer', jCapVazio:'Ainda nenhuma aula concluída — tudo bem, uma de cada vez.',
-    jTempo:'Tempo', investido:'investido', restante:'restante', jGrifos:'Seus grifos', jSemGrifo:'Nenhum grifo ainda. Selecione um trecho do texto para grifar.',
-    jPend:function(n){ return n? ('sem pressa — '+n+' perguntas esperando por você') : 'nada esperando por você agora'; },
-    jFim:'Você concluiu a trilha inteira. O que estava no papel agora está no seu trabalho.',
-    exportar:'salvar meu progresso (.json)', importar:'trazer progresso salvo', zerar:'zerar tudo',
-    zerarQ:'Apagar todo o seu progresso deste curso?', arqInv:'Arquivo inválido.',
-    irAte:'ir até ela', resetar:'refazer', feito:'feita', pendente:'pendente',
-    grifar:'grifar', grifarCartao:'grifar + pergunta', novoCartao:'Nova pergunta de revisão', frente:'Pergunta', verso:'Resposta',
-    ceHint:'Escreva como <b>pergunta</b>: lembrar sozinho fixa mais do que reler.', salvar:'salvar', cancelar:'cancelar',
-    copiar:'copiar', copiado:'copiado ✓', certo:'Certo.', quase:'Quase.', aCerta:'A certa está marcada.',
-    exemplo:'Na prática', compare:'Toque para comparar os dois casos:'
+    "lido":"lido","concluida":"concluída ✓","andamento":"em andamento","comecar":"começar →",
+    "continuar":"Continuar de onde parou","comecarCurso":"Começar pela aula 1","revisao":"Revisar","aula":"Aula",
+    "revisarN":"revisar {n}","aulasConcluidas":"aulas concluídas","faltam":"para terminar","min":"min",
+    "dica":"Dica: o botão <b>Aa</b> aumenta a letra. Seu progresso fica salvo sozinho neste navegador.","entendi":"entendi",
+    "promessa":"Ao fim desta aula",
+    "fechoTit":"Fechar a aula","fechoTxt":"Em uma frase: o que desta aula você vai usar primeiro no seu trabalho? (opcional, fica só com você)",
+    "concluir":"concluir aula","concluidaTit":"Aula concluída.",
+    "concluidaTxt":"{n} perguntas desta aula foram para o <b>revisar</b>. Elas voltam sozinhas nos próximos dias, na hora certa de lembrar.","salvo":"Seu progresso foi salvo.",
+    "revisarAgora":"revisar agora","refazer":"refazer a prática",
+    "mostrar":"mostrar resposta","deNovo":"errei","bom":"lembrei","facil":"fácil",
+    "nadaRevisar":"Nada para revisar agora. As perguntas voltam sozinhas nos próximos dias.",
+    "menu":"Menu","jornada":"Minha jornada","exercicios":"Práticas do curso","tema":"Tema","idioma":"Idioma",
+    "temas":{"papel":"papel","escuro":"escuro","sepia":"sépia"},
+    "tamanho":"Tamanho da letra","entrelinha":"Espaço entre linhas","restaurar":"restaurar padrão","fechar":"fechar","menor":"menor","maior":"maior","menos":"menos","mais":"mais",
+    "jProg":"Progresso","jCap":"O que você já consegue fazer","jCapVazio":"Ainda nenhuma aula concluída — tudo bem, uma de cada vez.",
+    "jTempo":"Tempo","investido":"investido","restante":"restante","jGrifos":"Seus grifos","jSemGrifo":"Nenhum grifo ainda. Selecione um trecho do texto para grifar.",
+    "jPend":"sem pressa — {n} perguntas esperando por você","jPend0":"nada esperando por você agora",
+    "jFim":"Você concluiu a trilha inteira. O que estava no papel agora está no seu trabalho.",
+    "capRe":"^(ao fim desta aula,? )?você (consegue|tem) ",
+    "exportar":"salvar meu progresso (.json)","importar":"trazer progresso salvo","zerar":"zerar tudo",
+    "zerarQ":"Apagar todo o seu progresso deste curso?","arqInv":"Arquivo inválido.",
+    "irAte":"ir até ela","resetar":"refazer","feito":"feita","pendente":"pendente",
+    "grifar":"grifar","grifarCartao":"grifar + pergunta","novoCartao":"Nova pergunta de revisão","frente":"Pergunta","verso":"Resposta",
+    "ceHint":"Escreva como <b>pergunta</b>: lembrar sozinho fixa mais do que reler.","salvar":"salvar","cancelar":"cancelar",
+    "copiar":"copiar","copiado":"copiado ✓","certo":"Certo.","quase":"Quase.","aCerta":"A certa está marcada.",
+    "exemplo":"Na prática","compare":"Toque para comparar os dois casos:"
   };
+  /*L-FIM*/
+  function F(s,n){ return String(s).replace('{n}',n); }
   var CK=((document.querySelector('meta[name="curso"]')||{}).content)||'v6:curso';
   var today=Math.floor(Date.now()/86400000);
   function $(id){ return document.getElementById(id); }
@@ -42,9 +47,9 @@
     '<div class="seltb" id="seltb"><button data-a="hl">'+L.grifar+'</button><button data-a="card">'+L.grifarCartao+'</button></div>');
   document.body.insertAdjacentHTML('beforeend',
     '<div class="scrim" id="scrim"></div>'+
-    '<aside class="panel" id="menu" role="dialog" aria-modal="true" aria-label="'+L.menu+'"><button class="close" data-close aria-label="fechar">&#10005;</button><h3>'+L.menu+'</h3>'+
+    '<aside class="panel" id="menu" role="dialog" aria-modal="true" aria-label="'+L.menu+'"><button class="close" data-close aria-label="'+L.fechar+'">&#10005;</button><h3>'+L.menu+'</h3>'+
       '<div class="menu-list"><button id="m-rev">'+L.revisao+' <small id="m-revn"></small></button><button id="m-jor">'+L.jornada+'</button><button id="m-ex">'+L.exercicios+'</button><button id="m-tema">'+L.tema+' <small id="m-temal"></small></button></div></aside>'+
-    '<aside class="panel" id="jornada" role="dialog" aria-modal="true" aria-label="'+L.jornada+'"><button class="close" data-close aria-label="fechar">&#10005;</button><h3>'+L.jornada+'</h3>'+
+    '<aside class="panel" id="jornada" role="dialog" aria-modal="true" aria-label="'+L.jornada+'"><button class="close" data-close aria-label="'+L.fechar+'">&#10005;</button><h3>'+L.jornada+'</h3>'+
       '<div class="block"><p class="lbl">'+L.jProg+'</p><div class="pbar"><i id="jpbar"></i></div><p class="stat"><span id="jdone">0</span><small>/ <span id="jtot">0</span> '+L.aulasConcluidas+'</small></p><p class="muted" id="jpend"></p></div>'+
       '<div class="block"><p class="lbl">'+L.jCap+'</p><ul class="capacidades" id="jcap"></ul></div>'+
       '<div class="block"><p class="lbl">'+L.jTempo+'</p><p class="stat"><span id="jtinv">0</span><small>min '+L.investido+'</small></p><p class="stat"><span id="jtres">0</span><small>min '+L.restante+'</small></p></div>'+
@@ -52,18 +57,19 @@
       '<p class="block" id="jfim" hidden>'+L.jFim+'</p>'+
       '<div class="btnrow"><button id="expbtn">'+L.exportar+'</button><button id="impbtn">'+L.importar+'</button><button id="resetbtn">'+L.zerar+'</button></div>'+
       '<input type="file" id="impfile" accept="application/json" hidden></aside>'+
-    '<aside class="panel" id="revisar" role="dialog" aria-modal="true" aria-label="'+L.revisao+'"><button class="close" data-close aria-label="fechar">&#10005;</button><h3>'+L.revisao+'</h3><div id="revbody"></div></aside>'+
-    '<aside class="panel" id="exercicios" role="dialog" aria-modal="true" aria-label="'+L.exercicios+'"><button class="close" data-close aria-label="fechar">&#10005;</button><h3>'+L.exercicios+'</h3><div id="exlist"></div></aside>'+
+    '<aside class="panel" id="revisar" role="dialog" aria-modal="true" aria-label="'+L.revisao+'"><button class="close" data-close aria-label="'+L.fechar+'">&#10005;</button><h3>'+L.revisao+'</h3><div id="revbody"></div></aside>'+
+    '<aside class="panel" id="exercicios" role="dialog" aria-modal="true" aria-label="'+L.exercicios+'"><button class="close" data-close aria-label="'+L.fechar+'">&#10005;</button><h3>'+L.exercicios+'</h3><div id="exlist"></div></aside>'+
     '<div class="prefs" id="prefs" role="dialog" aria-label="'+L.tamanho+'">'+
-      '<div class="prow"><span>'+L.tamanho+'</span><span><button data-pf="size" data-d="-1" aria-label="menor">A&minus;</button> <button data-pf="size" data-d="1" aria-label="maior">A+</button></span></div>'+
-      '<div class="prow"><span>'+L.entrelinha+'</span><span><button data-pf="leading" data-d="-1" aria-label="menos">&minus;</button> <button data-pf="leading" data-d="1" aria-label="mais">+</button></span></div>'+
+      '<div class="prow"><span>'+L.tamanho+'</span><span><button data-pf="size" data-d="-1" aria-label="'+L.menor+'">A&minus;</button> <button data-pf="size" data-d="1" aria-label="'+L.maior+'">A+</button></span></div>'+
+      '<div class="prow"><span>'+L.entrelinha+'</span><span><button data-pf="leading" data-d="-1" aria-label="'+L.menos+'">&minus;</button> <button data-pf="leading" data-d="1" aria-label="'+L.mais+'">+</button></span></div>'+
       '<div class="prow"><span>'+L.tema+'</span><span><button data-th="papel">'+L.temas.papel+'</button> <button data-th="escuro">'+L.temas.escuro+'</button> <button data-th="sepia">'+L.temas.sepia+'</button></span></div>'+
       '<div class="prow"><button data-pf="reset" style="width:100%">'+L.restaurar+'</button></div></div>'+
-    '<div class="cedit" id="cedit" role="dialog" aria-modal="true" aria-label="'+L.novoCartao+'"><button class="close" data-close aria-label="fechar">&#10005;</button><h3>'+L.novoCartao+'</h3>'+
+    '<div class="cedit" id="cedit" role="dialog" aria-modal="true" aria-label="'+L.novoCartao+'"><button class="close" data-close aria-label="'+L.fechar+'">&#10005;</button><h3>'+L.novoCartao+'</h3>'+
       '<label for="cefront">'+L.frente+'</label><textarea id="cefront"></textarea><label for="ceback">'+L.verso+'</label><textarea id="ceback"></textarea>'+
       '<p class="cehint">'+L.ceHint+'</p><div class="row"><button class="big" id="cesave">'+L.salvar+'</button><button class="big sec" id="cecancel">'+L.cancelar+'</button></div></div>'+
     '<div id="routestatus" class="sronly" role="status" aria-live="polite"></div>');
 
+  document.documentElement.style.setProperty('--lbl-promessa',JSON.stringify(L.promessa));
   var aulaEls={};
   document.querySelectorAll('.view[data-aula]').forEach(function(v){ aulaEls[v.getAttribute('data-aula')]=v; });
   var KEYS=Object.keys(aulaEls).sort(function(a,b){ return a-b; });
@@ -103,6 +109,12 @@
   document.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){ closePanels(); }); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closePanels(); hideTB(); } });
   if($('menubtn')) $('menubtn').addEventListener('click',function(){ refreshRevn(); openPanel('menu'); });
+  // seletor de idioma: aparece no menu quando a página declara <link rel="alternate" hreflang> (montado pelo traduzir-curso.py)
+  (function(){ var alts=[].slice.call(document.querySelectorAll('link[rel="alternate"][hreflang]')).filter(function(l){ return l.getAttribute('hreflang')!=='x-default'; });
+    if(alts.length<2) return; var row=el('div','langrow','<span>'+L.idioma+'</span>'), cur=(document.documentElement.lang||'').slice(0,2);
+    alts.forEach(function(l){ var hl=l.getAttribute('hreflang'), a=el('a','',esc(l.getAttribute('data-nome')||hl.toUpperCase())), base=l.getAttribute('href').split('#')[0];
+      a.href=base; if(hl.slice(0,2)===cur) a.setAttribute('aria-current','true'); a.addEventListener('click',function(){ a.href=base+location.hash; }); row.appendChild(a); });
+    document.querySelector('#menu .menu-list').appendChild(row); })();
   $('m-rev').addEventListener('click',openReview);
   $('m-jor').addEventListener('click',function(){ renderJornada(); openPanel('jornada'); });
   $('m-ex').addEventListener('click',function(){ renderExercicios(); openPanel('exercicios'); });
@@ -129,14 +141,14 @@
       if(a.done) done++; else rest+=Math.round(tempoMin(k)*(1-Math.min(1,n/tot)));
       if(!card) return; var bar=card.querySelector('.bar2 i'), meta=card.querySelector('.meta'), t=tempoMin(k);
       if(bar) bar.style.transform='scaleX('+(a.done?1:Math.min(1,n/tot))+')';
-      if(meta) meta.innerHTML=(t?t+' min · ':'')+(a.done?'<span class="ok">'+L.concluida+'</span>':(n>0?L.andamento:L.comecar));
+      if(meta) meta.innerHTML=(t?t+' '+L.min+' · ':'')+(a.done?'<span class="ok">'+L.concluida+'</span>':(n>0?L.andamento:L.comecar));
     });
     var sc=document.querySelector('#v-trilha .statcards');
-    if(sc) sc.innerHTML='<div class="statcard"><span class="sc-num">'+done+'/'+KEYS.length+'</span><span class="sc-lbl">'+L.aulasConcluidas+'</span></div><div class="statcard"><span class="sc-num">~'+rest+' min</span><span class="sc-lbl">'+L.faltam+'</span></div>';
+    if(sc) sc.innerHTML='<div class="statcard"><span class="sc-num">'+done+'/'+KEYS.length+'</span><span class="sc-lbl">'+L.aulasConcluidas+'</span></div><div class="statcard"><span class="sc-num">~'+rest+' '+L.min+'</span><span class="sc-lbl">'+L.faltam+'</span></div>';
     var cont=document.querySelector('#v-trilha .continuar');
     if(cont){ var nxt=KEYS.filter(function(k){ return !state.aulas[k].done; })[0];
       if(!nxt){ cont.hidden=true; } else { cont.hidden=false; var h=aulaEls[nxt].querySelector('h1'), started=KEYS.some(function(k){ return readCount(k)>0||state.aulas[k].done; });
-        cont.href='#aula-'+nxt; cont.innerHTML='<span>'+(started?L.continuar:L.comecarCurso)+'<small>Aula '+nxt+' · '+esc(h?h.textContent.replace(/\s+/g,' ').trim():'')+'</small></span><span aria-hidden="true">→</span>'; } }
+        cont.href='#aula-'+nxt; cont.innerHTML='<span>'+(started?L.continuar:L.comecarCurso)+'<small>'+L.aula+' '+nxt+' · '+esc(h?h.textContent.replace(/\s+/g,' ').trim():'')+'</small></span><span aria-hidden="true">→</span>'; } }
   }
 
   // ---------- dica de 1 linha (substitui o modal de boas-vindas) ----------
@@ -147,7 +159,7 @@
 
   // ---------- aula: kicker com tempo, rótulo dos exemplos ----------
   KEYS.forEach(function(k){ var v=aulaEls[k], kick=v.querySelector('.a-hero .kicker'), t=tempoMin(k);
-    if(kick&&t&&!kick.querySelector('.tempo')) kick.insertAdjacentHTML('beforeend','<span class="tempo"> · '+t+' min</span>');
+    if(kick&&t&&!kick.querySelector('.tempo')) kick.insertAdjacentHTML('beforeend','<span class="tempo"> · '+t+' '+L.min+'</span>');
     v.querySelectorAll('p[data-ex]').forEach(function(p){ if(!p.getAttribute('data-exlbl')){ var w=p.getAttribute('data-ex'); p.setAttribute('data-exlbl',L.exemplo+' · '+w.charAt(0).toUpperCase()+w.slice(1)); } });
   });
 
@@ -209,7 +221,7 @@
     function render(){ var a=state.aulas[k];
       if(!a.done){ box.innerHTML='<h3>'+L.fechoTit+'</h3><p>'+L.fechoTxt+'</p>'; var ta=el('textarea'); ta.value=a.reflect; ta.setAttribute('aria-label',L.fechoTxt); ta.addEventListener('input',function(){ a.reflect=ta.value; save(); }); box.appendChild(ta);
         var b=el('button','big',L.concluir); b.type='button'; b.addEventListener('click',function(){ steps(k).forEach(function(s){ a.read[s.getAttribute('data-read')||s.id]=true; }); a.done=true; seedCards(k); save(); refreshRevn(); render(); }); box.appendChild(b); }
-      else { var n=authorCards(k).length; box.innerHTML='<h3 class="concluida">'+L.concluidaTit+'</h3><p>'+L.concluidaTxt(n)+'</p>'; var row=el('div','row');
+      else { var n=authorCards(k).length; box.innerHTML='<h3 class="concluida">'+L.concluidaTit+'</h3><p>'+(n?F(L.concluidaTxt,n):L.salvo)+'</p>'; var row=el('div','row');
         if(n){ var r=el('button','big',L.revisarAgora); r.type='button'; r.addEventListener('click',function(){ reviewAula(k); }); row.appendChild(r); }
         if(v.querySelector('.practice')){ var p=el('button','big sec',L.refazer); p.type='button'; p.addEventListener('click',function(){ resetPractice(k,true); }); row.appendChild(p); }
         box.appendChild(row); } }
@@ -235,7 +247,7 @@
 
   // ---------- revisão espaçada (só cartões de aulas concluídas ou criados pelo aluno) ----------
   function allDue(){ var arr=[]; KEYS.forEach(function(k){ var cs=state.aulas[k].cards; for(var id in cs) if(cs[id].due<=today) arr.push({k:k,id:id}); }); return arr; }
-  function refreshRevn(){ var n=allDue().length, b=$('revbtn'); if(b){ b.hidden=n===0; b.textContent=L.revisarN(n>9?'9+':n); } if($('m-revn')) $('m-revn').textContent=n?(n>9?'9+':n):''; }
+  function refreshRevn(){ var n=allDue().length, b=$('revbtn'); if(b){ b.hidden=n===0; b.textContent=F(L.revisarN,n>9?'9+':n); } if($('m-revn')) $('m-revn').textContent=n?(n>9?'9+':n):''; }
   if($('revbtn')) $('revbtn').addEventListener('click',openReview);
   function grade(c,g){ if(g==='again'){ c.reps=0; c.interval=0; c.due=today; } else { c.reps=(c.reps||0)+1; c.interval=c.reps===1?1:(c.reps===2?3:Math.round((c.interval||1)*(c.ease||2.5))); if(g==='easy'){ c.interval=Math.max(1,Math.round(c.interval*1.3)); c.ease=(c.ease||2.5)+0.15; } c.due=today+c.interval; } }
   var rq=[], ri=0;
@@ -252,9 +264,9 @@
   // ---------- jornada ----------
   function renderJornada(){ var done=KEYS.filter(function(k){ return state.aulas[k].done; });
     $('jdone').textContent=done.length; $('jtot').textContent=KEYS.length; $('jpbar').style.transform='scaleX('+(KEYS.length?done.length/KEYS.length:0)+')';
-    var n=allDue().length; $('jpend').textContent=L.jPend(n>9?'9+':n);
+    var n=allDue().length; $('jpend').textContent=(n?F(L.jPend,n>9?'9+':n):L.jPend0);
     var cap=$('jcap'); cap.innerHTML=''; if(!done.length) cap.innerHTML='<li class="muted" style="list-style:none;margin-left:-20px">'+L.jCapVazio+'</li>';
-    done.forEach(function(k){ var p=aulaEls[k].querySelector('.promise'); if(p){ var li=el('li'); li.textContent=p.textContent.trim().replace(/^(ao fim desta aula,? )?você (consegue|tem) /i,''); cap.appendChild(li); } });
+    done.forEach(function(k){ var p=aulaEls[k].querySelector('.promise'); if(p){ var li=el('li'); li.textContent=p.textContent.trim().replace(new RegExp(L.capRe,'i'),''); cap.appendChild(li); } });
     var inv=0,tot=0; KEYS.forEach(function(k){ var t=tempoMin(k), a=state.aulas[k], f=a.done?1:Math.min(1,readCount(k)/(steps(k).length||1)); tot+=t; inv+=Math.round(t*f); });
     $('jtinv').textContent='~'+inv; $('jtres').textContent='~'+Math.max(0,tot-inv); $('jfim').hidden=done.length!==KEYS.length;
     var mk=$('jmarks'), all=[]; KEYS.forEach(function(k){ state.aulas[k].marks.forEach(function(m){ all.push(m); }); });
@@ -273,7 +285,7 @@
   // ---------- práticas do curso ----------
   function renderExercicios(){ var box=$('exlist'); box.innerHTML='';
     KEYS.forEach(function(k){ var pr=aulaEls[k].querySelector('.practice'); if(!pr) return; var h=pr.querySelector('.ph'), d=praticaDone(k), row=el('div','exrow');
-      row.innerHTML='<div><b>Aula '+k+'</b> — '+esc(h?h.textContent.trim():'')+'<br><span class="'+(d?'done':'muted')+'">'+(d?L.feito:L.pendente)+'</span></div>';
+      row.innerHTML='<div><b>'+L.aula+' '+k+'</b> — '+esc(h?h.textContent.trim():'')+'<br><span class="'+(d?'done':'muted')+'">'+(d?L.feito:L.pendente)+'</span></div>';
       var act=el('div','btnrow'), go=el('button','',L.irAte), rs=el('button','',L.resetar); go.type=rs.type='button';
       go.addEventListener('click',function(){ closePanels(true); location.hash='aula-'+k; setTimeout(function(){ pr.scrollIntoView({block:'start'}); },60); });
       rs.addEventListener('click',function(){ resetPractice(k,false); renderExercicios(); }); act.appendChild(go); act.appendChild(rs); row.appendChild(act); box.appendChild(row); }); }

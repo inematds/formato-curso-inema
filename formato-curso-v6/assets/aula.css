@@ -65,6 +65,10 @@ button{font-family:var(--sans);font-size:15px;cursor:pointer}
 .bar .btn:hover{border-color:var(--accent)}
 .bar .btn.due{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .bar .btn[hidden]{display:none}
+.langs{display:flex;gap:2px}
+.langs a{display:inline-flex;align-items:center;min-height:36px;padding:0 9px;border-radius:99px;font-size:14px;font-weight:600;text-decoration:none;color:var(--muted)}
+.langs a[aria-current="true"]{color:var(--ink);background:var(--panel2)}
+@media(max-width:560px){.bar .landing-cta{display:none}}
 @media(max-width:560px){.brand .course{display:none}.bar .btn{padding:0 12px}.bar .back .t{display:none}}
 
 /* ---------- trilha ---------- */
@@ -99,10 +103,10 @@ footer.pe{max-width:var(--wide);margin:0 auto;padding:32px 16px 64px;color:var(-
 .a-hero{padding:28px 0 8px}
 .a-hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.08;letter-spacing:-.02em;margin:0 0 20px}
 .promise{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:14px 18px;margin:20px 0;font-size:18px;color:var(--ink)}
-.promise::before{content:"Ao fim desta aula";display:block;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.promise::before{content:var(--lbl-promessa,"Ao fim desta aula");display:block;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:2px}
 .why{color:var(--ink-soft);margin:0 0 20px}
 .dica{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--warm-soft);border-radius:var(--r);padding:10px 14px;margin:4px 0 20px;font-size:15px}
-.dica button{border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:99px;padding:6px 12px;min-height:36px}
+.dica button{white-space:nowrap;border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:99px;padding:6px 12px;min-height:36px}
 
 /* Em 1 minuto */
 .em1min{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:0 0 12px;box-shadow:var(--shadow)}
@@ -273,6 +277,10 @@ details.mais > *:not(summary){font-size:16px}
 .menu-list{display:grid;gap:8px}
 .menu-list button{display:flex;justify-content:space-between;align-items:center;text-align:left;min-height:52px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:17px}
 .menu-list button small{color:var(--muted);font-size:14px}
+.langrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px;padding:6px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:17px}
+.langrow span{flex:1}
+.langrow a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line2);color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.langrow a[aria-current="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .block{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:0 0 12px}
 .block .lbl{font-size:14px;font-weight:700;color:var(--muted);margin:0 0 8px}
 .pbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}

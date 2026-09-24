@@ -1,5 +1,14 @@
 # Changelog — formato-curso-v6
 
+## 6.1.0 — 2026-09-24
+
+- Cenas pelo **Codex image_gen por padrão** (`gerar-cena.py --gerador auto`), fallback inemaimg/flux2-klein.
+- Capa pela `capa-inema` com `--raw-in` da arte da trilha (evita cena inventada fora das regras).
+- **Trilíngue:** `traduzir-curso.py` (EN/ES em `en/` e `es/`, nano via OpenRouter, cache, validação de tags/{n}/espaços,
+  seletor de idioma no menu e na landing, estado separado por idioma). Textos do motor num bloco JSON único (`L-INICIO/L-FIM`),
+  rótulo da promessa vindo do motor, rótulo "Na prática · X" gravado no HTML pela montagem.
+- Versão no nome do curso em todas as superfícies.
+
 ## 6.0.0 — 2026-09-24
 
 Nova skill para iniciante 30+, a partir da análise `../ANALISE-V5-INICIANTE.md`. v5 e v2 ficam intocadas.

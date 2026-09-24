@@ -34,6 +34,8 @@ for p in aulas:
       {thumb}
       <div><span class="n">Aula {n}</span><h3>{html.escape(h1)}</h3><p class="meta">{tempo} min</p><div class="bar2"><i></i></div></div>
     </a>''')
+    # rótulo do exemplo gravado no HTML (e não só gerado pelo motor) para o traduzir-curso.py alcançar
+    s = re.sub(r'<p data-ex="([^"]+)"(?![^>]*data-exlbl)', lambda m: f'<p data-ex="{m.group(1)}" data-exlbl="Na prática · {m.group(1).capitalize()}"', s)
     corpos.append(s)
 
 c = cfg

@@ -76,7 +76,7 @@ const res = []; const ok = (n, v, extra) => res.push([n, !!v, extra || '']);
   await page.reload(); await page.waitForTimeout(400);
   ok('tema e conclusão persistem após recarregar', await page.evaluate(ck => { const s = JSON.parse(localStorage.getItem(ck)); return document.documentElement.dataset.theme === 'escuro' && s.aulas['1'].done; }, CK));
   await page.evaluate(() => { location.hash = 'trilha'; }); await page.waitForTimeout(300);
-  ok('trilha mostra a aula 1 como concluída', await page.$eval('.au[data-aula="1"] .meta', m => /conclu/.test(m.textContent)));
+  ok('trilha mostra a aula 1 como concluída', await page.$eval('.au[data-aula="1"] .meta', m => !!m.querySelector('.ok')));
   ok('zero erro de JavaScript', errs.length === 0, errs.join(' | '));
   await browser.close();
   let fail = 0; for (const [n, v, x] of res) { if (!v) fail++; console.log((v ? 'OK    ' : 'FALHA ') + n + (x ? '  (' + x + ')' : '')); }
