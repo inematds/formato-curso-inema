@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- LANDING formato-curso v6 — usa assets/aula.css (mesmos tokens, tema papel).
+     A lista de aulas entre os marcadores AULAS é preenchida pelo montar-curso.py. Troque os [ ]. -->
+<html lang="pt-BR" data-theme="papel">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[Nome do curso] · INEMA.CLUB PRO</title>
+<meta name="description" content="[1 frase: o que a pessoa sai fazendo]">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aula.css">
+<style>
+  .l-hero{padding:32px 0 8px}
+  .l-hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(38px,7vw,64px);line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;max-width:16ch}
+  .l-hero h1 em{font-style:italic;color:var(--accent)}
+  .l-hero .lead{font-size:clamp(18px,2.3vw,22px);color:var(--ink-soft);max-width:36rem;margin:0 0 22px}
+  .l-sub{color:var(--muted);font-size:15px;margin:12px 0 0}
+  .l-sec{padding:28px 0}
+  .l-sec h2{font-family:var(--serif);font-weight:500;font-size:clamp(26px,4vw,34px);margin:0 0 14px}
+  .res{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .res div{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;font-size:17px}
+  .res b{display:block;margin-bottom:4px}
+  .pq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pq div{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  .pq h3{font-size:16px;margin:0 0 8px;color:var(--accent)} .pq .nao h3{color:var(--muted)}
+  .pq ul{margin:0;padding-left:20px;font-size:16px}
+  @media(max-width:640px){.pq{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-inner">
+  <span class="brand"><a class="mark" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a><span class="course">[Nome curto]</span></span>
+  <a class="btn" href="curso.html#trilha">entrar no curso</a>
+</div></header>
+<main class="wrap">
+  <section class="l-hero">
+    <p class="kicker">[Categoria — ex.: IA no seu trabalho]</p>
+    <h1>[Promessa em <em>poucas palavras</em>]</h1>
+    <p class="lead">[O que a pessoa sai fazendo, em 1–2 frases. Sem vídeo, no seu tempo.]</p>
+    <a class="big" href="curso.html#trilha">começar agora →</a>
+    <p class="l-sub">[N] aulas de ~15 minutos · sem instalar nada · funciona no celular e no computador</p>
+    <figure class="cena" style="margin-top:24px"><img src="assets/img/trilha.webp" width="1280" height="720" alt="[alt da trilha]"></figure>
+  </section>
+  <section class="l-sec">
+    <h2>O que você sai fazendo</h2>
+    <div class="res">
+      <div><b>[Resultado 1]</b>[em uma linha, concreto]</div>
+      <div><b>[Resultado 2]</b>[…]</div>
+      <div><b>[Resultado 3]</b>[…]</div>
+    </div>
+  </section>
+  <section class="l-sec">
+    <h2>Para quem é</h2>
+    <div class="pq">
+      <div class="sim"><h3>É para você se</h3><ul><li>[profissão-alvo 1] e quer [resultado].</li><li>Tem pouco tempo e nenhuma base técnica.</li><li>Prefere aprender fazendo.</li></ul></div>
+      <div class="nao"><h3>Não é para você se</h3><ul><li>Já domina o assunto e busca algo técnico.</li><li>Quer videoaula tradicional.</li></ul></div>
+    </div>
+  </section>
+  <section class="l-sec">
+    <h2>As aulas</h2>
+    <div class="aulas">
+<!--AULAS-->
+<!--/AULAS-->
+    </div>
+    <p><a class="big" href="curso.html#trilha">começar pela aula 1 →</a></p>
+  </section>
+</main>
+<footer class="pe">[Nome curto] · INEMA.CLUB PRO
+  <!-- inema-backlink:v1 — o link da ficha (/cursos/<id>-<slug>/) entra no cadastro do portal (atualiza-portal) -->
+  <p style="margin:.5rem 0 0"><a href="https://www.inema.club/aprender-inteligencia-artificial/">Guia: como aprender inteligência artificial</a> · <a href="https://www.inema.club/cursos/">Todos os cursos</a></p>
+  <!-- /inema-backlink:v1 -->
+</footer>
+</body>
+</html>

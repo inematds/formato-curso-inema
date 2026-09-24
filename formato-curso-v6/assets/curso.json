@@ -1,0 +1,12 @@
+{
+  "id": "meucurso6",
+  "titulo": "Nome completo do curso",
+  "titulo_html": "Promessa do curso em <em>poucas palavras</em>",
+  "curso_curto": "Nome curto",
+  "kicker": "Trilha única · N aulas curtas",
+  "lead": "O que a pessoa sai fazendo, em 2 frases. Sem instalar nada, no seu tempo.",
+  "imagem_trilha": "assets/img/trilha.webp",
+  "alt_trilha": "Quem aparece na imagem e o que está fazendo.",
+  "rodape": "Nome curto · INEMA.CLUB PRO · <a href=\"landing.html\">sobre o curso</a>",
+  "landing": "landing.html"
+}
