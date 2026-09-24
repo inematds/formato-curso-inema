@@ -143,6 +143,7 @@ Estes sao os erros mais frequentes. Verifique sempre antes de entregar:
 | 3 | Secoes por topico | 3 secoes: "O que e / Por que aprender / Conceitos-chave" | Menos de 3 |
 | 4 | Link INEMA.CLUB | Presente em TODAS as paginas com `text-sky-400` | Ausente |
 | 4b | Link PRO | Presente ao lado do INEMA.CLUB (separado por `-`), linkando `https://inema.pro`, dourado no light (`text-amber-700`) / prateado no dark (`dark:text-slate-300`) | Ausente |
+| 4c | Link de volta pro INEMA.CLUB (SEO) | Rodape da landing (`index.html`) com `<a href="https://www.inema.club/aprender-inteligencia-artificial/">Guia: como aprender inteligência artificial</a>` e `<a href="https://www.inema.club/cursos/">Todos os cursos</a>`. O link da ficha (`/cursos/<id>-<slug>/`) so entra depois do cadastro no portal (skill `atualiza-portal`), nunca com slug inventado | Ausente ou slug chutado |
 | 5 | Light mode CSS | Bloco completo: base + cores acento + sem gradiente + especiais + nav | Apenas base sem cores de acento |
 | 6 | Titulo do modulo | `text-2xl font-bold` | `text-lg` |
 | 7 | Modal | Usa `<iframe src="modulo-X-X.html">` | Conteudo duplicado |
@@ -241,6 +242,7 @@ Antes de entregar qualquer pagina, confirmar:
 3. 3 secoes por topico (O que e / Por que / Conceitos-chave)
 4. INEMA.CLUB presente (`text-sky-400`)
 4b. PRO presente ao lado do INEMA.CLUB, linkando `https://inema.pro` (dourado no light / prateado no dark)
+4c. Rodape da landing com link pro guia `/aprender-inteligencia-artificial/` e pra `/cursos/` do inema.club (ficha do curso so apos o cadastro no portal)
 5. Light mode CSS completo (base + cores acento + sem gradiente + especiais + nav)
 6. Titulo do modulo com `text-2xl`
 7. Cores corretas da trilha
