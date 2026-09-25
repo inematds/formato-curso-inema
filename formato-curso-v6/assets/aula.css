@@ -229,8 +229,8 @@ details.mais > *:not(summary){font-size:16px}
 .practice .pcount{font-weight:500;color:var(--muted)}
 .practice .ph{font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.15;margin:0 0 8px}
 .practice .pgoal{margin:0 0 10px;font-size:17px}
-.psafe{display:flex;gap:10px;background:var(--accent-soft);border-radius:12px;padding:10px 14px;font-size:16px;margin:0 0 14px}
-.psafe::before{content:"✓";font-weight:700;color:var(--accent)}
+.psafe{display:block;background:var(--accent-soft);border-radius:12px;padding:10px 14px;font-size:16px;margin:0 0 14px}
+.psafe::before{content:"✓";font-weight:700;color:var(--accent);margin-right:8px}
 .pcodewrap,.codewrap{position:relative;margin:0 0 14px}
 .pcode,.aula pre{margin:0;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:16px;padding-top:46px;font-family:var(--mono);font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:var(--ink)}
 .pcopy{position:absolute;top:8px;right:8px;min-height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--accent);background:var(--panel);color:var(--accent);font-weight:600}
@@ -275,8 +275,8 @@ details.mais > *:not(summary){font-size:16px}
 .panel h3{font-family:var(--serif);font-weight:500;font-size:26px;margin:4px 0 16px}
 .close{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--panel);color:var(--ink);font-size:18px}
 .menu-list{display:grid;gap:8px}
-.menu-list button{display:flex;justify-content:space-between;align-items:center;text-align:left;min-height:52px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:17px}
-.menu-list button small{color:var(--muted);font-size:14px}
+.menu-list button,.menu-list a.m-trilhas{display:flex;justify-content:space-between;align-items:center;text-align:left;min-height:52px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:17px}
+.menu-list button small,.menu-list a.m-trilhas small{color:var(--muted);font-size:14px}
 .langrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px;padding:6px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:17px}
 .langrow span{flex:1}
 .langrow a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line2);color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
@@ -360,3 +360,17 @@ details.complementar>summary small{display:block;font-weight:400;font-size:15px;
   .tela-caso[hidden]{display:block!important}
   .step,.cola,.practice,figure{break-inside:avoid}
 }
+/* ---------- 6.3: landing com módulos fechados (clique abre as aulas) ---------- */
+.aulas .mods-lp{grid-column:1/-1;display:grid;gap:12px}
+details.mod-lp{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);scroll-margin-top:80px}
+details.mod-lp[open]{border-color:var(--line2)}
+details.mod-lp>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:center;padding:16px 18px;min-height:64px}
+details.mod-lp>summary::-webkit-details-marker{display:none}
+details.mod-lp>summary::after{content:"+";grid-column:2;grid-row:1/span 3;font-size:28px;font-weight:600;color:var(--accent);line-height:1}
+details.mod-lp[open]>summary::after{content:"–"}
+details.mod-lp>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r)}
+details.mod-lp .mod-t{grid-column:1;font-family:var(--serif);font-weight:500;font-size:21px;margin:0;line-height:1.25}
+details.mod-lp .mod-r{grid-column:1;color:var(--muted);font-size:16px}
+details.mod-lp .mod-m{grid-column:1;color:var(--muted);font-size:15px}
+details.mod-lp>.aulas{padding:0 12px 12px;margin:0}
+.menu-list a.m-trilhas{text-decoration:none;border-color:var(--line2)}

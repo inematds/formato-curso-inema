@@ -54,6 +54,9 @@ com o modelo padrão (flux2-klein). `--gerador flux --seed N` força o local. Ol
 **Opcionais do `curso.json` (6.2):** `"modulos"` (agrupa a trilha), `"perfil": "tecnico"` + `"termos"` (curso que ensina
 terminal/Git/servidor: jargão permitido desde que definido com `.gterm` em cada aula, glossário gerado — ver
 `CONTEUDO-INICIANTE.md` §2b), `"glossario": true` (glossário sem perfil técnico). Sem teto de número de aulas.
+Com `"modulos"` (6.3), a landing mostra só os módulos, fechados (`details.mod-lp`: título, resumo, "N aulas · M min");
+o clique abre as aulas daquele módulo, e `landing.html#modulo-N` já chega com ele aberto. No curso, o menu ganha
+"Trilhas", que volta para `landing.html#modulos` para escolher o módulo.
 Aprofundamento vai no `details.complementar` depois do fecho (`V6-DESIGN.md` §3.7), fora do tempo e das 900 palavras.
 Traduzir (EN/ES): `python3 ~/.claude/skills/formato-curso-v6/scripts/traduzir-curso.py <curso> en es` — depois de montar;
 gera `en/` e `es/` (GPT-5.4 nano via OpenRouter, cache em `i18n/`, custo em `i18n/usage.jsonl`) e o seletor de idioma.

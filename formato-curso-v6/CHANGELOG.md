@@ -1,5 +1,22 @@
 # Changelog — formato-curso-v6
 
+## 6.3.3 — 2026-09-25
+
+- Landing com módulos: em vez de listar todas as aulas, mostra só os módulos, fechados (`<details class="mod-lp">`
+  com título, resumo e "N aulas · M min"); o clique abre as aulas. Funciona sem JS; `landing.html#modulo-N` abre o N.
+  O título do módulo continua como `h3` (a tradução em cache é reaproveitada).
+- Menu do curso: item "Trilhas · escolher o módulo" (só com módulos) volta para `landing.html#modulos`. Textos no bloco L.
+- Sem `"modulos"`, a landing e o menu ficam como na 6.2. Verificado no OSWork v6.2: motor 26/26 e auditor 48/48 em PT/EN/ES.
+
+## 6.2.3 — 2026-09-25
+
+- Auditor, edição em inglês: work/skill(s)/script(s)/origin/shell/restore também contam como palavras comuns (a
+  tradução usa "work", "restore" etc. como verbo). Achado ao traduzir os módulos 2–8 do OSWork v6.2.
+- Motor: o "copiar" de um terminal de exemplo (`pre` com `.pr`) copia só as linhas de comando, sem `$` e sem `.out`.
+- CSS: `.psafe` deixou de ser flex (`display:block`, ✓ inline) — `<code>`/`.gterm` dentro não quebram mais em colunas no celular.
+- Tradutor: unidade sem tradução válida após 4 rodadas não aborta mais o idioma; fica em PT, é listada em
+  `i18n/<lang>-faltando.json` e aparece um aviso (traduza no cache e rode `--so-montar`). Cards tolerantes a falta.
+
 ## 6.2.2 — 2026-09-24
 
 - Auditor, perfil técnico: plural tolerado na definição ("LLM" no texto vale pelo `.gterm` "LLMs"); na edição em

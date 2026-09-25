@@ -44,7 +44,7 @@ def marca_gterm(m, n):
         e["aulas"].append(n)
     return m.group(0) if g else f'<span class="gterm"{attrs} data-gl="{k}">{inner}</span>'
 
-cards, corpos, card_de = [], [], {}
+cards, corpos, card_de, tempo_de = [], [], {}, {}
 for p in aulas:
     s = p.read_text(encoding="utf-8").strip()
     m = re.search(r'<section class="view" id="v-aula-(\d+)" data-aula="(\d+)" data-tempo="(\d+)\s*min"', s)
@@ -60,6 +60,7 @@ for p in aulas:
       <div><span class="n">Aula {n}</span><h3>{html.escape(h1)}</h3><p class="meta">{tempo} min</p><div class="bar2"><i></i></div></div>
     </a>''')
     card_de[int(n)] = cards[-1]
+    tempo_de[int(n)] = int(tempo)
     if com_glossario:
         s = re.sub(r'<span class="gterm"([^>]*)>(.*?)</span>', lambda m: marca_gterm(m, n), s, flags=re.S)
     # rótulo do exemplo gravado no HTML (e não só gerado pelo motor) para o traduzir-curso.py alcançar
@@ -171,7 +172,18 @@ if lp.exists():
         def lp_card(x):
             return x.replace('href="#aula-', 'href="curso.html#aula-').replace('<div class="bar2"><i></i></div>', '')
         if c.get("modulos"):
-            lista = "\n".join(f'    <h3 class="mod-tit">{md["titulo"]}</h3>\n' + "\n".join(lp_card(card_de[int(x)]) for x in md["aulas"]) for md in c["modulos"])
+            # 6.3: módulos fechados (<details>, sem JS para abrir); landing.html#modulo-N já chega com o N aberto
+            def lp_mod(i, md):
+                ns = [int(x) for x in md["aulas"]]
+                minutos = sum(tempo_de[x] for x in ns)
+                resumo = f'<div class="mod-r">{md["resumo"]}</div>' if md.get("resumo") else ""
+                return (f'    <details class="mod-lp" id="modulo-{i}">\n'
+                        f'      <summary><h3 class="mod-t">{md["titulo"]}</h3>{resumo}'
+                        f'<div class="mod-m">{len(ns)} aulas · {minutos} min</div></summary>\n'
+                        f'      <div class="aulas">\n' + "\n".join(lp_card(card_de[x]) for x in ns) + '\n      </div>\n    </details>')
+            lista = ('    <div class="mods-lp" id="modulos">\n' + "\n".join(lp_mod(i, md) for i, md in enumerate(c["modulos"], 1)) +
+                     '\n    </div>\n    <script>(function(){function abre(){var d=location.hash&&document.getElementById(location.hash.slice(1));'
+                     'if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView();}}abre();addEventListener("hashchange",abre);})();</script>')
         else:
             lista = "\n".join(lp_card(x) for x in cards)
         ls = re.sub(r"<!--AULAS-->.*?<!--/AULAS-->", "<!--AULAS-->\n" + lista.replace("\\", "\\\\") + "\n<!--/AULAS-->", ls, flags=re.S)

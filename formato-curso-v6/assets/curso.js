@@ -18,7 +18,7 @@
     "revisarAgora":"revisar agora","refazer":"refazer a prática",
     "mostrar":"mostrar resposta","deNovo":"errei","bom":"lembrei","facil":"fácil",
     "nadaRevisar":"Nada para revisar agora. As perguntas voltam sozinhas nos próximos dias.",
-    "menu":"Menu","jornada":"Minha jornada","exercicios":"Práticas do curso","tema":"Tema","idioma":"Idioma",
+    "menu":"Menu","trilhas":"Trilhas","trilhasSub":"escolher o módulo","jornada":"Minha jornada","exercicios":"Práticas do curso","tema":"Tema","idioma":"Idioma",
     "temas":{"papel":"papel","escuro":"escuro","sepia":"sépia"},
     "tamanho":"Tamanho da letra","entrelinha":"Espaço entre linhas","restaurar":"restaurar padrão","fechar":"fechar","menor":"menor","maior":"maior","menos":"menos","mais":"mais",
     "jProg":"Progresso","jCap":"O que você já consegue fazer","jCapVazio":"Ainda nenhuma aula concluída — tudo bem, uma de cada vez.",
@@ -119,6 +119,10 @@
   // glossário (6.2): só existe quando o montar-curso.py gerou a view #v-glossario
   if($('v-glossario')){ var mg=el('button','',L.glossario); mg.id='m-glo'; mg.type='button'; document.querySelector('#menu .menu-list').appendChild(mg);
     mg.addEventListener('click',function(){ closePanels(true); location.hash='glossario'; }); }
+  // trilhas (6.3): com módulos, o menu leva de volta à landing, onde se escolhe o módulo (landing.html#modulos)
+  (function(){ var lk=document.querySelector('.brand .course'); if(!lk||!document.querySelector('.modulo')) return;
+    var a=el('a','m-trilhas',esc(L.trilhas)+' <small>'+esc(L.trilhasSub)+'</small>'); a.href=lk.getAttribute('href').split('#')[0]+'#modulos';
+    var lista=document.querySelector('#menu .menu-list'); lista.insertBefore(a,lista.firstChild); })();
   $('m-rev').addEventListener('click',openReview);
   $('m-jor').addEventListener('click',function(){ renderJornada(); openPanel('jornada'); });
   $('m-ex').addEventListener('click',function(){ renderExercicios(); openPanel('exercicios'); });
@@ -214,7 +218,11 @@
   function flash(b,m){ var o=b.getAttribute('data-o'); if(o===null){ o=b.textContent; b.setAttribute('data-o',o); } b.textContent=m; setTimeout(function(){ b.textContent=b.getAttribute('data-o'); },1400); }
   function copyText(t,b){ function fb(){ var ta=el('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); flash(b,L.copiado); }catch(e){} ta.remove(); }
     try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){ flash(b,L.copiado); },fb); return; } }catch(e){} fb(); }
-  document.querySelectorAll('.view[data-aula] pre').forEach(function(pre){ if(pre.closest('.pcodewrap')) return; var w=el('div','codewrap'); pre.before(w); w.appendChild(pre); var b=el('button','pcopy',L.copiar); b.type='button'; w.prepend(b); b.addEventListener('click',function(){ copyText(pre.textContent,b); }); });
+  // terminal de exemplo: copia só as linhas de comando (as que têm .pr), sem o $ e sem a saída (.out)
+  function cmdText(pre){ if(!pre.querySelector('.pr')) return pre.textContent; var c=pre.cloneNode(true);
+    c.querySelectorAll('.out').forEach(function(o){ o.remove(); }); c.querySelectorAll('.pr').forEach(function(o){ o.textContent='\u0001'; });
+    return c.textContent.split('\n').filter(function(l){ return l.indexOf('\u0001')>=0; }).map(function(l){ return l.slice(l.indexOf('\u0001')+1).trim(); }).filter(Boolean).join('\n'); }
+  document.querySelectorAll('.view[data-aula] pre').forEach(function(pre){ if(pre.closest('.pcodewrap')) return; var w=el('div','codewrap'); pre.before(w); w.appendChild(pre); var b=el('button','pcopy',L.copiar); b.type='button'; w.prepend(b); b.addEventListener('click',function(){ copyText(cmdText(pre),b); }); });
 
   // ---------- prática ----------
   var practiceRefresh={};

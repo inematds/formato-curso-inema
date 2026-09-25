@@ -213,8 +213,13 @@ def traduz(base, lang, api, fonte):
             json.dump(cache, open(dest, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
             print(f"  {lang} rodada {rodada+1} lote {i}/{len(lotes)}: {ok} ok, {ruins} rejeitadas", flush=True)
     falta = [u for u in fonte if u not in cache]
+    fp = os.path.join(base, "i18n", f"{lang}-faltando.json")
     if falta:
-        sys.exit(f"{lang}: {len(falta)} unidades sem tradução válida após 4 rodadas. Ex.: {falta[0][:120]!r}")
+        # não aborta o idioma: monta o resto (o trecho fica em PT) e lista o que faltou para traduzir à mão no cache
+        json.dump(falta, open(fp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"  ATENÇÃO {lang}: {len(falta)} unidades sem tradução válida após 4 rodadas (ficam em PT). "
+              f"Lista em {fp} — traduza no cache i18n/{lang}.json e rode de novo com --so-montar. Ex.: {falta[0][:120]!r}", file=sys.stderr)
+    elif os.path.exists(fp): os.remove(fp)
     return cache
 
 def alternates(soup, pagina, lang, langs):
@@ -257,7 +262,7 @@ def monta(base, lang, tr, langs):
         md = soup.find("meta", attrs={"name": "description"})
         if md and md.get("content") in tr: md["content"] = tr[md["content"]]
         for sc in soup.find_all("script", id=re.compile(r"^cards-")):
-            cs = json.loads(sc.string); sc.string = "\n" + json.dumps([{"front": tr[c["front"]], "back": tr[c["back"]]} for c in cs], ensure_ascii=False, indent=1) + "\n"
+            cs = json.loads(sc.string); sc.string = "\n" + json.dumps([{"front": tr.get(c["front"], c["front"]), "back": tr.get(c["back"], c["back"])} for c in cs], ensure_ascii=False, indent=1) + "\n"
         soup.html["lang"] = HTMLLANG[lang]
         mc = soup.find("meta", attrs={"name": "curso"})
         if mc: mc["content"] = mc["content"] + "-" + lang

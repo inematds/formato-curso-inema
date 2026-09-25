@@ -66,7 +66,7 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
         jargDef = jarg.filter(t => defs.some(d => new RegExp(B + escRe(raiz(t)) + '(?:s|es)?' + A, 'iu').test(d)));
         // edição traduzida para o inglês: palavras do dia a dia em inglês não são jargão para quem lê em inglês
         const lang = (document.documentElement.lang || 'pt').slice(0, 2).toLowerCase();
-        const COMUNS = { en: ['input', 'inputs', 'output', 'outputs', 'download', 'upload', 'login', 'backup', 'setup'] };
+        const COMUNS = { en: ['input', 'inputs', 'output', 'outputs', 'download', 'upload', 'login', 'backup', 'setup', 'work', 'skill', 'skills', 'script', 'scripts', 'origin', 'shell', 'restore'] };
         jargDef = jargDef.concat(jarg.filter(t => (COMUNS[lang] || []).includes(t)));
         jarg = jarg.filter(t => !jargDef.includes(t));   // sobra só o que aparece sem definição na aula
       }
