@@ -50,7 +50,9 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
       const reais = v.querySelectorAll('.tela,.lado,.janela,.terminal').length;
       const cena = v.querySelector('figure.cena img');
       const cards = (() => { try { return JSON.parse((document.getElementById('cards-' + k) || {}).textContent || '[]'); } catch (e) { return null; } })();
-      const txtAll = T(v.querySelector('.aula')) + ' ' + (cards || []).map(c => c.front + ' ' + c.back).join(' ');
+      // perfil técnico: blocos de comando (pre/code) ficam fora da varredura de jargão — o termo é cobrado na prosa
+      const aulaTxt = perfil === 'tecnico' ? (() => { const c = v.querySelector('.aula').cloneNode(true); c.querySelectorAll('pre,code').forEach(x => x.remove()); return T(c); })() : T(v.querySelector('.aula'));
+      const txtAll = aulaTxt + ' ' + (cards || []).map(c => c.front + ' ' + c.back).join(' ');
       let jarg = [...new Set((txtAll.match(new RegExp(sent, 'gi')) || []).map(s => s.toLowerCase()))];
       let jargDef = [];
       if (perfil === 'tecnico') {

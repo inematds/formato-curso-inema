@@ -318,6 +318,8 @@ mark.hl{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
 /* ---------- 6.2: módulos na trilha, glossário, terminal, material complementar ---------- */
 .modulo{margin:0 0 36px}
 .modulo .aulas{margin-bottom:0}
+.aulas .mod-tit{grid-column:1/-1;font-family:var(--serif);font-weight:500;font-size:22px;margin:18px 0 2px}
+.aulas .mod-tit:first-child{margin-top:0}
 .mod-resumo{color:var(--muted);font-size:16px;margin:-6px 0 14px}
 .gl-link{display:inline-flex;gap:8px;align-items:center;margin:0 0 48px;padding:12px 18px;border:1px solid var(--line2);border-radius:999px;background:var(--panel);color:var(--accent);font-weight:600;text-decoration:none}
 .glossario{margin:0 0 48px}

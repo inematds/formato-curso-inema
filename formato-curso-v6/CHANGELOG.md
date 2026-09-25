@@ -1,5 +1,13 @@
 # Changelog — formato-curso-v6
 
+## 6.2.1 — 2026-09-24
+
+- Tradutor: o modelo traduzia o valor de `data-gl` (âncora do glossário) — agora é restaurado do PT na montagem
+  (`fixa_ids`). Perfil técnico: não introduzir termo técnico ausente do original; glossário "never script/backup" desligado.
+- Auditor, perfil técnico: `pre`/`code` ficam fora da varredura de jargão (o termo é cobrado na prosa).
+- Landing com módulos: `h3.mod-tit` com estilo próprio.
+- Verificado: tradução EN real do curso de teste → 10/10 em todas as aulas, motor 25/25, terminal idêntico, glossário ok.
+
 ## 6.2.0 — 2026-09-24
 
 Tudo opcional pelo `curso.json`; sem os campos novos a montagem, o auditor e o tradutor dão o mesmo resultado da 6.1

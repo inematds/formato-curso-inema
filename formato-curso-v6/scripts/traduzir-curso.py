@@ -73,6 +73,8 @@ SYS_TECNICO = """- Audience: adults learning technical skills (terminal, Git, se
 - Technical terms are part of the lesson: keep them in their standard technical form in {nome} (terminal, Git, commit,
   repository, SSH, VPS, systemd, token, API, Markdown, AGENTS.md...). Never replace them with lay paraphrases.
 - Commands, code, flags, paths, file names and environment variables stay EXACTLY as written; translate only the prose around them.
+- Never introduce a technical term that is not in the source: translate everyday Portuguese words with everyday words
+  (e.g. "entrar" -> "sign in", not "login"; "cópia datada" -> "dated copy", not "backup"; "saída" -> "result", not "output").
 - Never say "on the right/left" — the layout stacks on phones; refer to cards by their labels."""
 _SYS_LEIGO = SYS[SYS.index("- Audience:"):SYS.index("GLOSSARY")].rstrip("\n")
 
@@ -84,6 +86,13 @@ def sem_traducao(tag):
     """Bloco de comando: <pre class="cmd"> ou <pre> dentro de .terminal — fica igual em todo idioma."""
     pre = tag if tag.name == "pre" else tag.find_parent("pre")
     return pre is not None and ("cmd" in (pre.get("class") or []) or pre.find_parent(class_="terminal") is not None)
+
+def fixa_ids(src, tr):
+    """data-gl (âncora do glossário) nunca muda de idioma: o modelo às vezes traduz o valor; restaura na ordem do PT."""
+    ids = re.findall(r'data-gl="([^"]*)"', src)
+    if not ids: return tr
+    it = iter(ids)
+    return re.sub(r'data-gl="[^"]*"', lambda m: f'data-gl="{next(it, "")}"', tr) if len(re.findall(r'data-gl="', tr)) == len(ids) else tr
 
 def is_leaf(tag):
     if tag.name in ("script", "style", "svg", "head", "html", "body", "br"): return False
@@ -166,6 +175,9 @@ def traduz(base, lang, api, fonte):
     sistema = SYS.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you",
                          glossario="\n".join(f"  {a} -> {b}" for a, b in gl.items()))
     if perfil_tecnico(base):
+        gl = {a: b for a, b in gl.items() if "never" not in b and "nunca" not in b}   # "never script/backup" não vale aqui
+        sistema = SYS.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you",
+                             glossario="\n".join(f"  {a} -> {b}" for a, b in gl.items()))
         sistema = sistema.replace(_SYS_LEIGO.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you"),
                                   SYS_TECNICO.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you"))
         assert "Technical terms are part of the lesson" in sistema, "troca do prompt técnico falhou"
@@ -236,7 +248,7 @@ def monta(base, lang, tr, langs):
         for t in leaves(soup):
             src = inner(t)
             if src not in tr: continue
-            novo = BeautifulSoup(tr[src], "html.parser")
+            novo = BeautifulSoup(fixa_ids(src, tr[src]), "html.parser")
             t.clear()
             for c in list(novo.contents): t.append(c)
         for a in ATTRS:
