@@ -61,7 +61,13 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
         extra.forEach(t => { if (new RegExp(B + escRe(t) + A, 'iu').test(txtAll)) jarg.push(t.toLowerCase()); });
         jarg = [...new Set(jarg)];
         const defs = [...v.querySelectorAll('.gterm')].map(g => T(g));
-        jargDef = jarg.filter(t => defs.some(d => new RegExp(B + escRe(t) + A, 'iu').test(d)));
+        // plural tolerado nos dois sentidos: "LLM" no texto vale pelo .gterm "LLMs" e vice-versa
+        const raiz = t => t.replace(/(es|s)$/i, '');
+        jargDef = jarg.filter(t => defs.some(d => new RegExp(B + escRe(raiz(t)) + '(?:s|es)?' + A, 'iu').test(d)));
+        // edição traduzida para o inglês: palavras do dia a dia em inglês não são jargão para quem lê em inglês
+        const lang = (document.documentElement.lang || 'pt').slice(0, 2).toLowerCase();
+        const COMUNS = { en: ['input', 'inputs', 'output', 'outputs', 'download', 'upload', 'login', 'backup', 'setup'] };
+        jargDef = jargDef.concat(jarg.filter(t => (COMUNS[lang] || []).includes(t)));
         jarg = jarg.filter(t => !jargDef.includes(t));   // sobra só o que aparece sem definição na aula
       }
       const tempo = parseInt(v.getAttribute('data-tempo') || '0', 10);

@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.2.2 — 2026-09-24
+
+- Auditor, perfil técnico: plural tolerado na definição ("LLM" no texto vale pelo `.gterm` "LLMs"); na edição em
+  inglês, input/output/download/upload/login/backup/setup contam como palavras comuns. Achado no piloto OSWork v6.2,
+  cujas traduções revisadas do v2 usam esses termos. Teste negativo e regressão (oswork-v6, motion-rise) conferidos.
+
 ## 6.2.1 — 2026-09-24
 
 - Tradutor: o modelo traduzia o valor de `data-gl` (âncora do glossário) — agora é restaurado do PT na montagem

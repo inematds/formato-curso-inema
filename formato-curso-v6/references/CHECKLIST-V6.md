@@ -12,7 +12,7 @@ A nota de uma aula é o número de critérios aprovados (0–10). **Aula entregu
 | 5 | **Aula enxuta** | palavras em `.step > p`, `.why`, `.promise` ≤900 (aula 1 ≤700); 3–5 steps | sim |
 | 6 | **Texto sem armadilha** | frases >22 palavras ≤5% e nenhuma >30; no teste-se a certa não é >35% mais longa que as outras | sim |
 | 7 | **Legível nos 3 temas** | todo texto visível ≥14px, contraste ≥4,5:1 (3:1 para ≥24px), mono só em `pre/code` | 0 violações |
-| 8 | **Zero jargão e zero "à direita"** | lista-sentinela no texto e nos cartões; "à direita/esquerda" (no celular os cartões empilham). **Perfil técnico:** todo termo da sentinela + `termos` presente na aula tem um `.gterm` que o define nessa aula | 0 |
+| 8 | **Zero jargão e zero "à direita"** | lista-sentinela no texto e nos cartões; "à direita/esquerda" (no celular os cartões empilham). **Perfil técnico:** todo termo da sentinela + `termos` presente na aula tem um `.gterm` que o define nessa aula (plural tolerado; comandos em `pre`/`code` fora da varredura; na edição EN, input/output/login e afins são palavras comuns) | 0 |
 | 9 | **Momento humano** | ≥1 `.calma` + `.psafe` na prática | sim |
 | 10 | **Espinha** | `.promise`, `.em1min`, 1 `.practice`, `.cola`, `.next-action`, 3–4 cartões com "?", `data-tempo` | sim |
 
