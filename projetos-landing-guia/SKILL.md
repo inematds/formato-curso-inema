@@ -2,7 +2,8 @@
 name: projetos-landing-guia
 description: >-
   Pagina unica de LANDING + GUIA DE USO de um projeto, self-contained em guia/index.html, padrao
-  INEMA dark ambar, pronta pra GitHub Pages. Gatilho: "pagina/landing/site/guia de uso do projeto",
+  INEMA dark ambar, SEMPRE em 3 idiomas (PT + guia/en/ + guia/es/, e README PT/EN/ES), pronta pra
+  GitHub Pages. Gatilho: "pagina/landing/site/guia de uso do projeto",
   ou GitHub Pages para um repo.
 ---
 
@@ -11,6 +12,34 @@ description: >-
 Gera uma **pagina unica** (`guia/index.html` self-contained, sem build) que serve como **landing + guia de uso** de um projeto, e publica no **GitHub Pages**. Visual no padrao INEMA: dark premium com acento ambar, responsivo, com light/dark toggle.
 
 O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e quer **uma pagina que explica o que e + ensina a usar**, rapida de publicar. Voce nao reinventa o design — parte do template provado e so troca o conteudo.
+
+## Tres idiomas — SEMPRE (padrao desde 2026-09-25)
+
+Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere o usuario pedir.
+
+| Superficie | PT (fonte) | EN | ES |
+|---|---|---|---|
+| Guia | `guia/index.html` | `guia/en/index.html` | `guia/es/index.html` |
+| README | `README.md` | `README.en.md` | `README.es.md` |
+
+- **PT e a fonte.** Escreva e revise o PT primeiro; so entao traduza. Mudou o PT, retraduza o trecho nos dois.
+- **Traducao = copia do HTML com o texto traduzido.** Mesma estrutura, CSS, JS, ids/ancoras, URLs,
+  comandos, flags, numeros e nomes proprios. Traduzir: title, meta description, nav, titulos, texto,
+  badges, alt/aria, legendas, rodape, comentarios e valores de exemplo que forem prosa.
+- **Nas copias en/ e es/:** `<html lang="en">`/`"es"`; imagens `assets/x` -> `../assets/x`; seletor com
+  `a.on` no idioma (`<a href="../">PT</a><a class="on" href="./">EN</a><a href="../es/">ES</a>`);
+  links pra documentos que so existem em PT ganham "(in Portuguese)" / "(en portugués)".
+- **Seletor + hreflang** ja estao no `template.html` (`.lang` no nav e 3 `<link rel="alternate">`).
+- **Como traduzir:** dois subagentes em paralelo (um EN, um ES), cada um lendo o PT final e escrevendo
+  o arquivo, com a lista de "preservar" acima. Para volume grande/recorrente, seguir o fluxo com cache
+  de `~/projetos/wifi/RELATORIO-PROJETOS-TRILINGUES.md` (GPT-5.4 nano + glossario).
+- **Verificar os tres:** mesma contagem de tags (`<div`, `<section`, `<li`) que o PT, nenhuma palavra
+  PT sobrando (`grep -E "ção|não| você"`), imagens carregando em `en/` e `es/`, seletor navegando
+  entre os tres, sem rolagem horizontal em 360px.
+- **Imagens com texto (banner):** a arte e compartilhada; o banner com texto em PT serve os tres.
+  So gere banners por idioma se o usuario pedir.
+- **Portal:** o card PT entra pelo `atualiza-portal` normal; as versoes EN/ES entram em
+  `portal/src/data/translated-courses.ts` (secao "Versao traduzida" daquela skill).
 
 ## Regra de repositorio (nao quebrar)
 
@@ -28,12 +57,13 @@ O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e 
 1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
 2. **Copie o template.** Use `assets/template.html` como base — ele ja traz todo o CSS, o nav INEMA, o theme toggle e a estrutura de secoes. **Nao reescreva o CSS.** Edite so o conteudo e os `{{PLACEHOLDERS}}`.
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
-4. **Banner hero (padrao desde 2026-09-14).** Gere o banner promocional com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo) — ele vai no `<figure>` da hero E no topo do README. Se falhar, o `<figure>` usa `assets/hero.png` (flux, da capa).
+4. **Banner hero (padrao desde 2026-09-14).** Gere o banner promocional com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo) — ele vai no `<figure>` da hero E no topo do README. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
 5. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
 6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
-7. **Referencie o guia no README** (veja "Referencia no README" abaixo) — obrigatorio.
-8. **Publique no GitHub Pages** (veja "Publicar" abaixo).
-9. **Verifique** que ficou no ar e que o nav tem o link INEMA.CLUB.
+7. **Traduza** o guia para `guia/en/` e `guia/es/` (veja "Tres idiomas" acima) — obrigatorio.
+8. **Referencie o guia no README** (veja "Referencia no README" abaixo), nos 3 READMEs — obrigatorio.
+9. **Publique no GitHub Pages** (veja "Publicar" abaixo).
+10. **Verifique** que as 3 URLs (`/guia/`, `/guia/en/`, `/guia/es/`) respondem 200 e que o nav tem o link INEMA.CLUB.
 
 ## Referencia no README (obrigatorio)
 
@@ -48,6 +78,10 @@ pagina de uso.
 - **Banner no topo do README (padrao):** se `guia/assets/banner.jpg` existe, a primeira
   linha depois do `# titulo` e o banner clicavel apontando pro guia:
   `[![<titulo>](guia/assets/banner.jpg)](https://inematds.github.io/<nome-da-pasta>/guia/)`.
+- **README trilingue:** `README.md` (PT) + `README.en.md` + `README.es.md`, mesmo conteudo. A linha
+  logo abaixo do titulo em cada um e o seletor:
+  `**🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**`.
+  No EN/ES o link do guia aponta pra `.../guia/en/` e `.../guia/es/`.
 - Formato sugerido:
 
   ```markdown
@@ -155,6 +189,7 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 6. `guia/index.html` + `guia/assets/`; **deploy via GitHub Actions** (`.github/workflows/pages.yml` + `build_type=workflow`) — NAO legacy. `.nojekyll` na raiz por garantia. Nenhum `{{PLACEHOLDER}}` solto no HTML.
 7. Pages no ar (HTTP 200, run do Actions verde) e repo publico (com consentimento + sem segredos).
 8. **README do projeto tem link para o guia** (`https://inematds.github.io/<nome-da-pasta>/guia/`).
+9. **Tres idiomas:** `guia/en/index.html` e `guia/es/index.html` existem, respondem 200, seletor PT/EN/ES navega entre os tres (com `a.on` certo), imagens carregam, zero texto PT sobrando; `README.en.md` e `README.es.md` existem e os 3 READMEs tem o seletor de idioma.
 
 ## Capa oficial + imagem hero — SEMPRE gerar (via skill `capa-inema`)
 
@@ -169,7 +204,7 @@ o PRO leem `capa/capa.png`). O `hero.png` que sai junto e o **fallback** da hero
 ```bash
 node ~/.claude/skills/capa-inema/assets/gerar-capa.cjs --repo <pasta-do-repo> \
   --title "<título do projeto>" --cat "<categoria>" \
-  --save-raw <pasta-do-repo>/guia/assets/hero.png
+  --save-raw <pasta-do-repo>/guia/assets/hero.png --gerador auto
 ```
 
 Isso grava **duas coisas na mesma chamada** (uma única geração de imagem, sem desperdiçar
@@ -179,7 +214,12 @@ uma segunda chamada ao gerador):
   hero da própria página de guia (o template já referencia esse caminho).
 
 - **Layout default = `split`** (texto à esquerda + imagem à direita). Se o usuário pediu **"capa fb"** (full-bleed), acrescente `--layout fb`.
-- Requer o **inemaimg** no ar (`localhost:8000`).
+- **`--gerador auto` e OBRIGATORIO aqui (desde 2026-09-21):** a arte da capa/hero do guia
+  sai do **Codex CLI (`image_gen`)**, nao mais do flux local. O `--gerador auto` cai sozinho
+  pro **inemaimg/flux2-klein** (`localhost:8000`) se o Codex falhar — confira o log
+  (`[capa] arte: codex/image_gen` vs `flux2-klein (fallback)`). Sem a flag a engine usa flux
+  (default dela, que atende as capas de CURSO). Custo: uma geracao de imagem na conta OpenAI
+  do Codex.
 - Detalhes, opções e uso em lote: skill `capa-inema`.
 
 ## Banner hero + README — padrao desde 2026-09-14 (via Codex CLI)

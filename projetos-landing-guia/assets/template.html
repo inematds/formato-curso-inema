@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<!-- TEMPLATE projetos-landing-guia. Troque {{PLACEHOLDERS}} e o conteudo. NAO reescreva o CSS. -->
+<!-- TEMPLATE projetos-landing-guia. Troque {{PLACEHOLDERS}} e o conteudo. NAO reescreva o CSS.
+     TRILINGUE: este arquivo e a versao PT (guia/index.html). As versoes guia/en/index.html e
+     guia/es/index.html sao copias traduzidas: lang="en"/"es", seletor com a.on no idioma,
+     hrefs do seletor ../ e ../es/ (ou ../en/), e imagens assets/ -> ../assets/. -->
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{PROJETO}} — {{TAGLINE}}</title>
 <meta name="description" content="{{META_DESCRICAO}}">
+<link rel="alternate" hreflang="pt-BR" href="https://inematds.github.io/{{SLUG}}/guia/">
+<link rel="alternate" hreflang="en" href="https://inematds.github.io/{{SLUG}}/guia/en/">
+<link rel="alternate" hreflang="es" href="https://inematds.github.io/{{SLUG}}/guia/es/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -44,11 +50,14 @@
   nav .clubpro{display:inline-flex;align-items:center;gap:6px}
   nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
   nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .lang{display:inline-flex;gap:2px;font-family:Sora;font-size:.78rem}
+  .lang a{color:var(--mut);padding:.2em .45em;border-radius:6px} .lang a.on{color:var(--amb);background:rgba(226,162,59,.12)}
   .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
   .tgl:hover{border-color:var(--amb)}
   .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
   .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
   @media(max-width:760px){nav .links a.sec{display:none}}
+  @media(max-width:520px){nav .wrap{gap:8px;padding:8px 14px;height:auto;flex-wrap:wrap} nav .links{gap:8px;margin-left:0;width:100%;justify-content:space-between} nav .btn{padding:.45em .7em;font-size:.82rem} .tgl{width:34px;height:34px}}
   .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
   .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
   .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
@@ -108,6 +117,7 @@
     <a class="sec" href="#guia">Guia de uso</a>
     <a class="sec" href="#exemplos">Exemplos</a>
     <a class="sec" href="#roadmap">Roadmap</a>
+    <span class="lang"><a class="on" href="./">PT</a><a href="en/">EN</a><a href="es/">ES</a></span> <!-- en/: <a href="../">PT</a><a class="on" href="./">EN</a><a href="../es/">ES</a> -->
     <button class="tgl" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">🌙</button>
     <a class="btn" href="{{REPO_URL}}" target="_blank" rel="noopener">GitHub</a>
   </div>
