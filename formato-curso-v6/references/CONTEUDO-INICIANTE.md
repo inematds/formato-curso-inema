@@ -55,6 +55,18 @@
   enviar/baixar (upload/download), ficha de orientação (arquivo de configuração).
 - "Prompt" é aceitável em curso de IA, mas prefira "pedido" no texto corrido.
 
+### 2b. Perfil técnico (`"perfil": "tecnico"` no `curso.json`) — 6.2
+
+Quando o curso **ensina** o técnico (terminal, Git, servidor, bot), o jargão de plataforma deixa de ser proibido e vira
+conteúdo. As leis de escrita, a estrutura da aula e o portão continuam os mesmos; mudam três coisas:
+- **Todo termo técnico é definido com `.gterm` em cada aula em que aparece** (a primeira vez na aula). O auditor cobra
+  isso para a lista-sentinela + `"termos"` do `curso.json` (acrescente ali SSH, VPS, systemd, token…). Cada forma conta:
+  "instalar" e "instalação" são termos diferentes para o auditor.
+- O `montar-curso.py` gera o **glossário** (view `#glossario`, estilo wiki) com todos os `.gterm` e as aulas em que
+  aparecem; a definição inline ganha o link "ver no glossário". Mesma definição (`data-def`) do termo em todas as aulas.
+- **Prática pode ser no terminal** (`data-mode="tarefa"`), sempre numa pasta/máquina de treino, com o comando exato
+  num `.terminal` e o que conferir na saída. Nada de segredo real em tela; `.psafe` diz onde parar se der erro.
+
 ## 3. A aula em 4 movimentos (por que nesta ordem)
 
 1. **Abertura — "vale meu tempo?"** Cena (a pessoa na situação), promessa verificável, a dor de hoje

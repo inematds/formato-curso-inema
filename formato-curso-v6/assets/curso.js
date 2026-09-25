@@ -32,7 +32,8 @@
     "grifar":"grifar","grifarCartao":"grifar + pergunta","novoCartao":"Nova pergunta de revisão","frente":"Pergunta","verso":"Resposta",
     "ceHint":"Escreva como <b>pergunta</b>: lembrar sozinho fixa mais do que reler.","salvar":"salvar","cancelar":"cancelar",
     "copiar":"copiar","copiado":"copiado ✓","certo":"Certo.","quase":"Quase.","aCerta":"A certa está marcada.",
-    "exemplo":"Na prática","compare":"Toque para comparar os dois casos:"
+    "exemplo":"Na prática","compare":"Toque para comparar os dois casos:",
+    "glossario":"Glossário","verGlossario":"ver no glossário"
   };
   /*L-FIM*/
   function F(s,n){ return String(s).replace('{n}',n); }
@@ -115,6 +116,9 @@
     alts.forEach(function(l){ var hl=l.getAttribute('hreflang'), a=el('a','',esc(l.getAttribute('data-nome')||hl.toUpperCase())), base=l.getAttribute('href').split('#')[0];
       a.href=base; if(hl.slice(0,2)===cur) a.setAttribute('aria-current','true'); a.addEventListener('click',function(){ a.href=base+location.hash; }); row.appendChild(a); });
     document.querySelector('#menu .menu-list').appendChild(row); })();
+  // glossário (6.2): só existe quando o montar-curso.py gerou a view #v-glossario
+  if($('v-glossario')){ var mg=el('button','',L.glossario); mg.id='m-glo'; mg.type='button'; document.querySelector('#menu .menu-list').appendChild(mg);
+    mg.addEventListener('click',function(){ closePanels(true); location.hash='glossario'; }); }
   $('m-rev').addEventListener('click',openReview);
   $('m-jor').addEventListener('click',function(){ renderJornada(); openPanel('jornada'); });
   $('m-ex').addEventListener('click',function(){ renderExercicios(); openPanel('exercicios'); });
@@ -123,6 +127,15 @@
   // ---------- roteador ----------
   var active=null;
   function show(route){
+    var gl=/^glossario(?:-([a-z0-9-]+))?$/.exec(route);
+    if(gl&&$('v-glossario')){
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+      var gv=$('v-glossario'); gv.classList.add('active'); active=null; window.scrollTo(0,0);
+      var gh=gv.querySelector('h1'); if(gh){ gh.setAttribute('tabindex','-1'); try{ gh.focus({preventScroll:true}); }catch(e){} $('routestatus').textContent=gh.textContent.trim(); }
+      var gb=document.querySelector('.bar .back'); if(gb) gb.hidden=false;
+      if(gl[1]){ var gt=$('g-'+gl[1]); if(gt){ gt.classList.add('alvo'); gt.scrollIntoView({block:'center'}); } }
+      refreshRevn(); return;
+    }
     if(!/^(trilha|aula-[0-9]+)$/.test(route)||(route!=='trilha'&&!aulaEls[route.split('-')[1]])) route='trilha';
     document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
     var view=$(route==='trilha'?'v-trilha':'v-'+route); view.classList.add('active'); window.scrollTo(0,0);
@@ -177,7 +190,7 @@
   document.querySelectorAll('.gterm').forEach(function(g,i){ g.setAttribute('role','button'); g.setAttribute('tabindex','0'); g.setAttribute('aria-expanded','false');
     function tog(){ var p=g.closest('p,li')||g.parentNode, id='def-'+i, box=$(id);
       if(box){ box.remove(); g.setAttribute('aria-expanded','false'); return; }
-      box=el('div','defbox','<b>'+esc(g.textContent)+':</b> '+esc(g.getAttribute('data-def')||'')); box.id=id; p.after(box); g.setAttribute('aria-expanded','true'); g.setAttribute('aria-controls',id); }
+      box=el('div','defbox','<b>'+esc(g.textContent)+':</b> '+esc(g.getAttribute('data-def')||'')+(g.getAttribute('data-gl')&&$('v-glossario')?' <a class="gl-ir" href="#glossario-'+esc(g.getAttribute('data-gl'))+'">'+L.verGlossario+' →</a>':'')); box.id=id; p.after(box); g.setAttribute('aria-expanded','true'); g.setAttribute('aria-controls',id); }
     g.addEventListener('click',tog); g.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tog(); } });
   });
 

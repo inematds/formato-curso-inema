@@ -67,6 +67,24 @@ def chave():
                 if m: return m.group(1).strip().strip("'\"")
     sys.exit("OPENROUTER_API_KEY não encontrada nos dois .env conhecidos.")
 
+# 6.2 — perfil técnico: o público APRENDE os termos técnicos; o prompt troca a regra "sem jargão" por esta.
+SYS_TECNICO = """- Audience: adults learning technical skills (terminal, Git, servers) step by step, reading on a phone. Plain, warm,
+  adult, direct language; short sentences; address the reader as "you" ({tu}). No hype, never infantilize.
+- Technical terms are part of the lesson: keep them in their standard technical form in {nome} (terminal, Git, commit,
+  repository, SSH, VPS, systemd, token, API, Markdown, AGENTS.md...). Never replace them with lay paraphrases.
+- Commands, code, flags, paths, file names and environment variables stay EXACTLY as written; translate only the prose around them.
+- Never say "on the right/left" — the layout stacks on phones; refer to cards by their labels."""
+_SYS_LEIGO = SYS[SYS.index("- Audience:"):SYS.index("GLOSSARY")].rstrip("\n")
+
+def perfil_tecnico(base):
+    p = os.path.join(base, "curso.html")
+    return os.path.exists(p) and '<meta name="perfil" content="tecnico">' in open(p, encoding="utf-8").read()
+
+def sem_traducao(tag):
+    """Bloco de comando: <pre class="cmd"> ou <pre> dentro de .terminal — fica igual em todo idioma."""
+    pre = tag if tag.name == "pre" else tag.find_parent("pre")
+    return pre is not None and ("cmd" in (pre.get("class") or []) or pre.find_parent(class_="terminal") is not None)
+
 def is_leaf(tag):
     if tag.name in ("script", "style", "svg", "head", "html", "body", "br"): return False
     has_text = False
@@ -85,6 +103,7 @@ def leaves(soup):
         for c in t.children:
             if getattr(c, "name", None) is None: continue
             if c.name in ("script", "style", "svg"): continue
+            if c.name == "pre" and sem_traducao(c): continue
             if is_leaf(c): out.append(c)
             else: walk(c)
     walk(soup.body)
@@ -96,7 +115,7 @@ def leaves(soup):
             p = p.parent
         return False
     orf = [s for s in soup.body.find_all(string=True) if s.strip() and not isinstance(s, Comment)
-           and s.parent.name not in ("script", "style") and not s.find_parent("svg") and not dentro(s)]
+           and s.parent.name not in ("script", "style") and not s.find_parent("svg") and not dentro(s) and not sem_traducao(s.parent)]
     if orf: print(f"  aviso: {len(orf)} trechos de texto fora de bloco traduzível, ex.: {orf[0].strip()[:60]!r}", file=sys.stderr)
     if soup.title and soup.title.string: out.append(soup.title)
     return out
@@ -146,6 +165,10 @@ def traduz(base, lang, api, fonte):
     if os.path.exists(gp): gl.update(json.load(open(gp, encoding="utf-8")).get(lang, {}))
     sistema = SYS.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you",
                          glossario="\n".join(f"  {a} -> {b}" for a, b in gl.items()))
+    if perfil_tecnico(base):
+        sistema = sistema.replace(_SYS_LEIGO.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you"),
+                                  SYS_TECNICO.format(nome=NOMES[lang], tu="informal 'tú'" if lang == "es" else "you"))
+        assert "Technical terms are part of the lesson" in sistema, "troca do prompt técnico falhou"
     for rodada in range(4):
         falta = [u for u in fonte if u not in cache]
         if not falta: break

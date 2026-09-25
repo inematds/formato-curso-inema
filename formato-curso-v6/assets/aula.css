@@ -315,6 +315,42 @@ details.mais > *:not(summary){font-size:16px}
 mark.hl{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* ---------- 6.2: módulos na trilha, glossário, terminal, material complementar ---------- */
+.modulo{margin:0 0 36px}
+.modulo .aulas{margin-bottom:0}
+.mod-resumo{color:var(--muted);font-size:16px;margin:-6px 0 14px}
+.gl-link{display:inline-flex;gap:8px;align-items:center;margin:0 0 48px;padding:12px 18px;border:1px solid var(--line2);border-radius:999px;background:var(--panel);color:var(--accent);font-weight:600;text-decoration:none}
+.glossario{margin:0 0 48px}
+.gl-item{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;margin:0 0 12px;scroll-margin-top:80px}
+.gl-item.alvo{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.gl-item dt{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 4px}
+.gl-item dd{margin:0}
+.gl-item dd p{margin:0 0 6px;font-size:17px}
+.gl-aulas{color:var(--muted);font-size:15px}
+.gl-aulas a{color:var(--accent);margin-right:8px}
+.defbox .gl-ir{color:var(--accent);font-weight:600;white-space:nowrap}
+/* terminal: visual real de comando (só em curso perfil técnico) — fundo escuro fixo nos 3 temas */
+.terminal{background:#16181D;border:1px solid #2B2F38;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.terminal .tela-top{background:#22252D;border-bottom-color:#2B2F38;color:#C9CED8}
+.terminal pre,.aula .terminal pre{background:transparent;border:0;border-radius:0;color:#E6E9EF;padding:14px 16px;margin:0;font-size:15px}
+.terminal .pr{color:#7CE0C6;user-select:none}
+.terminal .out{color:#B7BDC9}
+.terminal .tela-nota{background:#1C1F26;color:#E6E9EF;margin:0;padding:10px 16px;border-top:1px solid #2B2F38;font-size:15px}
+/* material complementar: depois do fecho, fora do tempo e da contagem da aula */
+details.complementar{margin:48px 0 24px;border:1px solid var(--line2);border-top:4px solid var(--accent);border-radius:var(--r);background:var(--panel);padding:0 18px}
+details.complementar>summary{cursor:pointer;list-style:none;padding:16px 0;font-weight:700;font-size:18px;color:var(--accent)}
+details.complementar>summary::-webkit-details-marker{display:none}
+details.complementar>summary::before{content:"+ "}
+details.complementar[open]>summary::before{content:"– "}
+details.complementar>summary small{display:block;font-weight:400;font-size:15px;color:var(--muted);margin-top:2px}
+.complementar .comp-sec{border-top:1px solid var(--line);padding:14px 0 6px}
+.complementar h3{font-family:var(--serif);font-weight:500;font-size:22px;margin:4px 0 8px}
+.complementar h4{font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 4px}
+.complementar p,.complementar li{font-size:17px}
+.complementar pre{padding-top:16px}
+.complementar .comp-fontes{font-size:15px;color:var(--muted)}
+.complementar .comp-fontes a{color:var(--accent)}
+
 @media print{
   .bar,.prog,.panel,.scrim,.prefs,.seltb,.lnav,.fecho-motor,.dica,.pcopy,.alterna,.pede-ver{display:none!important}
   body{background:#fff;color:#000}

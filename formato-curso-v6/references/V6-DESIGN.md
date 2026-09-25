@@ -108,6 +108,39 @@ SVG inline simples, rótulos em palavras comuns dentro do SVG (`<text>` herda In
 ```
 Use `fill="var(--accent)"` / `stroke="var(--line2)"` para seguir o tema.
 
+### 3.6 Terminal — `.terminal` (perfil técnico)
+Visual real de comando: o que digitar e o que volta. Conta como visual real (critérios 1 e 2). Fundo escuro fixo nos 3 temas.
+Comandos ficam em `pre` (mono permitido) e **não são traduzidos** (`traduzir-curso.py` pula `pre` dentro de `.terminal`
+e `pre.cmd`). Nunca mostre token/senha real.
+```html
+<figure class="largo"><div class="terminal"><div class="tela-top"><i></i><i></i><i></i><span>Terminal</span></div>
+<pre><code><span class="pr">$</span> codex --version
+<span class="out">codex 0.x.y</span></code></pre>
+<p class="tela-nota">A primeira linha é o que você digita; a segunda, a resposta.</p></div>
+<figcaption>O que olhar e o que significa.</figcaption></figure>
+```
+
+### 3.7 Material complementar — `details.complementar` (depois do fecho)
+Aprofundamento opcional sem teto de tamanho: **não conta no tempo nem nas 900 palavras** (o auditor mede só a prosa
+dos steps, `.why` e `.promise`), mas passa pela checagem de legibilidade e de jargão. Fica **depois da `.fecho`**, antes
+do `nav.lnav`, fechado por padrão. Quando o curso vem de um curso maior (ex.: v2), o complementar segue a estrutura
+de lá, com o texto original: uma `.comp-sec` por bloco.
+```html
+<details class="complementar">
+  <summary>Material complementar<small>Aprofundamento do tópico. Não conta no tempo da aula.</small></summary>
+  <section class="comp-sec"><h3>O que é</h3><p>…</p><h3>Por que aprender</h3><p>…</p>
+    <h3>Conceitos-chave</h3><p>…</p><h4>Na prática</h4><p>…</p><h4>Experimente agora</h4><p>…</p></section>
+  <section class="comp-sec"><h3>Laboratório do módulo</h3><ol><li>…</li></ol>
+    <pre class="cmd"><code>comandos do laboratório</code></pre>
+    <p class="comp-fontes">Fontes: <a href="…">…</a></p></section>
+</details>
+```
+
+### 3.8 Módulos na trilha e glossário
+`"modulos": [{"titulo","resumo"?, "aulas":[…]}]` no `curso.json` agrupa os cards da trilha e da landing
+(`section.modulo` com `h2.sec-title`). Toda aula precisa estar em um módulo (a montagem falha se sobrar ou faltar).
+O glossário (`#v-glossario`, `dl.glossario`, `.gl-item#g-<termo>`) é gerado — não edite à mão.
+
 ## 4. Quadros de texto
 
 | Classe | Uso | Limite |

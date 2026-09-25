@@ -4,7 +4,10 @@
    Mede no navegador de verdade (Playwright), aula por aula, os 10 critérios da rubrica
    (references/CHECKLIST-V6.md). Critério 1 (teste dos 5 segundos) é medido por proxy
    (todo step tem um visual) e SEMPRE precisa da confirmação do leitor simulado/humano.
-   Nota da aula = critérios aprovados (0–10). Portão: aula >= 9 e nenhuma reprovação em 7, 8 ou 10. */
+   Nota da aula = critérios aprovados (0–10). Portão: aula >= 9 e nenhuma reprovação em 7, 8 ou 10.
+   6.2 — perfil técnico (<meta name="perfil" content="tecnico">, gerado pelo montar-curso.py): o critério 8 deixa de
+   ser "zero jargão" e passa a ser "todo termo técnico da aula tem um .gterm que o define NESSA aula". A lista é a
+   sentinela + <meta name="termos"> (curso.json "termos"). O details.complementar é aberto na checagem de legibilidade. */
 const path = require('path'), fs = require('fs');
 let pw; for (const p of [process.env.PLAYWRIGHT_PATH, 'playwright', '/home/nmaldaner/projetos/agent-browser/node_modules/playwright']) { try { if (p) { pw = require(p); break; } } catch (e) {} }
 if (!pw) { console.error('Playwright não encontrado (defina PLAYWRIGHT_PATH).'); process.exit(2); }
@@ -35,18 +38,30 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
   for (const k of keys) {
     await page.evaluate(r => { location.hash = r; }, 'aula-' + k); await page.waitForTimeout(250);
     const m = await page.evaluate(({ k, sent }) => {
+      const perfil = (document.querySelector('meta[name="perfil"]') || {}).content || '';
+      const extra = ((document.querySelector('meta[name="termos"]') || {}).content || '').split('|').map(x => x.trim()).filter(Boolean);
       const v = document.getElementById('v-aula-' + k), T = e => (e ? e.textContent.replace(/\s+/g, ' ').trim() : '');
       const prose = [...v.querySelectorAll('.step > p, .why, .promise')].map(T);
       const words = prose.join(' ').split(/\s+/).filter(Boolean).length;
       const sentT = prose.flatMap(p => p.split(/(?<=[.!?:;])\s+/)).filter(s => s.split(/\s+/).filter(Boolean).length >= 3); const sents = sentT.map(s => s.split(/\s+/).filter(Boolean).length); const longas = sentT.filter(s => s.split(/\s+/).filter(Boolean).length > 22);
       const steps = [...v.querySelectorAll('.step')];
-      const VIS = '.tela,.lado,.janela,figure,.diag';
+      const VIS = '.tela,.lado,.janela,.terminal,figure,.diag';
       const stepsSemVisual = steps.filter(s => !s.querySelector(VIS)).map((s, i) => i + 1);
-      const reais = v.querySelectorAll('.tela,.lado,.janela').length;
+      const reais = v.querySelectorAll('.tela,.lado,.janela,.terminal').length;
       const cena = v.querySelector('figure.cena img');
       const cards = (() => { try { return JSON.parse((document.getElementById('cards-' + k) || {}).textContent || '[]'); } catch (e) { return null; } })();
       const txtAll = T(v.querySelector('.aula')) + ' ' + (cards || []).map(c => c.front + ' ' + c.back).join(' ');
-      const jarg = [...new Set((txtAll.match(new RegExp(sent, 'gi')) || []).map(s => s.toLowerCase()))];
+      let jarg = [...new Set((txtAll.match(new RegExp(sent, 'gi')) || []).map(s => s.toLowerCase()))];
+      let jargDef = [];
+      if (perfil === 'tecnico') {
+        const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const B = '(?<![\\p{L}\\p{N}_])', A = '(?![\\p{L}\\p{N}_])';
+        extra.forEach(t => { if (new RegExp(B + escRe(t) + A, 'iu').test(txtAll)) jarg.push(t.toLowerCase()); });
+        jarg = [...new Set(jarg)];
+        const defs = [...v.querySelectorAll('.gterm')].map(g => T(g));
+        jargDef = jarg.filter(t => defs.some(d => new RegExp(B + escRe(t) + A, 'iu').test(d)));
+        jarg = jarg.filter(t => !jargDef.includes(t));   // sobra só o que aparece sem definição na aula
+      }
       const tempo = parseInt(v.getAttribute('data-tempo') || '0', 10);
       const pgoal = T(v.querySelector('.pgoal')); const pmin = parseInt((pgoal.match(/(\d+)\s*min/) || [])[1] || '0', 10);
       const espacial = [...new Set((T(v.querySelector('.aula')).match(/\b(à|a|na|no|da|do) (direita|esquerda)\b/gi) || []).map(x => x.toLowerCase()))];
@@ -55,10 +70,11 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
         cena: !!cena, cenaAlt: cena ? (cena.getAttribute('alt') || '').length : 0, cenaSrc: cena ? cena.getAttribute('src') : null,
         promise: !!v.querySelector('.promise'), em1: !!v.querySelector('.em1min'), practice: v.querySelectorAll('.practice').length, psafe: !!v.querySelector('.practice .psafe'),
         calma: v.querySelectorAll('.calma').length, cola: !!v.querySelector('.cola'), next: !!v.querySelector('.next-action'),
-        cardsN: cards ? cards.length : -1, cardsPerg: cards ? cards.every(c => /\?\s*$/.test(c.front.trim())) : false, tempo, pmin, jarg };
+        cardsN: cards ? cards.length : -1, cardsPerg: cards ? cards.every(c => /\?\s*$/.test(c.front.trim())) : false, tempo, pmin, jarg, jargDef, perfil };
     }, { k, sent: SENTINELA.source });
     // critério 7: legibilidade nos 3 temas
     m.leg = {};
+    await page.evaluate(k => document.querySelectorAll('#v-aula-' + k + ' details.complementar').forEach(d => { d.open = true; }), k);
     for (const th of themes) {
       await page.evaluate(t => document.documentElement.setAttribute('data-theme', t), th);
       m.leg[th] = await page.evaluate(k => {
@@ -113,7 +129,7 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
     console.log(`\nAula ${r.aula}: ${r.nota}/10 ${r.aprovada ? 'APROVADA' : 'REPROVADA'}  · ${m.words} palavras de prosa · ${m.steps} steps · frases >22: ${m.gt22}/${m.nS} · visuais reais ${m.reais} · cena ${m.cenaKB ?? '—'} KB · ${m.tempo} min`);
     for (const [n, ok] of Object.entries(r.criterios)) if (!ok) console.log('   ✗ ' + n);
     if (m.stepsSemVisual.length) console.log('     steps sem visual: ' + m.stepsSemVisual.join(', '));
-    if (m.jarg.length) console.log('     jargão: ' + m.jarg.join(', '));
+    if (m.jarg.length) console.log((m.perfil === 'tecnico' ? '     termo técnico sem .gterm nesta aula: ' : '     jargão: ') + m.jarg.join(', '));
     if (m.espacial.length) console.log('     referência espacial (celular empilha): ' + m.espacial.join(', '));
     if (m.quizInjusto) console.log('     teste-se: a alternativa certa é bem mais longa que as outras (' + m.quizInjusto + ')');
     if (!r.criterios['6 texto-sem-armadilha']) m.longas.slice(0, 6).forEach(x => console.log('     frase longa: ' + x));

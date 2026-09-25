@@ -1,5 +1,17 @@
 # Changelog — formato-curso-v6
 
+## 6.2.0 — 2026-09-24
+
+Tudo opcional pelo `curso.json`; sem os campos novos a montagem, o auditor e o tradutor dão o mesmo resultado da 6.1
+(conferido em oswork-v6 e motion-rise: `curso.html`/`landing.html` idênticos, notas iguais, motor 26/26 e 25/25).
+- **Sem limite de aulas.** O teto de 9 saiu; cada aula continua com ~15 min e ≤900 palavras.
+- **Módulos** (`"modulos"`): trilha e landing agrupadas por módulo.
+- **Material complementar** (`details.complementar`, depois do fecho): aprofundamento sem teto, fora do tempo e da
+  contagem de palavras; aberto pelo auditor na checagem de legibilidade dos 3 temas.
+- **Perfil técnico** (`"perfil": "tecnico"`, `"termos"`): critério 8 vira "todo termo técnico definido com `.gterm`
+  na aula"; glossário gerado (`#glossario`, link "ver no glossário" na definição, item no menu); visual `.terminal`
+  conta como visual real; prática pode ser no terminal; tradutor mantém termos técnicos e não traduz comandos.
+
 ## 6.1.0 — 2026-09-24
 
 - Cenas pelo **Codex image_gen por padrão** (`gerar-cena.py --gerador auto`), fallback inemaimg/flux2-klein.
