@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.4.3 — 2026-09-28
+
+- Tradutor: motor padrão passa a ser o **Codex pela assinatura** (`codex exec -m gpt-6-luna --ephemeral --sandbox read-only`,
+  pedido pela entrada padrão, 4 lotes em paralelo), sem chave de API. OpenRouter vira opção (`--motor openrouter`), só com
+  autorização explícita. `--modelo <id>` troca o modelo do Codex. `usage.jsonl` registra motor, modelo e segundos por lote.
+
 ## 6.3.3 — 2026-09-25
 
 - Landing com módulos: em vez de listar todas as aulas, mostra só os módulos, fechados (`<details class="mod-lp">`

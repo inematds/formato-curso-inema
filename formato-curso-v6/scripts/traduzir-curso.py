@@ -2,22 +2,25 @@
 """Traduz um curso v6 montado (curso.html + landing.html + textos do motor) para EN/ES.
 
 Uso (depois do montar-curso.py):
-  python3 traduzir-curso.py <pasta-do-curso> [en es] [--so-montar]
+  python3 traduzir-curso.py <pasta-do-curso> [en es] [--so-montar] [--motor codex|openrouter] [--modelo <id>]
 
 Padrão INEMA trilíngue (RELATORIO-CURSOS-TRILINGUES.md): PT na raiz, <lang>/ ao lado; só TEXTO vai para a API
 (blocos com as tags inline preservadas, atributos, cartões e o bloco L do motor); CSS/JS/imagens são reaproveitados.
-Modelo: GPT-5.4 nano via OpenRouter (chave em ~/projetos/openpcbotv2/.env ou ~/projetos/wifi/.env, lida em runtime,
-nunca impressa). Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
+Motor padrão (6.4): Codex pela ASSINATURA (`codex exec`, sessão do `codex login`), modelo gpt-6-luna — sem chave de API.
+`--motor openrouter` (GPT-5.4 nano, chave OPENROUTER_API_KEY) só com autorização explícita do usuário para essa API. Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
 (tags, {n}, espaços de borda, vazio) volta sozinha até 3 vezes; depois o build para e diz qual.
 Glossário opcional do curso: <curso>/i18n/glossario.json {"en": {"pt": "en"}, "es": {...}}.
 Custo e tokens de cada chamada: <curso>/i18n/usage.jsonl.
 Saída: <lang>/curso.html, <lang>/landing.html, <lang>/index.html, <lang>/assets/curso.js; PT ganha os <link hreflang>.
 Estado do aluno separado por idioma (meta curso + "-<lang>"). Imagens e CSS compartilhados (../assets/).
 """
-import copy, html, json, os, re, sys, time, urllib.error, urllib.request
+import copy, html, json, os, re, subprocess, sys, tempfile, time, urllib.error, urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup, NavigableString, Comment
 
-MODELO = "openai/gpt-5.4-nano"
+MODELO = "openai/gpt-5.4-nano"   # só no motor openrouter
+CODEX_MODELO = "gpt-6-luna"       # motor codex (assinatura); troque com --modelo
+PARALELO = 4                      # lotes simultâneos no motor codex
 URL = "https://openrouter.ai/api/v1/chat/completions"
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America)"}
 ROTULO = {"pt": "Português", "en": "English", "es": "Español"}
@@ -66,6 +69,19 @@ def chave():
                 m = re.match(r"\s*OPENROUTER_API_KEY\s*=\s*(.+)", linha)
                 if m: return m.group(1).strip().strip("'\"")
     sys.exit("OPENROUTER_API_KEY não encontrada nos dois .env conhecidos.")
+
+def via_codex(sistema, lote, modelo):
+    """Um lote pelo `codex exec` da assinatura: só leitura, sem sessão salva, resposta final num arquivo."""
+    pedido = (sistema + "\n\nReturn ONLY the JSON object (no code fences, no comments). INPUT JSON:\n"
+              + json.dumps(lote, ensure_ascii=False))
+    with tempfile.TemporaryDirectory() as d:
+        out = os.path.join(d, "out.txt")
+        r = subprocess.run(["codex", "exec", "-m", modelo, "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
+                            "-C", d, "-o", out, "-"], input=pedido, capture_output=True, text=True, timeout=900)
+        if r.returncode or not os.path.exists(out): raise RuntimeError(f"codex exec rc={r.returncode}: {r.stderr[-300:]}")
+        txt = open(out, encoding="utf-8").read().strip()
+    txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", txt)
+    return json.loads(txt[txt.index("{"):txt.rindex("}") + 1])
 
 # 6.2 — perfil técnico: o público APRENDE os termos técnicos; o prompt troca a regra "sem jargão" por esta.
 SYS_TECNICO = """- Audience: adults learning technical skills (terminal, Git, servers) step by step, reading on a phone. Plain, warm,
@@ -166,7 +182,7 @@ def unidades(base):
         if u not in vistos and re.search(r"[A-Za-zÀ-ú]", u): vistos.add(u); out.append(u)
     return out
 
-def traduz(base, lang, api, fonte):
+def traduz(base, lang, api, fonte, motor="codex", modelo=CODEX_MODELO):
     os.makedirs(os.path.join(base, "i18n"), exist_ok=True)
     dest = os.path.join(base, "i18n", f"{lang}.json")
     cache = json.load(open(dest, encoding="utf-8")) if os.path.exists(dest) else {}
@@ -189,6 +205,30 @@ def traduz(base, lang, api, fonte):
             lote[str(len(lote))] = u; tam += len(u)
             if tam > 3000 or len(lote) >= 40 or rodada > 0 and len(lote) >= 8: lotes.append(lote); lote, tam = {}, 0
         if lote: lotes.append(lote)
+        def grava(i, lote, saida, extra):
+            ok = ruins = 0
+            for k, src in lote.items():
+                tr = saida.get(k)
+                if valida(src, tr) is None: cache[src] = tr; ok += 1
+                else: ruins += 1
+            with open(os.path.join(base, "i18n", "usage.jsonl"), "a") as fh:
+                fh.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "lang": lang, "ok": ok, "rejeitadas": ruins, **extra}) + "\n")
+            json.dump(cache, open(dest, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+            print(f"  {lang} rodada {rodada+1} lote {i}/{len(lotes)}: {ok} ok, {ruins} rejeitadas", flush=True)
+        if motor == "codex":
+            def um(par):
+                i, lote = par
+                for tent in range(3):
+                    t0 = time.time()
+                    try: return i, lote, via_codex(sistema, lote, modelo), round(time.time() - t0)
+                    except (RuntimeError, subprocess.TimeoutExpired, ValueError, json.JSONDecodeError) as e:
+                        erro = e; time.sleep(5 * (tent + 1))
+                print(f"  {lang} lote {i}: falhou 3x ({str(erro)[:160]}); fica para a próxima rodada", file=sys.stderr)
+                return i, lote, {}, None
+            with ThreadPoolExecutor(PARALELO) as ex:
+                for i, lote, saida, seg in ex.map(um, enumerate(lotes, 1)):
+                    grava(i, lote, saida, {"motor": "codex-assinatura", "modelo": modelo, "seg": seg, "usd": None})
+            continue
         for i, lote in enumerate(lotes, 1):
             corpo = {"model": MODELO, "temperature": 0.15, "max_completion_tokens": 12000, "usage": {"include": True},
                      "response_format": {"type": "json_object"},
@@ -201,17 +241,9 @@ def traduz(base, lang, api, fonte):
                 except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as e:
                     if tent == 4: sys.exit(f"{lang}: lote {i} falhou 5x ({e}); cache preservado em {dest}")
                     time.sleep(8 * (tent + 1))
-            ok = ruins = 0
-            for k, src in lote.items():
-                tr = saida.get(k)
-                if valida(src, tr) is None: cache[src] = tr; ok += 1
-                else: ruins += 1
             u = res.get("usage", {})
-            with open(os.path.join(base, "i18n", "usage.jsonl"), "a") as fh:
-                fh.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "lang": lang, "modelo": MODELO, "id": res.get("id"),
-                                     "in": u.get("prompt_tokens"), "out": u.get("completion_tokens"), "usd": u.get("cost"), "ok": ok, "rejeitadas": ruins}) + "\n")
-            json.dump(cache, open(dest, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-            print(f"  {lang} rodada {rodada+1} lote {i}/{len(lotes)}: {ok} ok, {ruins} rejeitadas", flush=True)
+            grava(i, lote, saida, {"motor": "openrouter", "modelo": MODELO, "id": res.get("id"),
+                                   "in": u.get("prompt_tokens"), "out": u.get("completion_tokens"), "usd": u.get("cost")})
     falta = [u for u in fonte if u not in cache]
     fp = os.path.join(base, "i18n", f"{lang}-faltando.json")
     if falta:
@@ -291,18 +323,28 @@ def pt_alternates(base, langs):
         open(p, "w", encoding="utf-8").write(str(soup))
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    argv = sys.argv[1:]
+    def opt(nome, padrao):
+        if nome in argv:
+            i = argv.index(nome); v = argv[i + 1]; del argv[i:i + 2]; return v
+        return padrao
+    motor = opt("--motor", "codex"); modelo = opt("--modelo", CODEX_MODELO)
+    if motor not in ("codex", "openrouter"): sys.exit("--motor deve ser codex ou openrouter")
+    args = [a for a in argv if not a.startswith("--")]
     base = os.path.abspath(args[0]); langs = args[1:] or ["en", "es"]
     fonte = unidades(base)
-    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres)")
-    api = None if "--so-montar" in sys.argv else chave()
+    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres) · motor {motor}"
+          + (f" ({modelo}, assinatura)" if motor == "codex" else f" ({MODELO}, API)"))
+    so_montar = "--so-montar" in sys.argv
+    api = chave() if (motor == "openrouter" and not so_montar) else None
     for lang in langs:
-        if api: tr = traduz(base, lang, api, fonte)
+        if not so_montar: tr = traduz(base, lang, api, fonte, motor, modelo)
         else: tr = json.load(open(os.path.join(base, "i18n", f"{lang}.json"), encoding="utf-8"))
         monta(base, lang, tr, langs); print(f"{lang}/: curso.html, landing.html, index.html, assets/curso.js")
     pt_alternates(base, langs)
     us = [json.loads(l) for l in open(os.path.join(base, "i18n", "usage.jsonl"))] if os.path.exists(os.path.join(base, "i18n", "usage.jsonl")) else []
-    print(f"custo API acumulado (usage.jsonl): US$ {sum((u.get('usd') or 0) for u in us):.4f} em {len(us)} chamadas")
+    print(f"custo de API acumulado (usage.jsonl, só motor openrouter): US$ {sum((u.get('usd') or 0) for u in us):.4f}; "
+          f"chamadas pela assinatura do Codex: {sum(1 for u in us if u.get('motor') == 'codex-assinatura')}")
 
 if __name__ == "__main__":
     main()
