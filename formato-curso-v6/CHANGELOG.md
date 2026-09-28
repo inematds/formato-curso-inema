@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.5.3 — 2026-09-28
+
+- Tradutor: saiu o motor OpenRouter (GPT por API). Todo GPT vai pela assinatura (`codex exec -m gpt-6-luna`).
+  Reserva Groq com modelo que não é GPT (`llama-3.3-70b-versatile`), **desligada por padrão**: só com `--reserva-groq` ou
+  `RESERVA_GROQ=1`, e só no lote em que o Codex falhou 3 vezes. `usage.jsonl` marca `codex-assinatura` ou `groq-reserva`.
+
 ## 6.4.3 — 2026-09-28
 
 - Tradutor: motor padrão passa a ser o **Codex pela assinatura** (`codex exec -m gpt-6-luna --ephemeral --sandbox read-only`,

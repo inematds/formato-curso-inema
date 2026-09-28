@@ -2,12 +2,13 @@
 """Traduz um curso v6 montado (curso.html + landing.html + textos do motor) para EN/ES.
 
 Uso (depois do montar-curso.py):
-  python3 traduzir-curso.py <pasta-do-curso> [en es] [--so-montar] [--motor codex|openrouter] [--modelo <id>]
+  python3 traduzir-curso.py <pasta-do-curso> [en es] [--so-montar] [--modelo <id>] [--reserva-groq]
 
 Padrão INEMA trilíngue (RELATORIO-CURSOS-TRILINGUES.md): PT na raiz, <lang>/ ao lado; só TEXTO vai para a API
 (blocos com as tags inline preservadas, atributos, cartões e o bloco L do motor); CSS/JS/imagens são reaproveitados.
 Motor padrão (6.4): Codex pela ASSINATURA (`codex exec`, sessão do `codex login`), modelo gpt-6-luna — sem chave de API.
-`--motor openrouter` (GPT-5.4 nano, chave OPENROUTER_API_KEY) só com autorização explícita do usuário para essa API. Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
+Todo GPT só pela assinatura. Reserva Groq (modelo que não é GPT, chave GROQ_API_KEY) DESLIGADA: só com `--reserva-groq`
+ou RESERVA_GROQ=1, por pedido explícito do usuário; entra só no lote em que o Codex falhou 3 vezes. Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
 (tags, {n}, espaços de borda, vazio) volta sozinha até 3 vezes; depois o build para e diz qual.
 Glossário opcional do curso: <curso>/i18n/glossario.json {"en": {"pt": "en"}, "es": {...}}.
 Custo e tokens de cada chamada: <curso>/i18n/usage.jsonl.
@@ -18,10 +19,10 @@ import copy, html, json, os, re, subprocess, sys, tempfile, time, urllib.error, 
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup, NavigableString, Comment
 
-MODELO = "openai/gpt-5.4-nano"   # só no motor openrouter
+GROQ_MODELO = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")   # reserva (não é GPT)
 CODEX_MODELO = "gpt-6-luna"       # motor codex (assinatura); troque com --modelo
 PARALELO = 4                      # lotes simultâneos no motor codex
-URL = "https://openrouter.ai/api/v1/chat/completions"
+URL = "https://api.groq.com/openai/v1/chat/completions"   # só a reserva Groq
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America)"}
 ROTULO = {"pt": "Português", "en": "English", "es": "Español"}
 HTMLLANG = {"pt": "pt-BR", "en": "en", "es": "es"}
@@ -66,9 +67,9 @@ def chave():
         f = os.path.expanduser(p)
         if os.path.exists(f):
             for linha in open(f, encoding="utf-8"):
-                m = re.match(r"\s*OPENROUTER_API_KEY\s*=\s*(.+)", linha)
+                m = re.match(r"\s*GROQ_API_KEY\s*=\s*(.+)", linha)
                 if m: return m.group(1).strip().strip("'\"")
-    sys.exit("OPENROUTER_API_KEY não encontrada nos dois .env conhecidos.")
+    sys.exit("GROQ_API_KEY não encontrada nos dois .env conhecidos (pedida a reserva Groq).")
 
 def via_codex(sistema, lote, modelo):
     """Um lote pelo `codex exec` da assinatura: só leitura, sem sessão salva, resposta final num arquivo."""
@@ -182,7 +183,15 @@ def unidades(base):
         if u not in vistos and re.search(r"[A-Za-zÀ-ú]", u): vistos.add(u); out.append(u)
     return out
 
-def traduz(base, lang, api, fonte, motor="codex", modelo=CODEX_MODELO):
+def via_groq(sistema, lote, api):
+    """Reserva: só quando o usuário ativou (--reserva-groq). Modelo que não é GPT."""
+    corpo = {"model": GROQ_MODELO, "temperature": 0.15, "max_completion_tokens": 8000, "response_format": {"type": "json_object"},
+             "messages": [{"role": "system", "content": sistema}, {"role": "user", "content": json.dumps(lote, ensure_ascii=False)}]}
+    req = urllib.request.Request(URL, data=json.dumps(corpo).encode(), headers={"Authorization": f"Bearer {api}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=240) as r: res = json.loads(r.read())
+    return json.loads(res["choices"][0]["message"]["content"]), res.get("usage", {})
+
+def traduz(base, lang, api, fonte, modelo=CODEX_MODELO):
     os.makedirs(os.path.join(base, "i18n"), exist_ok=True)
     dest = os.path.join(base, "i18n", f"{lang}.json")
     cache = json.load(open(dest, encoding="utf-8")) if os.path.exists(dest) else {}
@@ -215,35 +224,24 @@ def traduz(base, lang, api, fonte, motor="codex", modelo=CODEX_MODELO):
                 fh.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "lang": lang, "ok": ok, "rejeitadas": ruins, **extra}) + "\n")
             json.dump(cache, open(dest, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
             print(f"  {lang} rodada {rodada+1} lote {i}/{len(lotes)}: {ok} ok, {ruins} rejeitadas", flush=True)
-        if motor == "codex":
-            def um(par):
-                i, lote = par
-                for tent in range(3):
-                    t0 = time.time()
-                    try: return i, lote, via_codex(sistema, lote, modelo), round(time.time() - t0)
-                    except (RuntimeError, subprocess.TimeoutExpired, ValueError, json.JSONDecodeError) as e:
-                        erro = e; time.sleep(5 * (tent + 1))
-                print(f"  {lang} lote {i}: falhou 3x ({str(erro)[:160]}); fica para a próxima rodada", file=sys.stderr)
-                return i, lote, {}, None
-            with ThreadPoolExecutor(PARALELO) as ex:
-                for i, lote, saida, seg in ex.map(um, enumerate(lotes, 1)):
-                    grava(i, lote, saida, {"motor": "codex-assinatura", "modelo": modelo, "seg": seg, "usd": None})
-            continue
-        for i, lote in enumerate(lotes, 1):
-            corpo = {"model": MODELO, "temperature": 0.15, "max_completion_tokens": 12000, "usage": {"include": True},
-                     "response_format": {"type": "json_object"},
-                     "messages": [{"role": "system", "content": sistema}, {"role": "user", "content": json.dumps(lote, ensure_ascii=False)}]}
-            for tent in range(5):
-                req = urllib.request.Request(URL, data=json.dumps(corpo).encode(), headers={"Authorization": f"Bearer {api}", "Content-Type": "application/json"})
+        def um(par):
+            i, lote = par
+            for tent in range(3):
+                t0 = time.time()
+                try: return i, lote, via_codex(sistema, lote, modelo), {"motor": "codex-assinatura", "modelo": modelo, "seg": round(time.time() - t0)}
+                except (RuntimeError, subprocess.TimeoutExpired, ValueError, json.JSONDecodeError) as e:
+                    erro = e; time.sleep(5 * (tent + 1))
+            if api:
                 try:
-                    with urllib.request.urlopen(req, timeout=240) as r: res = json.loads(r.read())
-                    saida = json.loads(res["choices"][0]["message"]["content"]); break
-                except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as e:
-                    if tent == 4: sys.exit(f"{lang}: lote {i} falhou 5x ({e}); cache preservado em {dest}")
-                    time.sleep(8 * (tent + 1))
-            u = res.get("usage", {})
-            grava(i, lote, saida, {"motor": "openrouter", "modelo": MODELO, "id": res.get("id"),
-                                   "in": u.get("prompt_tokens"), "out": u.get("completion_tokens"), "usd": u.get("cost")})
+                    saida, u = via_groq(sistema, lote, api)
+                    print(f"  {lang} lote {i}: Codex falhou 3x; usada a reserva Groq ({GROQ_MODELO})", file=sys.stderr)
+                    return i, lote, saida, {"motor": "groq-reserva", "modelo": GROQ_MODELO, "in": u.get("prompt_tokens"), "out": u.get("completion_tokens")}
+                except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as e2: erro = e2
+            print(f"  {lang} lote {i}: falhou ({str(erro)[:160]}); fica para a próxima rodada", file=sys.stderr)
+            return i, lote, {}, {"motor": "falhou"}
+        with ThreadPoolExecutor(PARALELO) as ex:
+            for i, lote, saida, extra in ex.map(um, enumerate(lotes, 1)):
+                grava(i, lote, saida, extra)
     falta = [u for u in fonte if u not in cache]
     fp = os.path.join(base, "i18n", f"{lang}-faltando.json")
     if falta:
@@ -328,23 +326,23 @@ def main():
         if nome in argv:
             i = argv.index(nome); v = argv[i + 1]; del argv[i:i + 2]; return v
         return padrao
-    motor = opt("--motor", "codex"); modelo = opt("--modelo", CODEX_MODELO)
-    if motor not in ("codex", "openrouter"): sys.exit("--motor deve ser codex ou openrouter")
+    modelo = opt("--modelo", CODEX_MODELO)
     args = [a for a in argv if not a.startswith("--")]
     base = os.path.abspath(args[0]); langs = args[1:] or ["en", "es"]
     fonte = unidades(base)
-    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres) · motor {motor}"
-          + (f" ({modelo}, assinatura)" if motor == "codex" else f" ({MODELO}, API)"))
     so_montar = "--so-montar" in sys.argv
-    api = chave() if (motor == "openrouter" and not so_montar) else None
+    reserva = "--reserva-groq" in sys.argv or os.environ.get("RESERVA_GROQ") == "1"
+    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres) · Codex pela assinatura ({modelo})"
+          + (f" · reserva Groq LIGADA ({GROQ_MODELO})" if reserva else " · reserva Groq desligada"))
+    api = chave() if (reserva and not so_montar) else None
     for lang in langs:
-        if not so_montar: tr = traduz(base, lang, api, fonte, motor, modelo)
+        if not so_montar: tr = traduz(base, lang, api, fonte, modelo)
         else: tr = json.load(open(os.path.join(base, "i18n", f"{lang}.json"), encoding="utf-8"))
         monta(base, lang, tr, langs); print(f"{lang}/: curso.html, landing.html, index.html, assets/curso.js")
     pt_alternates(base, langs)
     us = [json.loads(l) for l in open(os.path.join(base, "i18n", "usage.jsonl"))] if os.path.exists(os.path.join(base, "i18n", "usage.jsonl")) else []
-    print(f"custo de API acumulado (usage.jsonl, só motor openrouter): US$ {sum((u.get('usd') or 0) for u in us):.4f}; "
-          f"chamadas pela assinatura do Codex: {sum(1 for u in us if u.get('motor') == 'codex-assinatura')}")
+    print(f"chamadas pela assinatura do Codex: {sum(1 for u in us if u.get('motor') == 'codex-assinatura')}; "
+          f"reserva Groq usada: {sum(1 for u in us if u.get('motor') == 'groq-reserva')} lote(s)")
 
 if __name__ == "__main__":
     main()

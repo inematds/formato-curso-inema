@@ -59,7 +59,7 @@ o clique abre as aulas daquele módulo, e `landing.html#modulo-N` já chega com 
 "Trilhas", que volta para `landing.html#modulos` para escolher o módulo.
 Aprofundamento vai no `details.complementar` depois do fecho (`V6-DESIGN.md` §3.7), fora do tempo e das 900 palavras.
 Traduzir (EN/ES): `python3 ~/.claude/skills/formato-curso-v6/scripts/traduzir-curso.py <curso> en es` — depois de montar;
-gera `en/` e `es/` e o seletor de idioma. **Motor padrão (6.4): Codex pela assinatura** (`codex exec -m gpt-6-luna`, sessão do `codex login`, sem chave de API; `--modelo <id>` troca o modelo). `--motor openrouter` (GPT-5.4 nano por API) só com autorização explícita do usuário. Cache em `i18n/`, registro em `i18n/usage.jsonl`.
+gera `en/` e `es/` e o seletor de idioma. **Motor padrão (6.4): Codex pela assinatura** (`codex exec -m gpt-6-luna`, sessão do `codex login`, sem chave de API; `--modelo <id>` troca o modelo). Todo GPT só pela assinatura: não há motor por API. Reserva Groq (modelo que não é GPT) **desligada**: só com `--reserva-groq` ou `RESERVA_GROQ=1`, quando o usuário pedir explicitamente. Cache em `i18n/`, registro em `i18n/usage.jsonl`.
 Sempre na ordem: montar → traduzir (a montagem reescreve o `curso.html` PT e apaga os links de idioma). Depois audite e
 teste também `en/curso.html` e `es/curso.html`. Glossário do curso: `i18n/glossario.json`.
 
