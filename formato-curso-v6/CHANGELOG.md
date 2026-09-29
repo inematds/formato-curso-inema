@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.5.4 — 2026-09-29
+
+- Montagem: o rótulo "Na prática · <profissão>" só põe a primeira letra em maiúscula (antes o `capitalize()` baixava o resto:
+  "Analista de RH" virava "Analista de rh"). Achado pelo leitor simulado do curso Áreas INEMA v6.2.
+- Tradutor: o `en/index.html` / `es/index.html` usa o `curso_curto` do `curso.json` (antes vinha "OSWork" fixo).
+
 ## 6.5.3 — 2026-09-28
 
 - Tradutor: saiu o motor OpenRouter (GPT por API). Todo GPT vai pela assinatura (`codex exec -m gpt-6-luna`).

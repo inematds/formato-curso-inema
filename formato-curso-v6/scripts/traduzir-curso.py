@@ -310,7 +310,9 @@ def monta(base, lang, tr, langs):
     L2 = {k: ({kk: tr.get(vv, vv) for kk, vv in v.items()} if isinstance(v, dict) else (CAPRE[lang] if k == "capRe" else tr.get(v, v))) for k, v in L.items()}
     js2 = js[:m.start(1)] + json.dumps(L2, ensure_ascii=False) + js[m.end(1):]
     open(os.path.join(base, lang, "assets", "curso.js"), "w", encoding="utf-8").write(js2)
-    open(os.path.join(base, lang, "index.html"), "w").write('<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=landing.html"><a href="landing.html">OSWork</a>\n')
+    try: nome = html.escape(json.load(open(os.path.join(base, "curso.json"), encoding="utf-8")).get("curso_curto", "Curso"))
+    except Exception: nome = "Curso"
+    open(os.path.join(base, lang, "index.html"), "w").write(f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=landing.html"><a href="landing.html">{nome}</a>\n')
 
 def pt_alternates(base, langs):
     for pagina in ("curso.html", "landing.html"):

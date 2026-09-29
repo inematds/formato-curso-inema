@@ -64,7 +64,7 @@ for p in aulas:
     if com_glossario:
         s = re.sub(r'<span class="gterm"([^>]*)>(.*?)</span>', lambda m: marca_gterm(m, n), s, flags=re.S)
     # rótulo do exemplo gravado no HTML (e não só gerado pelo motor) para o traduzir-curso.py alcançar
-    s = re.sub(r'<p data-ex="([^"]+)"(?![^>]*data-exlbl)', lambda m: f'<p data-ex="{m.group(1)}" data-exlbl="Na prática · {m.group(1).capitalize()}"', s)
+    s = re.sub(r'<p data-ex="([^"]+)"(?![^>]*data-exlbl)', lambda m: f'<p data-ex="{m.group(1)}" data-exlbl="Na prática · {m.group(1)[:1].upper() + m.group(1)[1:]}"', s)
     corpos.append(s)
 
 c = cfg
