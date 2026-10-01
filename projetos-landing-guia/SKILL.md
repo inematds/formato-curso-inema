@@ -224,9 +224,15 @@ uma segunda chamada ao gerador):
 
 ## Banner hero + README — padrao desde 2026-09-14 (via Codex CLI)
 
-A hero do guia e o topo do README usam um **banner promocional 16:9 no estilo INEMA.PRO**
-(fundo preto-azulado, tipografia 3D dourada + ciano, tiles com icones neon, faixa
-`INEMA.CLUB · inematds.github.io/<repo>`). E gerado pelo **Codex CLI** (`codex exec` +
+A hero do guia e o topo do README usam um **banner promocional 16:9**. Desde 2026-10-01 o
+**estilo padrao e `live`**, igual ao banner "Hoje tem live" do portal: sans geometrica limpa
+(tipo Montserrat), contraste de peso extra-bold x thin em branco, a palavra de `--destaque`
+enorme em dourado metalico chanfrado, texto a esquerda com filete dourado e cena
+cinematografica escura/dourada a direita (`--sides`), `INEMA.CLUB · inematds.github.io/<repo>`
+discreto no canto. Alternativa: `--estilo opus` (como o banner do claude-opus55: titulo
+dourado metalico limpo + tiles com icones). **Nunca** fonte "de jogo" (condensada, inflada,
+cartunesca, dourado+ciano no titulo) — padrao antigo, reprovado pelo usuario. Exemplo do
+padrao novo: `inematds/dot`. E gerado pelo **Codex CLI** (`codex exec` +
 `image_gen`), porque ele escreve texto em portugues corretamente — o flux2-klein nao, por
 isso a capa continua sem texto. **A capa do catalogo NAO muda** (segue `capa-inema`).
 
@@ -236,11 +242,17 @@ Rode **depois** da capa e **antes** de escrever o `guia/index.html`:
 bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
   --repo <pasta-do-repo> \
   --title "<TITULO CURTO EM CAIXA ALTA>" \
+  [--destaque "<PALAVRA DO TITULO EM DOURADO; default: a ultima>"] \
   --sub "<SUBTITULO / PROMESSA>" \
   --line "<uma frase de apoio>" \
   --tiles "<4 a 6 legendas separadas por virgula, tiradas das secoes do guia>" \
-  [--sides "<o que vai a esquerda | a direita | no centro>"]
+  [--sides "<cena/objeto 3D da direita (live) ou elementos laterais (opus)>"] \
+  [--estilo live|opus] [--dry-run]
 ```
+
+- `--dry-run` so imprime o prompt montado (nao gera nem gasta credito).
+- No `live`, `--tiles` vira uma linha discreta de rotulos (sem caixas); prefira titulo curto
+  (2-3 palavras) com uma palavra forte de destaque.
 
 - Saida: `<repo>/guia/assets/banner.jpg` (1400px, JPG leve). O template ja aponta
   `<figure><img src="assets/banner.jpg">` na hero.
