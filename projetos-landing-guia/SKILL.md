@@ -36,8 +36,12 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 - **Verificar os tres:** mesma contagem de tags (`<div`, `<section`, `<li`) que o PT, nenhuma palavra
   PT sobrando (`grep -E "ção|não| você"`), imagens carregando em `en/` e `es/`, seletor navegando
   entre os tres, sem rolagem horizontal em 360px.
-- **Imagens com texto (banner):** a arte e compartilhada; o banner com texto em PT serve os tres.
-  So gere banners por idioma se o usuario pedir.
+- **Imagens com texto (banner):** desde 2026-10-01, **um banner por idioma** (o usuario reclamou
+  do texto em PT nas paginas EN/ES). Gere com `--lang en|es` e `--saida <nome>-<lang>`, passando
+  os textos ja traduzidos: `banner-en.jpg`, `banner-es.jpg`, `banner-grade-en.jpg`,
+  `banner-grade-es.jpg`. Em `guia/en/` e `guia/es/` aponte `../assets/banner-<lang>.jpg` e
+  `../assets/banner-grade-<lang>.jpg`; `README.en.md`/`README.es.md` usam `banner-<lang>.jpg`.
+  Sao 6 geracoes por guia (2 estilos x 3 idiomas); rode em paralelo e confira o texto de cada uma.
 - **Portal:** o card PT entra pelo `atualiza-portal` normal; as versoes EN/ES entram em
   `portal/src/data/translated-courses.ts` (secao "Versao traduzida" daquela skill).
 
@@ -266,6 +270,10 @@ bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
   bash $G --repo <repo> --title ... --sub ... --line ... --tiles ... --estilo grade --saida banner-grade
   ```
   No `grade`, `--sub` pode ser mais longo e `--tiles` deve ter 6 itens (viram cartoes).
+  Depois repita os dois com `--lang en --saida banner-en` / `--saida banner-grade-en` (e `es`),
+  com `--title/--sub/--line/--tiles` traduzidos.
+  **Paleta (os dois estilos):** contida como no "Hoje tem live" — preto/grafite e branco, dourado
+  so como acento (destaque, filete, poucos pontos de luz). Nada de tudo dourado e saturado.
   Exemplo dos dois: `inematds/dot`.
 - **README:** logo abaixo do `# titulo`, insira `[![<titulo>](guia/assets/banner.jpg)](<url do guia>)`.
 - **Confira a imagem** (Read no arquivo) antes de publicar: o Codex acerta o texto principal,
