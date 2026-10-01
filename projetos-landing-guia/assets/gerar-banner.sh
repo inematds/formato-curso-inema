@@ -9,10 +9,11 @@
 #
 # Estilos (padrão desde 2026-10-01: live):
 #   live — como o banner "Hoje tem live" do portal: sans geométrica limpa, contraste de peso
-#          (extra-bold × fino) em branco, a palavra de destaque enorme em dourado metálico chanfrado,
-#          texto à esquerda e cena cinematográfica escura/dourada à direita. --tiles vira rótulos discretos.
+#          (extra-bold × fino) em branco, a palavra de destaque enorme em dourado/âmbar,
+#          texto à esquerda e cena cinematográfica com luz quente à direita. --tiles vira rótulos discretos.
 #   grade — layout do banner antigo (título no topo, fileira de tiles com ícones, faixa INEMA.CLUB
-#          embaixo) com a tipografia e a imagem do live (sans limpa, dourado, fotográfico, sem neon azul).
+#          embaixo) com cor/luz/tipografia das referências (ícones em traço dourado, como a capa do musicavideo).
+#   live e grade anexam assets/referencias/ref-live.jpg e ref-musicavideo.jpg (codex exec -i) como referência de estilo.
 #   opus — como o banner do guia claude-opus55: título em dourado metálico limpo, tiles com ícones.
 #   Nunca fonte "de jogo" (condensada, inflada, cartunesca) — era o padrão antigo, abandonado.
 #
@@ -49,9 +50,10 @@ if [ "$ESTILO" = live ]; then
   TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Abaixo do filete, uma linha discreta de rótulos pequenos em branco fino, separados por ' · ': $(printf '%s' "$TILES" | sed 's/,/ · /g'). Sem caixas, sem ícones."
   PROMPT="$HEAD_TXT
 
-Estilo (igual ao banner 'HOJE TEM LIVE' do INEMA): thumbnail cinematográfica premium, fundo quase preto e neutro com bokeh suave, sem neon azul, sem partículas, sem foto de pessoa. Paleta contida e pouco saturada: a maior parte em preto, grafite e branco; dourado como acento (a palavra de destaque, o filete e alguns pontos de luz), nunca a imagem toda dourada ou âmbar.
+As duas imagens anexadas são a REFERÊNCIA DE ESTILO aprovada (cores, luz, tipografia e acabamento): copie o estilo, NUNCA o conteúdo, as pessoas, os logos ou os textos delas.
+Estilo: thumbnail cinematográfica premium como 'HOJE TEM LIVE' e a capa do INEMA MUSICAVIDEO. Cor e luz como nas referências: fundo preto com luz cinematográfica quente âmbar e laranja (luzes de palco, bokeh, reflexos), cena com cor viva e contraste alto, podendo ter pontos de cor do tema (telas, luzes) — nem monocromática cinza, nem toda dourada. Letras brancas limpas e letras em dourado/âmbar com gradiente suave e brilho leve, como 'MUSICAS' e 'ESCALA' na referência; nada de letras cromadas, neon ou supersaturadas, sem neon azul, sem foto de pessoa.
 Tipografia: sans-serif geométrica limpa e moderna (tipo Montserrat / Gotham), NUNCA fonte de jogo, condensada, inflada ou cartunesca. Contraste de pesos: palavras em branco alternando extra-bold e fino (thin), como 'HOJE' extra-bold e 'TEM' thin. A palavra de destaque em caixa alta, enorme, em dourado metálico chanfrado com brilho sutil e reflexo de luz, ocupando a maior parte da largura do bloco de texto.
-Layout: bloco de texto alinhado à esquerda ocupando cerca de 55% da largura; à direita, cena fotorrealista com profundidade de campo: $SIDES, iluminação de estúdio escura com reflexos dourados pontuais.
+Layout: bloco de texto alinhado à esquerda ocupando cerca de 55% da largura; à direita, cena fotorrealista com profundidade de campo: $SIDES, iluminação quente âmbar/laranja de palco ou estúdio.
 
 Conteúdo:
 $( [ -n "$RESTO" ] && echo "- Acima do destaque, em branco (misturando extra-bold e thin): '$RESTO'." )
@@ -63,20 +65,21 @@ $TILES_TXT
 - No canto inferior esquerdo, pequeno e discreto, em branco thin: 'INEMA.CLUB · inematds.github.io/$SLUG'.
 $TAIL_TXT"
 elif [ "$ESTILO" = grade ]; then
-  TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Fileira horizontal de cartões quadrados, um por item, cada um com um ícone/objeto 3D fotorrealista em grafite, prata escovada ou vidro escuro, com no máximo um pequeno detalhe dourado, e a legenda embaixo em branco sans limpa: $TILES. Cartões quase pretos, foscos, com borda cinza fina e discreta; sem moldura dourada, sem brilho, sem neon."
+  TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Fileira horizontal de cartões, um por item, como a fileira de ícones da referência MUSICAVIDEO: cartões escuros semitransparentes com borda fina dourada/âmbar, ícone em traço dourado com leve brilho e legenda em branco (sans bold limpa): $TILES."
   PROMPT="$HEAD_TXT
 
-Estilo: mesmo layout dos banners clássicos do INEMA (título no topo, subtítulo, fileira de cartões com ícones, faixa inferior), mas com a tipografia, a imagem e a PALETA do banner 'HOJE TEM LIVE' do INEMA: fotografia cinematográfica premium, sóbria, fundo quase preto e neutro (grafite, não marrom nem âmbar), bokeh suave e reflexos discretos numa superfície escura, sem partículas, sem foto de pessoa.
-Paleta contida e pouco saturada: cerca de 85% da imagem em preto, grafite e branco. Dourado é ACENTO: só na palavra de destaque, num filete fino e em um ou dois pontos de luz ao fundo. Nada de objetos, cartões, molduras ou fundo dourados. No máximo uma cor de acento do tema (como o vermelho do YouTube no banner da live), num único elemento. Sem glow exagerado, sem brilho em tudo.
+As duas imagens anexadas são a REFERÊNCIA DE ESTILO aprovada (cores, luz, tipografia e acabamento): copie o estilo, NUNCA o conteúdo, as pessoas, os logos ou os textos delas.
+Estilo: mesmo layout dos banners clássicos do INEMA (título no topo, subtítulo, fileira de cartões com ícones, faixa inferior), com o acabamento da capa INEMA MUSICAVIDEO e do 'HOJE TEM LIVE'.
+Cor e luz como nas referências: fundo preto com luz cinematográfica quente âmbar e laranja (luzes de palco, bokeh, reflexos), cena com cor viva e contraste alto, podendo ter pontos de cor do tema (telas, luzes) — nem monocromática cinza, nem toda dourada. Letras brancas limpas e letras em dourado/âmbar com gradiente suave e brilho leve, como 'MUSICAS' e 'ESCALA' na referência; nada de letras cromadas, neon ou supersaturadas, sem neon azul, sem foto de pessoa.
 Tipografia: sans-serif geométrica limpa e moderna (tipo Montserrat / Gotham), NUNCA fonte de jogo, condensada, inflada ou cartunesca. Título centralizado no topo com contraste de pesos: a palavra de destaque enorme em dourado metálico chanfrado com brilho sutil, as demais palavras do título em branco extra-bold ou thin. Subtítulo em branco extra-bold; linha de apoio em branco thin.
 
 Conteúdo:
 - Título no topo: '$TITLE', com '$DESTAQUE' em dourado e o resto em branco.
 - Subtítulo: '$SUB'.
 $( [ -n "$LINE" ] && echo "- Linha menor: '$LINE'." )
-- Elementos de fundo nas laterais: $SIDES, em tons neutros (grafite, prata, vidro escuro), desfocados com profundidade de campo para não competir com o texto.
+- Elementos de fundo nas laterais: $SIDES, com luz quente âmbar/laranja e profundidade de campo, sem competir com o texto.
 $TILES_TXT
-- Faixa inferior: barra fina quase preta, sem moldura dourada, com o texto 'INEMA.CLUB · inematds.github.io/$SLUG' em branco (INEMA.CLUB em branco extra-bold, o resto thin).
+- Faixa inferior escura com borda fina dourada, como a da referência MUSICAVIDEO, com o texto 'INEMA.CLUB · inematds.github.io/$SLUG' em branco bold.
 $TAIL_TXT"
 else
   TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Fileira de tiles quadrados com ícone 3D e legenda, um por item: $TILES."
@@ -102,7 +105,10 @@ echo "[banner] gerando via codex exec em $REPO ..."
 # (AppArmor restringe user namespaces) e, mesmo com -s workspace-write, a gravação do PNG
 # falha com "Operation not permitted" — a imagem é gerada e jogada fora (visto 2026-09-13).
 LOG="$REPO/guia/assets/$SAIDA.codex.log"
-( cd "$REPO" && timeout 600 codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox "$PROMPT" >"$LOG" 2>&1 )
+REFDIR="$(dirname "$(realpath "$0")")/referencias"; IMGS=()
+[ "$ESTILO" != opus ] && for r in "$REFDIR"/ref-live.jpg "$REFDIR"/ref-musicavideo.jpg; do [ -f "$r" ] && IMGS+=(-i "$r"); done
+# o prompt vai pela entrada padrão: com -i <FILE>... um argumento posicional seria lido como mais uma imagem
+( cd "$REPO" && printf '%s' "$PROMPT" | timeout 600 codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox "${IMGS[@]}" >"$LOG" 2>&1 )
 [ -s "$PNG" ] && rm -f "$LOG" || { echo "[banner] codex não gerou guia/assets/$SAIDA.png — veja $LOG"; }
 [ -s "$PNG" ] || { echo "[banner] codex não gerou guia/assets/$SAIDA.png — fallback pro hero.png"; exit 1; }
 ffmpeg -y -loglevel error -i "$PNG" -vf scale=1400:-1 -q:v 3 "$JPG" && rm -f "$PNG"
