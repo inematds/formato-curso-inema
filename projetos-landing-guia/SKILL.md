@@ -57,7 +57,7 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
 2. **Copie o template.** Use `assets/template.html` como base — ele ja traz todo o CSS, o nav INEMA, o theme toggle e a estrutura de secoes. **Nao reescreva o CSS.** Edite so o conteudo e os `{{PLACEHOLDERS}}`.
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
-4. **Banner hero (padrao desde 2026-09-14).** Gere o banner promocional com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo) — ele vai no `<figure>` da hero E no topo do README. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
+4. **Banners (padrao desde 2026-10-01: DOIS estilos em todo guia).** Gere com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo): `--estilo live` → `banner.jpg`, que vai no `<figure>` da hero E no topo do README; e `--estilo grade --saida banner-grade` → `banner-grade.jpg`, que vai no `<figure>` do inicio da secao "O que e" (ja no template). Se o usuario pedir mais, acrescente `--estilo opus --saida banner-opus` em outra secao. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
 5. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
 6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
 7. **Traduza** o guia para `guia/en/` e `guia/es/` (veja "Tres idiomas" acima) — obrigatorio.
@@ -229,7 +229,10 @@ A hero do guia e o topo do README usam um **banner promocional 16:9**. Desde 202
 (tipo Montserrat), contraste de peso extra-bold x thin em branco, a palavra de `--destaque`
 enorme em dourado metalico chanfrado, texto a esquerda com filete dourado e cena
 cinematografica escura/dourada a direita (`--sides`), `INEMA.CLUB · inematds.github.io/<repo>`
-discreto no canto. Alternativa: `--estilo opus` (como o banner do claude-opus55: titulo
+discreto no canto. **Segundo banner obrigatorio:** `--estilo grade --saida banner-grade` —
+layout classico (titulo no topo centralizado, fileira de 6 cartoes com objetos 3D dourados,
+faixa `INEMA.CLUB · ...` embaixo) com a tipografia e a imagem do live (dourado fotografico,
+sem neon azul); vai no inicio da secao "O que e". Terceiro, opcional: `--estilo opus` (como o banner do claude-opus55: titulo
 dourado metalico limpo + tiles com icones). **Nunca** fonte "de jogo" (condensada, inflada,
 cartunesca, dourado+ciano no titulo) — padrao antigo, reprovado pelo usuario. Exemplo do
 padrao novo: `inematds/dot`. E gerado pelo **Codex CLI** (`codex exec` +
@@ -254,8 +257,16 @@ bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
 - No `live`, `--tiles` vira uma linha discreta de rotulos (sem caixas); prefira titulo curto
   (2-3 palavras) com uma palavra forte de destaque.
 
-- Saida: `<repo>/guia/assets/banner.jpg` (1400px, JPG leve). O template ja aponta
-  `<figure><img src="assets/banner.jpg">` na hero.
+- Saida: `<repo>/guia/assets/<saida>.jpg` (1400px, JPG leve; default `banner`). O template ja
+  aponta `assets/banner.jpg` na hero e `assets/banner-grade.jpg` no inicio de "O que e"
+  (EN/ES usam `../assets/`). Rode o script duas vezes com os mesmos textos:
+  ```bash
+  G=~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh
+  bash $G --repo <repo> --title ... --sub ... --line ... --tiles ...                       # live -> banner.jpg
+  bash $G --repo <repo> --title ... --sub ... --line ... --tiles ... --estilo grade --saida banner-grade
+  ```
+  No `grade`, `--sub` pode ser mais longo e `--tiles` deve ter 6 itens (viram cartoes).
+  Exemplo dos dois: `inematds/dot`.
 - **README:** logo abaixo do `# titulo`, insira `[![<titulo>](guia/assets/banner.jpg)](<url do guia>)`.
 - **Confira a imagem** (Read no arquivo) antes de publicar: o Codex acerta o texto principal,
   mas pode inventar frases decorativas pequenas nas bordas. Se algum texto principal saiu
