@@ -69,6 +69,10 @@ const SENTINELA = /\b(JSON|terminal|Git|GitHub|reposit[óo]rio|commit|branch|pip
         const COMUNS = { en: ['input', 'inputs', 'output', 'outputs', 'download', 'upload', 'login', 'backup', 'setup', 'work', 'skill', 'skills', 'script', 'scripts', 'origin', 'shell', 'restore'] };
         jargDef = jargDef.concat(jarg.filter(t => (COMUNS[lang] || []).includes(t)));
         jarg = jarg.filter(t => !jargDef.includes(t));   // sobra só o que aparece sem definição na aula
+      } else if ((document.documentElement.lang || 'pt').slice(0, 2).toLowerCase() === 'en') {
+        // edição EN de curso iniciante: "Upload a skill", "download" etc. são palavras comuns (e nomes reais de botão) em inglês
+        const COMUNS_EN = ['input', 'inputs', 'output', 'outputs', 'download', 'upload', 'login', 'backup', 'setup'];
+        jarg = jarg.filter(t => !COMUNS_EN.includes(t));
       }
       const tempo = parseInt(v.getAttribute('data-tempo') || '0', 10);
       const pgoal = T(v.querySelector('.pgoal')); const pmin = parseInt((pgoal.match(/(\d+)\s*min/) || [])[1] || '0', 10);

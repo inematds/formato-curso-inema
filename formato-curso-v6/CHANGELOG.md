@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.5.5 — 2026-10-06
+
+- Auditor: na edição EN de curso **iniciante** (sem `perfil: tecnico`), upload/download/login/input/output/backup/setup
+  deixam de contar como jargão, como já valia no perfil técnico. Antes, "Upload a skill" (nome real do botão do app)
+  reprovava 5 aulas do Skills v6 em inglês.
+
 ## 6.5.4 — 2026-09-29
 
 - Montagem: o rótulo "Na prática · <profissão>" só põe a primeira letra em maiúscula (antes o `capitalize()` baixava o resto:
