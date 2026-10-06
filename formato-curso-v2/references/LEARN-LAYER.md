@@ -13,6 +13,14 @@
 
 ---
 
+## Contents
+
+- 1. Modelo de dados `localStorage`
+- 2. API `window.INEMA`
+- 3. Convenções de markup `data-*` (snippets copia-e-cola)
+- 4. Como incluir numa página
+- 5. Degradação graciosa e robustez
+
 ## 1. Modelo de dados `localStorage`
 
 ### 1.1 Dois escopos

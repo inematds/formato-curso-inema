@@ -5,6 +5,47 @@
 
 ---
 
+## Contents
+
+- COMO USAR
+- 1. ERROS CRITICOS (OBRIGATORIO)
+- 2. NAVIGATION
+- 3. HEADER
+- 4. CARDS DE MODULO
+- 5. FUNCIONALIDADE
+- 6. RESPONSIVIDADE
+- 1. ERROS CRITICOS (OBRIGATORIO)
+- 2. NAVIGATION
+- 3. BREADCRUMB
+- 4. HEADER
+- 5. TOPICOS (SECOES)
+- 6. RESUMO FINAL
+- 7. FUNCIONALIDADE
+- Trilha 1 (Emerald)
+- Trilha 2 (Blue)
+- Trilha 3 (Purple)
+- Trilha 4 (Amber)
+- Trilha 5 (Teal)
+- Trilha 6 (Rose)
+- Estrutura
+- Layout
+- Conteudo
+- Funcionalidade
+- Botoes (onde adicionar)
+- Mapeamento de Pastas
+- ERRO #18 — Anti-FOUC (sem flash de tema entre paginas)
+- ERRO #19 — IDs / `data-*` estaveis presentes (contrato de ancoragem)
+- ERRO #20 — Marcar-lido acessivel (aria-pressed, justify-start, teclado)
+- ERRO #21 — Progresso DERIVADO agrega topico->modulo->trilha->curso e bate "N de M"
+- ERRO #22 — Export -> Import faz round-trip SEM perda; merge nao-destrutivo
+- ERRO #23 — Contraste AA por tema (muted incluso; ambar nunca texto em superficie clara)
+- ERRO #24 — Popover / highlight nao quebra em selecao cross-node
+- ERRO #25 — Jornada `role=dialog` com foco preso, ESC e `inert`
+- ERRO #26 — Storage indisponivel cai em modo efemero (curso continua legivel)
+- ERRO #27 — `prefers-reduced-motion` honrado
+- ERRO #28 — Manifesto do curso presente (progresso cross-pagina depende dele)
+- TEMPLATE RAPIDO — CAMADA DE APRENDIZAGEM (v2)
+
 ## COMO USAR
 
 1. Copie este checklist para cada pagina que criar/revisar

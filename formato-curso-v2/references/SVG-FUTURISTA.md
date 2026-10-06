@@ -5,6 +5,14 @@
 
 ---
 
+## Contents
+
+- 1. Princípios
+- 2. Paleta dos diagramas
+- 3. Tokens compartilhados (defs + CSS)
+- 4. Catálogo de primitivos
+- 5. Checklist do SVG (antes de entregar)
+
 ## 1. Princípios
 
 1. **SVG inline, nunca imagem externa.** Vetorial, nítido, leve, combina com dark/light, e você controla 100%.

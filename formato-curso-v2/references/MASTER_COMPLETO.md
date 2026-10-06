@@ -5,7 +5,7 @@
 
 ---
 
-## INDICE
+## Contents
 
 1. [ERROS CRITICOS - NUNCA COMETER](#1-erros-criticos---nunca-cometer)
 2. [ESTRUTURA DO PROJETO](#2-estrutura-do-projeto)
