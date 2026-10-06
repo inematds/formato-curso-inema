@@ -13,6 +13,22 @@ Gera uma **pagina unica** (`guia/index.html` self-contained, sem build) que serv
 
 O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e quer **uma pagina que explica o que e + ensina a usar**, rapida de publicar. Voce nao reinventa o design — parte do template provado e so troca o conteudo.
 
+## Texto breve "o que e" — SEMPRE (regra global desde 2026-10-05)
+
+Todo guia tem, **logo abaixo da hero**, a secao `#resumo` ("Em resumo") com um **paragrafo curto que
+explica o que e o projeto** — ja esta no `template.html`, preencha `{{RESUMO}}`. E o README tem o mesmo
+texto numa secao `## O que é` logo depois do banner e do seletor de idioma.
+
+- **3 a 5 frases, ~50-100 palavras, linguagem simples, sem jargao.** Quem nunca ouviu falar do projeto
+  tem que entender so lendo esse paragrafo.
+- Responde, nesta ordem: **o que e** (ferramenta, kit, skill, analise...), **para quem serve**, **que
+  problema resolve / o que entrega** e **o que precisa para usar** (ou "e so ler", se for conteudo).
+- Nao repete o `lead` da hero (que e o pitch): o resumo explica, o lead vende.
+- So o que o projeto faz de verdade; nada inventado. Sigla ou nome tecnico, explique na primeira vez.
+- Vai traduzido nas versoes `en/`/`es/` ("In short"/"En resumen") e nos `README.en.md`/`README.es.md`
+  ("## What it is"/"## Qué es").
+- Guia antigo sem o bloco: ao mexer nele por qualquer motivo, acrescente o resumo.
+
 ## Tres idiomas — SEMPRE (padrao desde 2026-09-25)
 
 Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere o usuario pedir.
@@ -58,7 +74,7 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 
 ## Fluxo
 
-1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
+1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o **texto breve "o que e"** (3-5 frases simples — ver regra acima), o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
 2. **Copie o template.** Use `assets/template.html` como base — ele ja traz todo o CSS, o nav INEMA, o theme toggle e a estrutura de secoes. **Nao reescreva o CSS.** Edite so o conteudo e os `{{PLACEHOLDERS}}`.
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
 4. **Banners (padrao desde 2026-10-01: DOIS estilos em todo guia).** Gere com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo): `--estilo live` → `banner.jpg`, que vai no `<figure>` da hero E no topo do README; e `--estilo grade --saida banner-grade` → `banner-grade.jpg`, que vai no `<figure>` do inicio da secao "O que e" (ja no template). Se o usuario pedir mais, acrescente `--estilo opus --saida banner-opus` em outra secao. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
@@ -86,6 +102,7 @@ pagina de uso.
   logo abaixo do titulo em cada um e o seletor:
   `**🇧🇷 [Português](README.md) · 🇺🇸 [English](README.en.md) · 🇪🇸 [Español](README.es.md)**`.
   No EN/ES o link do guia aponta pra `.../guia/en/` e `.../guia/es/`.
+- **Texto "o que e" (obrigatorio):** logo apos o banner e o seletor de idioma, a secao `## O que é` com o mesmo paragrafo do `#resumo` do guia.
 - Formato sugerido:
 
   ```markdown
@@ -114,6 +131,7 @@ Preencha cada uma; escale o conteudo ao projeto.
 |-------|-----------|
 | **nav** | logo, INEMA.CLUB, PRO, itens de secao (ancoras), toggle, GitHub. So troca nome/emoji e URL do repo. |
 | **hero** | `chip` (subtitulo curto), `h1` (pitch com 1 palavra em `.amb`), `lead` (1-2 frases), 2 CTAs (ex.: "Comecar o guia" → `#guia`; "Ver no GitHub"), e uma `<figure>` com imagem (ou remova). |
+| **Em resumo** (`#resumo`, obrigatoria) | Paragrafo breve que explica o que e o projeto: o que e, para quem, que problema resolve, o que precisa pra usar. 3-5 frases simples. Nunca remover. |
 | **O que e** | 3 `.card` com os pontos fortes (emoji + titulo + 1 frase). |
 | **Como funciona** | um `.flow` (chips com `→`) mostrando o fluxo/pipeline + opcional grid de cards agrupando etapas. |
 | **Pre-requisitos** | cards com o que precisa estar instalado/no ar, com `<pre>` de comandos. |
@@ -194,6 +212,7 @@ Para verificar o conteudo publicado quando `curl` estiver bloqueado no ambiente,
 7. Pages no ar (HTTP 200, run do Actions verde) e repo publico (com consentimento + sem segredos).
 8. **README do projeto tem link para o guia** (`https://inematds.github.io/<nome-da-pasta>/guia/`).
 9. **Tres idiomas:** `guia/en/index.html` e `guia/es/index.html` existem, respondem 200, seletor PT/EN/ES navega entre os tres (com `a.on` certo), imagens carregam, zero texto PT sobrando; `README.en.md` e `README.es.md` existem e os 3 READMEs tem o seletor de idioma.
+10. **Texto breve "o que e":** secao `#resumo` preenchida logo abaixo da hero (3-5 frases simples, sem `{{RESUMO}}` sobrando) nas 3 linguas, e `## O que é` / `## What it is` / `## Qué es` nos 3 READMEs.
 
 ## Capa oficial + imagem hero — SEMPRE gerar (via skill `capa-inema`)
 

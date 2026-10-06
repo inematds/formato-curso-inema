@@ -66,6 +66,8 @@
   .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
   .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
   .hero figure img{width:100%;display:block}
+  .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
+  .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
   @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
   section{padding:62px 0;border-bottom:1px solid var(--line)}
   section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
@@ -138,6 +140,14 @@
     <figure><img src="assets/banner.jpg" alt="{{HERO_IMG_ALT}}"></figure> <!-- banner via gerar-banner.sh; se falhou, use assets/hero.png -->
   </div>
 </header>
+
+<!-- OBRIGATORIO: texto breve que explica o que e o projeto, logo abaixo da hero. 3 a 5 frases
+     simples, sem jargao: o que e, para quem serve, que problema resolve e o que precisa para usar.
+     Quem nunca ouviu falar do projeto tem que entender so lendo este paragrafo. -->
+<section id="resumo" class="resumo"><div class="wrap">
+  <span class="chip">Em resumo</span>
+  <p>{{RESUMO}}</p>
+</div></section>
 
 <section id="oque"><div class="wrap">
   <span class="chip">O que é</span>
