@@ -122,6 +122,10 @@ Estes elementos sao a identidade do padrao — mantenha sempre:
 - **Fontes Google**: Sora (titulos), Inter (corpo), JetBrains Mono (codigo).
 - **Responsivo**: o template ja colapsa grids e esconde itens de secao no mobile. Mantenha.
 - **Self-contained**: tudo inline (CSS + JS no proprio `guia/index.html`). So as imagens em `guia/assets/` sao externas (referenciadas como `assets/...`, relativo ao guia). Isso e o que faz funcionar em GitHub Pages sem build.
+- **Animacao (efeito interativo, demo animada, hero com movimento):** antes de escrever ou pedir o
+  codigo, monte o prompt pelo molde `references/animacao-prompt.md` (Aparencia com valores exatos,
+  Movimento numerado com ms, Regras: um loop rAF pausado fora da tela, nunca capturar rolagem,
+  `prefers-reduced-motion` com estado final parado, modo demonstracao com cursor fantasma). (2026-10-07)
 
 ## Estrutura (secoes do template)
 
