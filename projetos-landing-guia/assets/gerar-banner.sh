@@ -5,7 +5,7 @@
 # Uso:
 #   gerar-banner.sh --repo <pasta> --title "OPENAI DOTS" [--destaque "DOTS"] --sub "VALE A PENA?" \
 #     --line "frase curta de apoio" --tiles "AUDITORIA,AGENTS.MD,NÚCLEO PORTÁTIL,SKILLS" \
-#     [--sides "cena/elementos visuais"] [--estilo live|grade|opus] [--saida banner] [--lang pt|en|es] [--slug <repo>] [--dry-run]
+#     [--sides "cena/elementos visuais"] [--estilo live|grade|opus] [--saida banner] [--lang pt|en|es] [--slug <repo>] [--rodape "texto do rodapé"] [--selo "NomeDoProjeto"] [--dry-run]
 #
 # Estilos (padrão desde 2026-10-01: live):
 #   live — como o banner "Hoje tem live" do portal: sans geométrica limpa, contraste de peso
@@ -15,6 +15,9 @@
 #          embaixo) com cor/luz/tipografia das referências (ícones em traço dourado, como a capa do musicavideo).
 #   live e grade anexam assets/referencias/ref-live.jpg e ref-musicavideo.jpg (codex exec -i) como referência de estilo.
 #   opus — como o banner do guia claude-opus55: título em dourado metálico limpo, tiles com ícones.
+#   --selo "Nome": escreve o nome do projeto/produto em azul (#3B9EFF, Sora) acima do título,
+#          depois da geração (selo-banner.py, determinístico). Pulado se o nome já está no título.
+#          Regra inema-design V11 (13/10/2026).
 #   Nunca fonte "de jogo" (condensada, inflada, cartunesca) — era o padrão antigo, abandonado.
 #
 # Saída: <repo>/guia/assets/<saida>.jpg (default banner.jpg) (JPG 1400px de largura, ~400-500 KB).
@@ -25,14 +28,14 @@ set -uo pipefail
 while [ $# -gt 0 ]; do case "$1" in
   --repo) REPO="$2"; shift 2;; --title) TITLE="$2"; shift 2;; --sub) SUB="$2"; shift 2;;
   --line) LINE="$2"; shift 2;; --tiles) TILES="$2"; shift 2;; --sides) SIDES="$2"; shift 2;;
-  --slug) SLUG="$2"; shift 2;; --destaque) DESTAQUE="$2"; shift 2;; --estilo) ESTILO="$2"; shift 2;; --saida) SAIDA="$2"; shift 2;; --lang) LANGB="$2"; shift 2;; --dry-run) DRY=1; shift;;
+  --slug) SLUG="$2"; shift 2;; --rodape) RODAPE="$2"; shift 2;; --selo) SELO="$2"; shift 2;; --destaque) DESTAQUE="$2"; shift 2;; --estilo) ESTILO="$2"; shift 2;; --saida) SAIDA="$2"; shift 2;; --lang) LANGB="$2"; shift 2;; --dry-run) DRY=1; shift;;
   *) echo "arg desconhecido: $1"; exit 2;; esac; done
 : "${REPO:?--repo obrigatório}" "${TITLE:?--title obrigatório}" "${SUB:?--sub obrigatório}"
 REPO="$(realpath "$REPO")"  # evita SLUG "." com --repo .
 LINE="${LINE:-}"; TILES="${TILES:-}"; SLUG="${SLUG:-$(basename "$REPO")}"
 ESTILO="${ESTILO:-live}"; DESTAQUE="${DESTAQUE:-${TITLE##* }}"  # default: última palavra do título
 case "$ESTILO" in live|grade|opus) ;; *) echo "--estilo deve ser live, grade ou opus"; exit 2;; esac
-SAIDA="${SAIDA:-banner}"; LANGB="${LANGB:-pt}"
+SAIDA="${SAIDA:-banner}"; LANGB="${LANGB:-pt}"; RODAPE="${RODAPE:-INEMA.CLUB · inematds.github.io/$SLUG}"
 case "$LANGB" in pt) IDIOMA="português";; en) IDIOMA="inglês";; es) IDIOMA="espanhol";; *) echo "--lang deve ser pt, en ou es"; exit 2;; esac
 if [ "$ESTILO" = live ] || [ "$ESTILO" = grade ]; then
   SIDES="${SIDES:-um objeto 3D brilhante que representa o tema, sobre uma mesa ou pedestal num ambiente de estúdio escuro}"
@@ -62,7 +65,7 @@ $( [ -n "$RESTO" ] && echo "- Acima do destaque, em branco (misturando extra-bol
 $( [ -n "$LINE" ] && echo "- Uma linha em branco thin: '$LINE'." )
 - Um filete dourado fino horizontal sob o bloco de texto.
 $TILES_TXT
-- No canto inferior esquerdo, pequeno e discreto, em branco thin: 'INEMA.CLUB · inematds.github.io/$SLUG'.
+- No canto inferior esquerdo, pequeno e discreto, em branco thin: '$RODAPE'.
 $TAIL_TXT"
 elif [ "$ESTILO" = grade ]; then
   TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Fileira horizontal de cartões, um por item, como a fileira de ícones da referência MUSICAVIDEO: cartões escuros semitransparentes com borda fina dourada/âmbar, ícone em traço dourado com leve brilho e legenda em branco (sans bold limpa): $TILES."
@@ -79,7 +82,7 @@ Conteúdo:
 $( [ -n "$LINE" ] && echo "- Linha menor: '$LINE'." )
 - Elementos de fundo nas laterais: $SIDES, com luz quente âmbar/laranja e profundidade de campo, sem competir com o texto.
 $TILES_TXT
-- Faixa inferior escura com borda fina dourada, como a da referência MUSICAVIDEO, com o texto 'INEMA.CLUB · inematds.github.io/$SLUG' em branco bold.
+- Faixa inferior escura com borda fina dourada, como a da referência MUSICAVIDEO, com o texto '$RODAPE' em branco bold.
 $TAIL_TXT"
 else
   TILES_TXT=""; [ -n "$TILES" ] && TILES_TXT="- Fileira de tiles quadrados com ícone 3D e legenda, um por item: $TILES."
@@ -94,7 +97,7 @@ Conteúdo:
 $( [ -n "$LINE" ] && echo "- Linha menor: '$LINE'." )
 $TILES_TXT
 - Elementos: $SIDES.
-- Faixa inferior com moldura dourada: 'INEMA.CLUB · inematds.github.io/$SLUG'.
+- Faixa inferior com moldura dourada: '$RODAPE'.
 $TAIL_TXT"
 fi
 
@@ -112,4 +115,5 @@ REFDIR="$(dirname "$(realpath "$0")")/referencias"; IMGS=()
 [ -s "$PNG" ] && rm -f "$LOG" || { echo "[banner] codex não gerou guia/assets/$SAIDA.png — veja $LOG"; }
 [ -s "$PNG" ] || { echo "[banner] codex não gerou guia/assets/$SAIDA.png — fallback pro hero.png"; exit 1; }
 ffmpeg -y -loglevel error -i "$PNG" -vf scale=1400:-1 -q:v 3 "$JPG" && rm -f "$PNG"
+[ -n "${SELO:-}" ] && python3 "$(dirname "$(realpath "$0")")/selo-banner.py" "$JPG" "$SELO" --titulo "$TITLE"
 echo "[banner] ok -> $JPG ($(du -h "$JPG" | cut -f1)). Confira o texto na imagem antes de publicar."

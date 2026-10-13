@@ -277,8 +277,12 @@ bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
   --line "<uma frase de apoio>" \
   --tiles "<4 a 6 legendas separadas por virgula, tiradas das secoes do guia>" \
   [--sides "<cena/objeto 3D da direita (live) ou elementos laterais (opus)>"] \
-  [--estilo live|opus] [--dry-run]
+  [--estilo live|opus] [--selo "<NomeDoProjeto>"] [--dry-run]
 ```
+
+- `--selo "Nome"` (inema-design V11, 13/10/2026): quando o banner cita o projeto/produto,
+  escreve o nome em azul (`#3B9EFF`, Sora) acima do titulo. Se o nome ja esta no `--title`,
+  o selo e pulado. Banner pronto sem o script: `python3 assets/selo-banner.py <img> "Nome" --titulo "<titulo>"`.
 
 - `--dry-run` so imprime o prompt montado (nao gera nem gasta credito).
 - No `live`, `--tiles` vira uma linha discreta de rotulos (sem caixas); prefira titulo curto
