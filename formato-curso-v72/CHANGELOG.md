@@ -23,3 +23,11 @@
 
 ## 7.4.2 — 19/10/2026
 - `traduzir.py`: usa o **tradutor central** (`~/projetos/wifi/scripts/inema-traduz`); motor e modelo vêm de `INEMA_TRADUCAO_MOTOR`/`INEMA_TRADUCAO_MODELO` (ambiente → `~/.config/inema/modelos.env`, hoje Sonnet 5.5). `--motor`/`--modelo` só sobrescrevem quando passados. Fora da máquina do Nei, cai no `claude -p`/`codex exec` da assinatura com o mesmo padrão.
+
+## 7.5.1 — 19/10/2026
+- Tipo novo **`simconversa`** (conversa com cliente simulado, piloto no curso `formacao-vendas-ia-consultoria-v72`, aula 2): `sec_simconversa` no `gerar.py` + `assets/v72-conversa.js` e `v72-conversa.css` (só nas aulas que usam o tipo; tema escuro e papel pelas variáveis; botões de verdade e foco visível; placar sobre o melhor caminho; recomeçar; conclusão gravada em `<curso>:conv:<slug>-s<N>`).
+- `gerar.py`: constante `VERSAO` e `<meta name="generator" content="INEMA Learning 7.5.1">`; `cabeca()` aceita CSS extra; textos da conversa em `ui.conv_*` com padrão em `CONV_UI`.
+- `validar.py`: confere cada simconversa (início, destinos, 2–4 opções, nota inteira, alcançabilidade, sem laço, fim com texto).
+- `conferir-tela.cjs`: percorre a simconversa até o placar, testa recomeçar e a gravação, e captura `<aula>-conversa-<W>.png`.
+- `traduzir.py`: pula `vai` e `nota`, pula `inicio` quando é id; ids com `_` contam como slug; `UI_PADRAO` ganha as chaves `conv_*`; tradução que perde marcador `{p}`/`{m}`/`{n}` é recusada.
+- Modelo: `ui` com as chaves `conv_*`. Novo `examples/aula-simconversa.json`. Regressão: `do-chat-ao-agente-v72` gera e valida em PT/EN/ES com o motor novo (só muda o meta generator).

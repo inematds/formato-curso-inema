@@ -44,6 +44,8 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 
 **`simfila`** — simulação de fila (entrada/rodando/feito/falhou) com interromper e retomar: `tarefas[]`, `falha` (índice que falha na 1ª execução), `rot {...}`, `msg {...}`, `legenda`. Ver `examples/aula-com-simulacao.json`.
 
+**`simconversa`** (7.5.1) — conversa com cliente simulado: o cliente fala, o aluno escolhe uma de 2–4 respostas, vê o comentário (com rótulo "Boa escolha" / "Dá para melhorar" / "Escolha fraca", não só cor) e o caminho segue conforme a escolha, até um fim com placar, lição e "recomeçar". Campos: `personagem {nome, papel?}`, `inicio` (id da 1ª fala), `falas {id: {...}}`, `licao`. Fala comum: `{cliente, opcoes: [{t, vai, nota, comenta}]}` — `vai` = id da próxima fala, `nota` inteiro (0 = fraca, a maior da fala = boa, o meio = "dá para melhorar"). Fala final: `{fim: true, titulo?, texto}`. Ids das falas: minúsculas, `-` ou `_` (o tradutor pula). O placar é a soma das notas do caminho sobre o **melhor caminho possível**. Grava no navegador `<id do curso>:conv:<slug>-s<N>` (`{feito, pontos (melhor), max, ultimo, data}`). `validar.py` cobra: início existe, todo `vai` existe, 2–4 opções completas por fala, nota inteira, toda fala alcançável, sem laço, fim com texto. `conferir-tela.cjs` percorre até o placar, testa "recomeçar" e captura `<aula>-conversa-<W>.png`. JS/CSS em `assets/v72-conversa.js|css`, incluídos só nas aulas que usam o tipo. Textos de interface: chaves `conv_*` do `ui` (padrões em `CONV_UI` do `gerar.py`). Ver `examples/aula-simconversa.json`. Dica: a fala do cliente é ficção rotulada como simulação; o que ela ensina tem de vir da fonte.
+
 **`video`** — `chave` de `curso.videos`.
 
 **`quiz`** — `perguntas [{p, opcoes[], certa (índice), explica, ref? (tipo de seção para "rever"), cert?}]`. 3–5 perguntas; `explica` comenta por que a certa é certa e o erro comum.
@@ -58,4 +60,4 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 
 ## Precisa de uma simulação nova?
 
-Só existe `simfila`. Se a aula pede outra interação (ex.: montar um roteiro, conferir um portão), acrescente um tipo novo no `gerar.py` do curso (`sec_<tipo>`) + o comportamento em JS num arquivo próprio (`assets/<curso>.js`), sem editar `v71.js`/`v72.js`. Se ficar bom, traga para o motor da skill e registre no CHANGELOG.
+Existem `simfila` e `simconversa`. Se a aula pede outra interação (ex.: montar um roteiro, conferir um portão), acrescente um tipo novo no `gerar.py` do curso (`sec_<tipo>`) + o comportamento em JS num arquivo próprio (`assets/<curso>.js`), sem editar `v71.js`/`v72.js`. Se ficar bom, traga para o motor da skill e registre no CHANGELOG.

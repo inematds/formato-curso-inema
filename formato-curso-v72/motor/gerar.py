@@ -9,6 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
+VERSAO = "7.5.1"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -245,6 +246,29 @@ def sec_simfila(s, ui):
             f'<p class="dg-legenda">{s["legenda"]}</p></div>')
 
 
+CONV_UI = {  # 7.5.1: textos da simconversa; ficam em curso.json → ui e podem ser trocados/traduzidos lá
+    "conv_dica": "Escolha a sua resposta. O comentário aparece logo depois e a conversa segue conforme a escolha.",
+    "conv_voce": "Você", "conv_escolha": "Sua resposta", "conv_boa": "Boa escolha", "conv_meio": "Dá para melhorar",
+    "conv_ruim": "Escolha fraca", "conv_fim": "Fim da conversa", "conv_placar": "Você fez {p} de {m} pontos possíveis.",
+    "conv_licao": "Lição:", "conv_recomecar": "Recomeçar a conversa", "conv_feita": "Seu melhor placar: {p} de {m} pontos.",
+}
+
+
+def sec_simconversa(s, ui, conv_id):
+    """7.5.1: conversa com cliente simulado. O cliente fala, o aluno escolhe 1 de 2–4 respostas, vê o comentário,
+    o caminho segue conforme a escolha e termina com placar e lição. Comportamento em assets/v72-conversa.js."""
+    txt = {k: ui.get(k, v) for k, v in CONV_UI.items()}
+    p = s["personagem"]
+    dados = json.dumps({"inicio": s["inicio"], "falas": s["falas"], "licao": s.get("licao", ""), "nome": p["nome"], "txt": txt},
+                       ensure_ascii=False).replace("</", "<\\/")
+    papel = f'<small>{p["papel"]}</small>' if p.get("papel") else ""
+    return (f'<div class="conv" data-conv="{attr(conv_id)}"><div class="conv-cab"><span class="conv-av">{ic("usuario")}</span>'
+            f'<span class="conv-quem"><b>{p["nome"]}</b>{papel}</span><span class="conv-pts" aria-hidden="true"></span></div>'
+            f'<p class="conv-dica">{txt["conv_dica"]}</p><ol class="conv-log" aria-live="polite"></ol>'
+            f'<div class="conv-ops" role="group" aria-label="{attr(txt["conv_escolha"])}"></div><div class="conv-fim" hidden></div>'
+            f'<script type="application/json" class="conv-dados">{dados}</script></div>')
+
+
 def sec_quiz(s, ui, refs):
     """refs: tipo de seção → (id, título), para o link "rever o conceito" de cada pergunta."""
     itens = []
@@ -312,8 +336,9 @@ def sec_links(s, ui):
 
 
 # ---------- página ----------
-def cabeca(titulo, desc, prefixo, lang, canon, curso_id, pag=""):
+def cabeca(titulo, desc, prefixo, lang, canon, curso_id, pag="", extra_css=()):
     at = ativo(prefixo)
+    extra = "".join(f'\n<link rel="stylesheet" href="{at}assets/{c}"/>' for c in extra_css)
     alternos = "".join(f'<link rel="alternate" hreflang="{HREFLANG[l]}" href="{url_idioma(l, pag)}"/>' for l in IDIOMAS) if len(IDIOMAS) > 1 else ""
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
@@ -331,7 +356,8 @@ def cabeca(titulo, desc, prefixo, lang, canon, curso_id, pag=""):
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Sora:wght@600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="{at}assets/v71.css"/>
-<link rel="stylesheet" href="{at}assets/v72.css"/>
+<link rel="stylesheet" href="{at}assets/v72.css"/>{extra}
+<meta name="generator" content="INEMA Learning {VERSAO}"/>
 <script>try{{if(JSON.parse(localStorage.getItem("{curso_id}:tema"))==="papel")document.documentElement.setAttribute("data-tema","papel")}}catch(e){{}}</script>
 </head>"""
 
@@ -443,6 +469,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         elif t == "pratica": corpo = sec_pratica(s, ui, a["slug"])
         elif t == "video": corpo = sec_video(s, ui, curso, prefixo)
         elif t == "simfila": corpo = sec_simfila(s, ui)
+        elif t == "simconversa": corpo = sec_simconversa(s, ui, f'{a["slug"]}-s{num}')
         elif t == "quiz": corpo = sec_quiz(s, ui, refs)
         elif t == "gerador": corpo = sec_gerador(s, ui, aulas)
         elif t == "texto": corpo = sec_texto(s, ui)
@@ -468,7 +495,11 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
                f'<button type="button" class="btn neutro concluir" aria-pressed="false">{ic("check")}{ui["marcar_concluida"]}</button>{btn_prox_cheio}</div>')
     canon = f'{curso["url"]}aulas/{a["slug"]}/'
     titulo = f'{a["titulo"]} · {curso["nome"]} · INEMA'
-    return (cabeca(titulo, a["lead"], prefixo, lang, canon, id_curso(curso), f'aulas/{a["slug"]}/')
+    # 7.5.1: arquivos de tipos opcionais entram só na aula que usa o tipo (curso antigo não precisa deles)
+    tipos = {x["tipo"] for x in a["secoes"]}
+    css_extra = ["v72-conversa.css"] if "simconversa" in tipos else []
+    js_extra = "".join(f'<script src="{ativo(prefixo)}assets/{j}"></script>' for j in (["v72-conversa.js"] if "simconversa" in tipos else []))
+    return (cabeca(titulo, a["lead"], prefixo, lang, canon, id_curso(curso), f'aulas/{a["slug"]}/', css_extra)
             + f'<body data-curso="{id_curso(curso)}" data-aula="{a["slug"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">'
             + topo(curso, aulas, ui, prefixo, a["slug"])
             + '<div class="casca">' + lado(curso, aulas, ui, prefixo, a["slug"])
@@ -478,7 +509,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
             + f'<a class="comecar" href="#s1">{ui.get("comecar", "Começar a aula")} {ic("seta")}</a></div>{fig}</div>'
             + f'<div class="nesta2"><h2>{ui.get("nesta_vai", "Nesta aula você vai")}</h2><ol>{aprende}</ol><p class="objetivo"><b>{ui["objetivo"]}</b> {a["objetivo"]}</p></div>'
             + "".join(secs) + nav_fim + rodape(curso)
-            + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script></body></html>\n')
+            + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script>{js_extra}</body></html>\n')
 
 
 def pagina_inicio(curso, aulas, ui, lang):
@@ -526,7 +557,7 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(pagina_aula(curso, aulas, a, i, ui, curso["lang"]))
     (saida / "index.html").write_text(pagina_inicio(curso, aulas, ui, curso["lang"]))
-    print(f"{len(aulas)} aulas + index geradas ({args.lang}), {erros} erros")
+    print(f"{len(aulas)} aulas + index geradas ({args.lang}, motor {VERSAO}), {erros} erros")
 
 
 if __name__ == "__main__":

@@ -15,10 +15,17 @@ import argparse, json, os, pathlib, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 PULA = {"slug", "id", "tipo", "icone", "href", "url", "mp4", "poster", "vtt", "estilo", "selo", "lang",
-        "foco", "dias", "certa", "falha", "num", "minutos", "horas_padrao", "data-ex"}
-SE_SLUG = {"aula", "ref", "chave"}  # pulados só quando o valor é slug ("filas"); "Aula" no ui traduz
+        "foco", "dias", "certa", "falha", "num", "minutos", "horas_padrao", "data-ex",
+        "vai", "nota"}  # 7.5.1: simconversa ("vai" = id da próxima fala; "fim" é booleano)
+SE_SLUG = {"aula", "ref", "chave", "inicio"}  # pulados só quando o valor é slug ("filas", "fim_ruim"); "Aula" no ui traduz
 UI_PADRAO = {"aula": "Aula", "comecar": "Começar a aula", "nesta_vai": "Nesta aula você vai",
-             "trocar_tema": "Trocar tema claro/escuro"}  # padrões do gerar.py: entram no ui para serem traduzidos
+             "trocar_tema": "Trocar tema claro/escuro",
+             # 7.5.1: simconversa (mesmos padrões de CONV_UI no gerar.py)
+             "conv_dica": "Escolha a sua resposta. O comentário aparece logo depois e a conversa segue conforme a escolha.",
+             "conv_voce": "Você", "conv_escolha": "Sua resposta", "conv_boa": "Boa escolha", "conv_meio": "Dá para melhorar",
+             "conv_ruim": "Escolha fraca", "conv_fim": "Fim da conversa", "conv_placar": "Você fez {p} de {m} pontos possíveis.",
+             "conv_licao": "Lição:", "conv_recomecar": "Recomeçar a conversa", "conv_feita": "Seu melhor placar: {p} de {m} pontos."}
+# padrões do gerar.py: entram no ui para serem traduzidos
 CODIGO = {"conteudo"}            # blocos com botão copiar: comandos ficam, prosa/prompt traduz
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America, neutral, use 'tú')"}
 HTMLLANG = {"en": "en", "es": "es"}
@@ -106,7 +113,7 @@ def textos(no, caminho=()):
     """Gera (caminho, texto, é_código) de cada string traduzível."""
     if isinstance(no, dict):
         for k, v in no.items():
-            if k in PULA or (k in SE_SLUG and isinstance(v, str) and re.fullmatch(r"[a-z0-9-]+", v)):
+            if k in PULA or (k in SE_SLUG and isinstance(v, str) and re.fullmatch(r"[a-z0-9_-]+", v)):
                 continue
             yield from textos(v, caminho + (k,))
     elif isinstance(no, list):
@@ -140,6 +147,8 @@ def problema(pt, tr, codigo):
         cab = lambda s: [l.split()[0] for l in s.splitlines() if l.strip() and CMD.match(l) and not l.lstrip().startswith("#")]
         if cab(pt) != cab(tr):
             return f"comandos diferentes: {cab(pt)[:4]} → {cab(tr)[:4]}"
+    if sorted(re.findall(r"\{[a-z]\}", pt)) != sorted(re.findall(r"\{[a-z]\}", tr)):  # {p}, {m}, {n}, {a}
+        return "marcadores {x} diferentes"
     if pt.startswith(" ") != tr.startswith(" ") or pt.endswith(" ") != tr.endswith(" "):
         return "espaço de borda"
     return None

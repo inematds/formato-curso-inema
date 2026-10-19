@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* Portão de tela do curso v7.2: serve a pasta por HTTP local (nunca file://), abre a página inicial e
    cada aula em 1366 e 390 px e confere: sem transbordo horizontal, diagrama responde ao clique,
-   quiz mostra a resposta, botão copiar existe, sem erro de JavaScript. Salva capturas.
+   quiz mostra a resposta, botão copiar existe, simconversa vai do início ao placar e recomeça (7.5.1),
+   sem erro de JavaScript. Salva capturas (a simconversa ganha captura própria: <aula>-conversa-<W>.png).
    Uso: node conferir-tela.cjs <pasta-do-curso> [--saida <pasta>]   → sai 0 se tudo OK */
 const http = require('http'), fs = require('fs'), path = require('path');
 let pw; for (const p of [process.env.PLAYWRIGHT_PATH, 'playwright', '/home/nmaldaner/projetos/agent-browser/node_modules/playwright']) { try { if (p) { pw = require(p); break; } } catch (e) {} }
@@ -40,6 +41,20 @@ srv.listen(0, '127.0.0.1', async () => {
           if (op) { await op.scrollIntoViewIfNeeded(); await op.click(); await p.waitForTimeout(150);
             if (!(await p.$eval('.q-fb', el => el.textContent.trim().length > 0).catch(() => false))) erros.push(`${nome} @${W}: quiz sem resposta`); }
           if (!(await p.$('.copiar'))) erros.push(`${nome} @${W}: sem botão copiar`);
+          // 7.5.1: simconversa — percorre escolhendo a 1ª opção até o fim; exige placar e "recomeçar"; captura a seção
+          const convs = await p.$$('.conv');
+          for (let ci = 0; ci < convs.length; ci++) {
+            const cv = convs[ci]; let passos = 0;
+            while (passos < 30) { const b = await cv.$('.conv-op'); if (!b) break; await b.scrollIntoViewIfNeeded(); await b.click(); await p.waitForTimeout(120); passos++; }
+            const fimOk = await cv.$eval('.conv-fim', el => !el.hidden && /\d/.test(el.querySelector('.conv-placar')?.textContent || '') && !!el.querySelector('.conv-recomecar')).catch(() => false);
+            if (!passos) erros.push(`${nome} @${W}: simconversa sem opções`);
+            else if (!fimOk) erros.push(`${nome} @${W}: simconversa não chegou ao placar/recomeçar`);
+            const salvo = await p.evaluate(() => Object.keys(localStorage).some(k => k.includes(':conv:')));
+            if (!salvo) erros.push(`${nome} @${W}: simconversa não gravou a conclusão`);
+            await cv.screenshot({ path: path.join(saida, `${nome}-conversa${ci ? ci + 1 : ''}-${W}.png`) });
+            await (await cv.$('.conv-recomecar'))?.click(); await p.waitForTimeout(100);
+            if (!(await cv.$('.conv-op'))) erros.push(`${nome} @${W}: simconversa não recomeçou`);
+          }
           const sw2 = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
           if (sw2[0] > sw2[1]) erros.push(`${nome} @${W}: transbordo depois de interagir (${sw2[0]} > ${sw2[1]})`);
         }

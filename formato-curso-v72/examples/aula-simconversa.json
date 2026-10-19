@@ -1,0 +1,185 @@
+{
+  "slug": "call-descoberta",
+  "num": 2,
+  "menu": "Descoberta",
+  "titulo": "A call de descoberta",
+  "titulo_curto": "Call de descoberta",
+  "minutos": 18,
+  "lead": "Ninguém sai do consultório com a receita antes do exame. Na consultoria de IA isso acontece toda hora: o cliente diz uma dor e o consultor já responde com a solução. A call de descoberta põe a ordem certa: diagnosticar, dizer o que acontece se nada mudar e só então propor.",
+  "objetivo": "conduzir a call de descoberta com as 3 perguntas (escala, stack, conhecimento) e frear quando aparecem os sinais de alerta.",
+  "competencias": ["conduzir-call-de-descoberta", "mapear-escala-stack-dados", "reconhecer-sinais-de-alerta"],
+  "aprende": [
+    {"t": "Abrir a call como a pessoa preparada da sala"},
+    {"t": "Fazer as 3 perguntas que decidem o projeto"},
+    {"t": "Reconhecer os 4 sinais de alerta e pisar no freio"},
+    {"t": "Treinar numa call simulada com placar"}
+  ],
+  "hero_alt": "Consultor numa videochamada com a dona de uma empresa, anotando à mão num caderno.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "O caminho da call",
+      "sub": "Seis movimentos, sempre nesta ordem. Clique em cada um.",
+      "nos": [
+        {"icone": "chat", "titulo": "Abertura", "sub": "três frases",
+         "detalhe": "Diga o objetivo (entender a dor deles), mostre preparo sem se gabar (\"li o que vocês preencheram\") e devolva a palavra (\"queria ouvir com as suas palavras\")."},
+        {"icone": "usuario", "titulo": "Escala", "sub": "quantas pessoas?",
+         "detalhe": "\"Quantos funcionários vocês têm?\" é a pergunta mais barata da call. Cada faixa de porte decide, aprova orçamento e resiste a mudança de um jeito."},
+        {"icone": "camadas", "titulo": "Stack", "sub": "quais ferramentas?",
+         "detalhe": "Pergunte por categoria (comunicação, documentos, CRM, projetos, dados, design, desenvolvimento, banco de dados, notas de reunião), senão a pessoa lista três e esquece nove. Peça para ver a tela do sistema principal."},
+        {"icone": "memoria", "titulo": "Conhecimento", "sub": "onde os dados moram?", "forte": true,
+         "detalhe": "Três respostas possíveis: repositório único (raro, ideal), disperso mas organizado (ganha uma etapa de consolidação) ou completamente espalhado (não venda automação: venda a arrumação da casa)."},
+        {"icone": "escudo", "titulo": "Sinais de alerta", "sub": "quando frear",
+         "detalhe": "\"Agentes autônomos agora\", \"vi numa rede social\", \"meu concorrente tem\", \"tem que ser a mais nova\". Dois ou mais na mesma call: pise no freio."},
+        {"icone": "calendario", "titulo": "Próximo passo", "sub": "com data",
+         "detalhe": "A call termina com uma tarefa combinada e a próxima conversa na agenda. Nada de \"vou te mandar uma proposta\"."}
+      ],
+      "legenda": "As 3 perguntas do meio cabem em vinte minutos e definem tudo o que vem depois."
+    },
+    {
+      "tipo": "simconversa",
+      "titulo": "Call simulada: a dona da clínica",
+      "sub": "Conversa simulada para treinar. Escolha a resposta que você daria; o comentário aparece logo depois.",
+      "personagem": {"nome": "Dona da clínica odontológica", "papel": "decide sozinha · 12 funcionários"},
+      "inicio": "abre",
+      "falas": {
+        "abre": {
+          "cliente": "Oi! Quero um agente de IA que responda o WhatsApp da clínica. Quanto custa?",
+          "opcoes": [
+            {"t": "Fechado. Faço por um valor fixo e entrego em duas semanas.", "vai": "fim-pressa", "nota": 0,
+             "comenta": "Você prescreveu antes do exame. Sem saber volume, ferramentas e onde moram os dados, o preço é chute e o escopo vai inchar."},
+            {"t": "Antes do preço: quantas mensagens chegam por dia e quem responde hoje?", "vai": "escala", "nota": 2,
+             "comenta": "Pergunta de escala. O número decide a solução, e você mostrou que o preço vem depois do diagnóstico."},
+            {"t": "Me conta como funciona o atendimento de vocês?", "vai": "escala", "nota": 1,
+             "comenta": "Boa intenção, mas aberta demais: sem pedir número, a resposta vem em adjetivo (\"é muita coisa\")."}
+          ]
+        },
+        "escala": {
+          "cliente": "Somos 12 pessoas. Chegam umas 80 mensagens por dia e a recepcionista responde entre um paciente e outro. Muita gente desiste de marcar.",
+          "opcoes": [
+            {"t": "Então o agente resolve: ele responde tudo sozinho, na hora.", "vai": "fim-pressa", "nota": 0,
+             "comenta": "Você voltou a prescrever. Ainda não sabe em que sistema está a agenda nem de onde sairiam as respostas."},
+            {"t": "Que ferramentas vocês usam hoje para agenda, conversa e cadastro de paciente?", "vai": "stack", "nota": 2,
+             "comenta": "Pergunta de stack, por categoria. Cada ferramenta que aparece é uma pergunta: dá para conectar?"},
+            {"t": "Quantos desses que desistem viram consulta perdida por mês?", "vai": "stack", "nota": 1,
+             "comenta": "Boa: transforma a dor em número, que vira linha de base na aula 3. Mas faltou mapear as ferramentas antes de pensar no ganho."}
+          ]
+        },
+        "stack": {
+          "cliente": "A agenda fica num sistema da clínica, o WhatsApp é no celular da recepção e o cadastro… um pouco no sistema, um pouco numa planilha da minha sócia.",
+          "opcoes": [
+            {"t": "Dá para me mostrar a tela da agenda por dois minutos? E quem tem a senha de administrador?", "vai": "conhecimento", "nota": 2,
+             "comenta": "Ver a tela durante a call evita descobrir depois de assinar que o trabalho é o triplo do orçado."},
+            {"t": "Tranquilo, eu integro tudo isso com o agente.", "vai": "fim-pressa", "nota": 0,
+             "comenta": "Prometer integração sem ver o sistema é o começo do roteiro do desastre: contrato assinado, sistema sem porta de integração."},
+            {"t": "E onde ficam as informações que a recepção usa para responder: preço, convênio, horário?", "vai": "conhecimento", "nota": 1,
+             "comenta": "É a pergunta 3, e é boa. Mas ficou um buraco no mapa: ninguém disse se a agenda aceita integração."}
+          ]
+        },
+        "conhecimento": {
+          "cliente": "Preço e convênio cada uma sabe de cabeça. Quando muda, a gente avisa no grupo. A planilha da minha sócia ninguém mais atualiza.",
+          "opcoes": [
+            {"t": "Então o primeiro passo não é o agente: é colocar a casa em ordem, num lugar só, para a IA ter de onde responder.", "vai": "alerta", "nota": 2,
+             "comenta": "Conhecimento completamente espalhado pede arrumação antes de automação. Dita com calma, essa frase costuma ser recebida com alívio."},
+            {"t": "Sem problema, o agente aprende com as conversas antigas.", "vai": "fim-pressa", "nota": 0,
+             "comenta": "O que ninguém escreveu não chega à IA. O agente responderia preço errado com toda a segurança."}
+          ]
+        },
+        "alerta": {
+          "cliente": "Mas meu concorrente já tem um robô no WhatsApp. Não dá para fazer tudo de uma vez, agora?",
+          "opcoes": [
+            {"t": "Dá, se você aceitar o risco. Começo amanhã.", "vai": "fim-pressa", "nota": 0,
+             "comenta": "\"Meu concorrente tem\" é sinal de alerta. Copiar a solução do vizinho é herdar o problema dele sem o contexto dele."},
+            {"t": "São clínicas diferentes, com dados diferentes. Proponho começar pequeno: duas semanas arrumando as respostas mais pedidas e medindo quantos pacientes desistem hoje. Depois decidimos o próximo passo.", "vai": "fim-bom", "nota": 2,
+             "comenta": "Você nomeou o sinal sem constrangimento, ancorou num número e saiu com próximo passo e prazo."},
+            {"t": "Então talvez não seja o momento de trabalharmos juntos.", "vai": "fim-recusa", "nota": 1,
+             "comenta": "Recusar é legítimo com dois ou mais sinais na mesma call. Aqui apareceu um só, e ela pode aceitar começar pequeno."}
+          ]
+        },
+        "fim-pressa": {"fim": true, "titulo": "Venda rápida, problema longo",
+          "texto": "Você fechou rápido. Na terceira semana descobre que a agenda não tem porta de integração, que preço e convênio estão na cabeça da equipe e que o escopo dobrou. A cliente sente que pagou por algo que não resolve."},
+        "fim-recusa": {"fim": true, "titulo": "Freio cedo demais",
+          "texto": "Você protegeu o seu tempo, mas saiu sem nada. Com um sinal só, o caminho era nomear o risco e oferecer preparação: arrumar o conhecimento e medir antes de qualquer agente."},
+        "fim-bom": {"fim": true, "titulo": "Diagnóstico antes da receita",
+          "texto": "A cliente sai com um mapa: 12 pessoas, cerca de 80 mensagens por dia, agenda num sistema próprio e conhecimento espalhado. O próximo passo tem prazo e um número para medir. A proposta da aula 3 começa daqui."}
+      },
+      "licao": "Quem pergunta escala, stack e conhecimento antes de falar de solução vende o serviço certo: aqui, preparação primeiro."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Os 4 sinais de alerta",
+      "sub": "Nenhum é motivo para recusar sozinho. Cada um pede uma resposta pronta.",
+      "passos": [
+        {"titulo": "\"Agentes autônomos agora\"", "sub": "pressa por tecnologia",
+         "texto": ["Mesmo nos melhores fluxos, o agente aparece uma ou duas vezes no processo; o resto é passo fixo.", "Previsibilidade é o que faz automação funcionar em empresa."],
+         "exemplo": {"rot": "Resposta", "texto": "O agente entra onde o caminho muda a cada vez. No resto, passo fixo é mais barato e auditável."}},
+        {"titulo": "\"Vi numa rede social\"", "sub": "escopo que incha",
+         "texto": ["Toda semana chega uma novidade e o projeto muda de forma.", "Combine desde o começo onde as ideias novas entram."],
+         "exemplo": {"rot": "Resposta", "texto": "Ideia nova entra na fila da próxima etapa, não da atual."}},
+        {"titulo": "\"Meu concorrente tem\"", "sub": "cópia sem contexto",
+         "texto": ["São empresas diferentes, com burocracias, dados e pessoas diferentes.", "Copiar a solução do vizinho é herdar o problema dele sem herdar o contexto."],
+         "exemplo": {"rot": "Resposta", "texto": "Vamos olhar o seu número primeiro. O dele não serve para vocês."}},
+        {"titulo": "\"Tem que ser a mais nova\"", "sub": "tecnologia instável",
+         "texto": ["O que acabou de sair quebra, muda de comportamento sem aviso e não tem material de apoio.", "Você vira suporte de um produto que nem o fabricante estabilizou."],
+         "exemplo": {"rot": "Pisar no freio", "texto": "Esta é a base mínima que a empresa precisa. Mesmo que pareça atrasado por um mês, no mês seguinte vocês estão em dia."}}
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Modelos para copiar",
+      "sub": "O roteiro fica aberto ao lado durante a call. O prompt você roda antes.",
+      "blocos": [
+        {"rot": "Roteiro da call de descoberta", "icone": "lista",
+         "conteudo": "ROTEIRO DA CALL DE DESCOBERTA · <empresa> · <data>\n\nABERTURA (3 frases)\n- Meu objetivo aqui é entender a dor que vocês querem resolver. O que eu proponho depois sai daí.\n- Li o que vocês preencheram e pesquisei a empresa antes de entrar.\n- Mesmo assim, queria ouvir com as suas palavras as dores do dia a dia.\n\nPERGUNTA 1 · ESCALA\n- Quantas pessoas trabalham aqui? Quem decide sobre isso?\n\nPERGUNTA 2 · STACK (por categoria)\n- comunicação · documentos · CRM · projetos · dados e relatórios\n- design · desenvolvimento · banco de dados · notas de reunião\n- Posso ver a tela do sistema principal por 2 minutos?\n\nPERGUNTA 3 · CONHECIMENTO\n- Onde os dados de vocês moram? (único / disperso organizado / espalhado)\n\nSINAIS DE ALERTA (marque se aparecer)\n[ ] agentes autônomos agora   [ ] vi numa rede social\n[ ] meu concorrente tem        [ ] tem que ser a mais nova\n\nPISAR NO FREIO (2 ou mais sinais)\n- Esta é a base mínima que a empresa precisa. Mesmo que pareça\n  atrasado por um mês, no mês seguinte vocês estão em dia.\n\nPRÓXIMO PASSO\n- Tarefa para eles: <listar ferramentas com nº de usuários / mapear onde estão os dados>\n- Próxima conversa: <data e hora>"},
+        {"rot": "Prompt · pesquisa antes da call", "icone": "chat",
+         "conteudo": "Você é consultor de IA preparando uma call de descoberta.\nEmpresa: <setor e o que ela vende>\nPorte aproximado: <nº de funcionários>\nQuem marcou a call: <cargo e área>\nO que a pessoa escreveu no agendamento: \"\"\"<cole aqui>\"\"\"\n\nEntregue, nesta ordem:\n1. O modelo de negócio em 3 linhas: de onde vem a receita e o que\n   custa caro nessa operação.\n2. Três hipóteses de dor operacional prováveis para esse setor e porte,\n   da mais provável para a menos provável.\n3. Para CADA hipótese, duas perguntas abertas que eu faço na call para\n   confirmar ou descartar, sem sugerir solução dentro da pergunta.\nNão proponha ferramentas. Não use jargão de tecnologia."}
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Faça antes da sua próxima conversa com cliente.",
+      "exercicios": [
+        {"id": "e1", "titulo": "1 · Seu roteiro de call", "min": "25 min",
+         "texto": "Copie o roteiro e adapte ao seu nicho: escreva as 3 perguntas com as palavras do setor, escolha os 3 sinais de alerta que mais aparecem no seu mercado e escreva a sua frase de pisar no freio.",
+         "pronto": "o roteiro está salvo num arquivo ou nota com as 3 perguntas, 3 sinais de alerta e a frase de pisar no freio."},
+        {"id": "e2", "titulo": "2 · Call simulada com placar", "min": "10 min",
+         "texto": "Faça a call simulada desta aula. Se não chegar ao placar máximo, leia os comentários, clique em recomeçar e tente de novo.",
+         "pronto": "você terminou a call simulada com o placar máximo e consegue dizer em uma frase por que cada resposta certa era a certa."}
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste rápido",
+      "sub": "4 perguntas. A explicação aparece depois da sua tentativa.",
+      "perguntas": [
+        {"p": "A empresa tem 60 pessoas, 14 ferramentas pagas e diz que os dados estão \"cada um no seu lugar, mais ou menos\". O que você propõe primeiro?",
+         "opcoes": ["Um agente autônomo ligando as 14 ferramentas de uma vez", "Um piloto de 2 a 3 semanas com cerca de 10 usuários numa área ligada a receita", "Recusar o cliente: 14 ferramentas já é sinal de alerta"],
+         "certa": 1, "ref": "diagrama",
+         "explica": "Empresa média costuma ter muitas ferramentas usadas a uma fração do potencial. Começa-se pequeno, numa área que gera receita, para depois centralizar dados e cortar ferramentas. Muitas ferramentas não é sinal de alerta."},
+        {"p": "Os dados da empresa estão completamente espalhados: planilhas soltas, pastas pessoais, mensagens. O que você vende?",
+         "opcoes": ["A automação, com prazo maior", "A arrumação da casa antes de qualquer IA", "Um assistente que aprende com as mensagens"],
+         "certa": 1, "ref": "simconversa",
+         "explica": "No cenário espalhado, o primeiro exercício é colocar a casa em ordem para a empresa ficar elegível a usar IA. Automação em cima de conhecimento que ninguém escreveu responde errado com segurança."},
+        {"p": "Na mesma call o cliente diz \"meu concorrente tem\" e \"vi isso numa rede social\". O que fazer?",
+         "opcoes": ["Fechar logo, antes que ele mude de ideia", "Pisar no freio: dois sinais pedem a base mínima e escopo fechado por etapa", "Ignorar: é só empolgação"],
+         "certa": 1, "ref": "passos",
+         "explica": "Dois ou mais sinais na mesma call indicam que o projeto vai custar mais em desgaste do que render. Ancore na base mínima e combine que ideia nova entra na próxima etapa."},
+        {"p": "Por que pedir para ver a tela do sistema durante a call?",
+         "opcoes": ["Para impressionar com conhecimento técnico", "Para não descobrir depois de assinar que o trabalho é bem maior do que o orçado", "Para copiar os dados do cliente"],
+         "certa": 1, "ref": "diagrama",
+         "explica": "Sistema sem porta de integração ou cadastro duplicado muda prazo e preço. Dois minutos de tela compartilhada evitam o roteiro do desastre: contrato assinado e escopo triplicado."}
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Resumo",
+      "itens": [
+        {"t": "Diagnosticar antes de prescrever", "texto": "A solução dita cedo demais fecha a porta do contrato maior."},
+        {"t": "Três perguntas", "texto": "Escala, stack e onde o conhecimento mora. Cabem em vinte minutos."},
+        {"t": "Quatro sinais de alerta", "texto": "Dois na mesma call: pise no freio com a frase da base mínima."},
+        {"t": "Fechamento é agenda", "texto": "Tarefa combinada e próxima conversa marcada ainda na call."}
+      ]
+    }
+  ]
+}
