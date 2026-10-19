@@ -18,7 +18,7 @@ Sai 0 quando passa ("OK: ...") e 1 quando falta algo. Regras (lista "regras" da 
               um_so: no máximo uma família por plano; variar: N famílias diferentes no conjunto;
               min: rótulo ("som:") só vale com >= min letras depois dele, até o próximo |
   duracao     {min, max}                     cada plano tem "N s"; a soma fica entre min e max
-  termos      {grupos: [{rot, termos}]}      o texto todo cita um termo de cada grupo
+  termos      {grupos: [{rot, termos, campo?}]}  o texto todo cita um termo de cada grupo (com campo: só a linha "Campo: …")
   video       {min, max, proporcao?, largura_min?}   7.12.15: modo vídeo — o argumento é o arquivo de vídeo
               (duração e tamanho pelo ffprobe); proporcao "16:9" ou lista ["16:9", "9:16"]; clipes de exemplo
               em video_ok / video_erro (caminhos no repo)
@@ -221,7 +221,11 @@ def conferir(texto, sec, ui=None, lang="pt"):
         elif t == "termos":
             tudo = "\n".join(linhas)
             for gi, g in enumerate(r["grupos"]):
-                if not achados(tudo, r["grupos"])[gi]:
+                alvo = tudo
+                if g.get("campo"):  # 7.13.16: só a linha "Campo: …" conta
+                    pc = re.compile(r"^\s*[-*•]?\s*" + re.escape(norm(g["campo"])) + r"\s*:(.*)$")
+                    alvo = "\n".join((pc.match(norm(l)) or [None, ""])[1] for l in linhas)
+                if not achados(alvo, r["grupos"])[gi]:
                     faltas.append(fmt(T["conf_termo"], g=g["rot"]))
     if faltas:
         return False, T["conf_falta"], faltas

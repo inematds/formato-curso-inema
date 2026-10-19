@@ -1,4 +1,4 @@
-/* INEMA Learning 7.12.15 — conferidor: o aluno cola (ou carrega) o arquivo que escreveu e a página confere.
+/* INEMA Learning 7.13.16 — conferidor: o aluno cola (ou carrega) o arquivo que escreveu e a página confere.
    Mesmas regras e mensagens do conferir.py (opção de terminal). Regras: campos, planos, cada_plano, duracao, termos;
    7.12.15: video {min, max, proporcao?, largura_min?} — lê duração e tamanho do arquivo escolhido (loadedmetadata).
    Tudo no navegador: nada é enviado. Rascunho guardado em localStorage "<data-curso>:conf:<id>:txt"; a última
@@ -102,7 +102,15 @@
         if (planos.length && (segs < r.min || segs > r.max)) faltas.push(fmt(T.conf_duracao, { s: num(segs), x: r.min, y: r.max }));
       } else if (r.tipo === "termos") {
         var tudo = linhas.join("\n");
-        r.grupos.forEach(function (g, gi) { if (!achados(tudo, r.grupos)[gi].n) faltas.push(fmt(T.conf_termo, { g: g.rot })); });
+        r.grupos.forEach(function (g, gi) {
+          // 7.13.16: "campo" limita a busca à linha "Campo: …" (o aviso tem de estar no Rótulo, não numa fala)
+          var alvo = tudo;
+          if (g.campo) {
+            var pc = new RegExp("^\\s*[-*•]?\\s*" + escRe(norm(g.campo)) + "\\s*:(.*)$");
+            alvo = linhas.map(function (l) { var m = pc.exec(norm(l)); return m ? m[1] : ""; }).join("\n");
+          }
+          if (!achados(alvo, r.grupos)[gi].n) faltas.push(fmt(T.conf_termo, { g: g.rot }));
+        });
       }
     });
     if (faltas.length) return { ok: false, msg: T.conf_falta, faltas: faltas };

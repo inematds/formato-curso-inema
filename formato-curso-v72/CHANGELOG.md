@@ -118,3 +118,6 @@
 ## 7.13.16 — 19/10/2026
 - Conferidor: família de `termos` escrita com " / " (barra entre espaços) separa só ali, e o termo pode ter barra dentro (`"out/2026 / oct/2026 / octubre de 2026"`, `"16:9 / 4:3"`). Antes "out/2026" virava "out" e "2026" e qualquer "2026" no arquivo contava como a data. Família sem " / " separa em toda barra, como antes (nenhum curso v72 publicado muda: varredura de 19/10/2026).
 - Modo vídeo: tolerância da proporção de 2 % para 3 %. O 720p do Wan 2.2 5B sai 1280×704 (2,3 % de 16:9) e era chamado de "1.85:1" e recusado num curso que manda conferir o clipe aberto; 1.85:1 de verdade (4 % de 16:9) continua 1.85:1. Mesma mudança em `conferir.py` e `assets/v72-conferidor.js`; `VERSAO` 7.13.16. Achado pelo revisor independente do `formacao-cinema-ia-geracao-v72`.
+
+## 7.13.16 — 19/10/2026
+- Conferidor: grupo da regra `termos` aceita `campo` — a busca fica só na linha `Campo: …` (ex.: `{"rot": "o aviso de vídeo feito com IA", "campo": "Rótulo", "termos": [...]}`). Antes, o aviso de IA numa fala ("isso não foi feito com IA") fazia passar um anúncio com `Rótulo: nenhum, é cliente real`. Mesma mudança em `conferir.py` e `v72-conferidor.js`; o `campo` passa pelo tradutor (é o rótulo do campo, traduzido como os `campos`). Achado pelo revisor independente do `formacao-cinema-ia-producao-v72`. `VERSAO` 7.13.16.
