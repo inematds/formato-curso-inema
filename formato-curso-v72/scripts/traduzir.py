@@ -37,7 +37,14 @@ UI_PADRAO = {"aula": "Aula", "comecar": "Começar a aula", "nesta_vai": "Nesta a
              "conf_duracao": "Os planos somam {s} s; o pedido é de {x} a {y} s.", "conf_termo": "Falta citar {g}.",
              "conf_mais": "… e mais {n}.", "conf_rot": "Cole aqui o seu arquivo (ou carregue o .txt):",
              "conf_conferir": "Conferir", "conf_exemplo": "Exemplo que passa", "conf_errado": "Exemplo com erro",
-             "conf_carregar": "Carregar .txt", "conf_baixar": "Baixar o arquivo", "conf_limpar": "Limpar"}
+             "conf_carregar": "Carregar .txt", "conf_baixar": "Baixar o arquivo", "conf_limpar": "Limpar",
+             # 7.12.16: conferidor em modo vídeo (mesmos padrões de CONF_UI)
+             "conf_video_dur": "O vídeo tem {s} s; o pedido é de {x} a {y} s.",
+             "conf_video_prop": "O vídeo é {w}×{h} ({p}); o pedido é {q}.",
+             "conf_video_larg": "O vídeo tem {w} px de largura; o mínimo é {x} px.",
+             "conf_video_ler": "Não consegui ler este vídeo. Exporte em MP4 (H.264) ou WebM e tente de novo.",
+             "conf_video_rot": "Escolha o seu vídeo. Ele é lido aqui no navegador: nada é enviado.",
+             "conf_video_escolher": "Escolher o vídeo", "conf_video_lendo": "Lendo o vídeo…"}
 # padrões do gerar.py: entram no ui para serem traduzidos
 CODIGO = {"conteudo"}            # blocos com botão copiar: comandos ficam, prosa/prompt traduz
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America, neutral, use 'tú')"}
