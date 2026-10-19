@@ -82,6 +82,20 @@ for p in aulas:
     erros += [f"{nome}: simconversa — {e}" for e in confere_conversas(h)]
     for src in re.findall(r'(?:src|poster)="(\.\./\.\./[^"]+)"', h):
         if not (p.parent / src).resolve().exists(): erros.append(f"{nome}: arquivo local ausente {src}")
+# 7.11.15: curso técnico que cita um elemento HTML no texto ("<audio> com id") gera o elemento de verdade
+# (TAGS_HTML aceita audio, video, canvas…) e a palavra some da tela. No texto, escreva <code>&lt;audio&gt;</code>.
+ELEMENTO = re.compile(r"<(audio|video|canvas|iframe|img|input|button|select|textarea|form|script|style|source|template|svg|object|embed|Composition)\b", re.I)
+def _textos(v, chave=None):
+    if isinstance(v, dict):
+        for k, x in v.items():
+            if k not in ("conteudo", "html"): yield from _textos(x, k)
+    elif isinstance(v, list):
+        for x in v: yield from _textos(x, chave)
+    elif isinstance(v, str): yield v
+for aj in sorted((RAIZ / "conteudo" / args.lang / "aulas").glob("*.json")):
+    for t in _textos(json.loads(aj.read_text())):
+        for m in ELEMENTO.finditer(t):
+            erros.append(f"{aj.name}: '<{m.group(1)}…>' no texto vira elemento HTML de verdade; escreva <code>&lt;{m.group(1)}&gt;</code>")
 if not (base / "index.html").exists(): erros.append("index.html ausente")
 
 # viés do teste (7.7.9): a certa sempre na mesma posição, ou sempre a mais longa, deixa o aluno acertar sem ler
