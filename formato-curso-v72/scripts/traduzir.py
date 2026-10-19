@@ -49,12 +49,29 @@ Rules:
   product names (INEMA.CLUB, INEMA.PRO, OSWork, INTELECTO, Jarvis, inemaccbot, Claude Code, Codex, OpenRouter, Ollama,
   Telegram, GitHub, VPS, r7e, r7ex, promoavatar, finviral, advviral, saudeviral), file and folder names
   (README.md, AGENTS.md, .env, meu-jarvis.md, entrada/, rodando/, feito/, falhou/ ...), commands, flags, paths, variables.
-- Text inside <code>...</code> stays as is unless it is plain Portuguese prose.
+- Text inside <code>...</code> stays as is unless it is plain Portuguese prose. A placeholder in square brackets
+  inside <code> (e.g. <code>./run.sh "[pedido]"</code>) is prose: translate the words in the brackets.
 - Keys starting with "c:" are copyable blocks (terminal, files, prompts for the agent): translate ONLY comments,
   natural-language prompts and prose lines; every command line, path, file name, key and code stays byte-identical.
   Markdown headings/labels of a template may be translated.
 - Glossary (use consistently): {glossario}
 Return ONLY a JSON object with the same keys and the translated strings as values."""
+
+
+# 7.8.11: link para outro curso v7.x (https://inematds.github.io/<repo>-v7N/...) leva à versão do mesmo idioma.
+# O href fica igual na tradução (validação de links); a troca é feita ao gravar conteudo/<lang>/.
+# assets/ (capa reaproveitada do irmão) e caminhos que já têm idioma não mudam.
+IRMAO = re.compile(r"(https://inematds\.github\.io/[\w.-]+-v7\d+/)(?!(?:en|es|pt)/|assets/)")
+
+
+def localiza(no, lang):
+    if isinstance(no, dict):
+        return {k: localiza(v, lang) for k, v in no.items()}
+    if isinstance(no, list):
+        return [localiza(v, lang) for v in no]
+    if isinstance(no, str):
+        return IRMAO.sub(lambda m: m.group(1) + lang + "/", no)
+    return no
 
 
 PUBLICO_PADRAO = "adults learning to work with AI agents (terminal, Git, Telegram bots, queues, social media)"
@@ -241,6 +258,7 @@ def main():
             if f.name == "curso.json":
                 d["lang"] = HTMLLANG[lang]
                 d["url"] = d["url"].rstrip("/") + f"/{lang}/"
+            d = localiza(d, lang)
             rel = f.relative_to(pt)
             (destino / rel).write_text(json.dumps(d, ensure_ascii=False, indent=2) + "\n")
         print(f"[{lang}] gravado em conteudo/{lang}/ ({faltou} textos sem tradução)")
