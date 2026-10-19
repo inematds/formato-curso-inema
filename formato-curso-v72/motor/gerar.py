@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.11.15"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.12.15"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -290,14 +290,42 @@ CONF_UI = {  # 7.9.12: textos do conferidor; ficam em curso.json → ui (mesmos 
     "conf_rot": "Cole aqui o seu arquivo (ou carregue o .txt):",
     "conf_conferir": "Conferir", "conf_exemplo": "Exemplo que passa", "conf_errado": "Exemplo com erro",
     "conf_carregar": "Carregar .txt", "conf_baixar": "Baixar o arquivo", "conf_limpar": "Limpar",
+    # 7.12.15: modo vídeo (regra "video"): o navegador lê duração e tamanho do arquivo, sem enviar nada
+    "conf_video_dur": "O vídeo tem {s} s; o pedido é de {x} a {y} s.",
+    "conf_video_prop": "O vídeo é {w}×{h} ({p}); o pedido é {q}.",
+    "conf_video_larg": "O vídeo tem {w} px de largura; o mínimo é {x} px.",
+    "conf_video_ler": "Não consegui ler este vídeo. Exporte em MP4 (H.264) ou WebM e tente de novo.",
+    "conf_video_rot": "Escolha o seu vídeo. Ele é lido aqui no navegador: nada é enviado.",
+    "conf_video_escolher": "Escolher o vídeo", "conf_video_lendo": "Lendo o vídeo…",
 }
 
 
-def sec_conferidor(s, ui, conf_id):
+def sec_conferidor_video(s, ui, conf_id, prefixo, txt):
+    """7.12.15: modo vídeo — o aluno escolhe o arquivo (input file) e a página lê duração, largura e altura
+    (loadedmetadata), sem enviar nada. Os exemplos são clipes do repo (video_ok, video_erro), em WebM para
+    tocar também no Chromium sem codecs proprietários. "pronto quando" cita a resposta (ex.: "OK: 8,0 s · 1920×1080 · 16:9")."""
+    dados = json.dumps({"regras": s["regras"], "ok": s["ok"], "video": True,
+                        "video_ok": ativo(prefixo) + s["video_ok"], "video_erro": ativo(prefixo) + s["video_erro"],
+                        "txt": txt}, ensure_ascii=False).replace("</", "<\\/")
+    tid = f"cf-{conf_id}"
+    return (f'<div class="confer cf-video" data-conf="{attr(conf_id)}" data-ok-prefixo="{attr(re.split(r"[{:]", s["ok"])[0])}">'
+            f'<div class="cf-cab"><span class="cf-arquivo">{ic("video")}{esc(s.get("arquivo", "video.mp4"))}</span>'
+            f'<span class="cf-exs"><button type="button" class="btn neutro" data-cf-ex="ok">{ic("check")}{txt["conf_exemplo"]}</button>'
+            f'<button type="button" class="btn neutro" data-cf-ex="errado">{ic("x")}{txt["conf_errado"]}</button></span></div>'
+            f'<p class="cf-rot">{s.get("rot", txt["conf_video_rot"])}</p>'
+            f'<div class="cf-acoes"><label class="btn cheio cf-arq-rot" for="{tid}">{ic("carregar")}{txt["conf_video_escolher"]}</label>'
+            f'<input type="file" id="{tid}" class="sr cf-arq" accept="video/*,.mp4,.webm,.mov,.mkv"/></div>'
+            f'<div class="cf-res" aria-live="polite" hidden></div>'
+            f'<script type="application/json" class="cf-dados">{dados}</script></div>')
+
+
+def sec_conferidor(s, ui, conf_id, prefixo=""):
     """7.9.12: o aluno cola (ou carrega) o arquivo que escreveu e a página confere pelas regras da seção
     (campos, planos, cada_plano, duracao, termos). "pronto quando" cita a resposta literal ("OK: ...").
     Comportamento em assets/v72-conferidor.js; o mesmo motor em Python no conferir.py (opção de terminal)."""
     txt = {k: ui.get(k, v) for k, v in CONF_UI.items()}
+    if any(r.get("tipo") == "video" for r in s["regras"]):
+        return sec_conferidor_video(s, ui, conf_id, prefixo, txt)
     dados = json.dumps({"regras": s["regras"], "ok": s["ok"], "exemplo": s["exemplo"], "exemplo_errado": s["exemplo_errado"],
                         "arquivo": s.get("arquivo", "arquivo.txt"), "txt": txt}, ensure_ascii=False).replace("</", "<\\/")
     tid = f"cf-{conf_id}"
@@ -516,7 +544,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         elif t == "video": corpo = sec_video(s, ui, curso, prefixo)
         elif t == "simfila": corpo = sec_simfila(s, ui)
         elif t == "simconversa": corpo = sec_simconversa(s, ui, f'{a["slug"]}-s{num}')
-        elif t == "conferidor": corpo = sec_conferidor(s, ui, f'{a["slug"]}-s{num}')
+        elif t == "conferidor": corpo = sec_conferidor(s, ui, f'{a["slug"]}-s{num}', prefixo)
         elif t == "quiz": corpo = sec_quiz(s, ui, refs)
         elif t == "gerador": corpo = sec_gerador(s, ui, aulas)
         elif t == "texto": corpo = sec_texto(s, ui)

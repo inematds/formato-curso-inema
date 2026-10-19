@@ -1,4 +1,4 @@
-/* INEMA Learning 7.9.12 — conferidor (o aluno cola o arquivo e a página confere). Só variáveis do tema. */
+/* INEMA Learning 7.12.15 — conferidor (o aluno cola o arquivo e a página confere). Só variáveis do tema. */
 .confer{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:clamp(14px,2.2vw,24px);max-width:900px}
 .cf-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .cf-arquivo{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--mono);color:var(--txt);min-width:0;overflow-wrap:anywhere}
@@ -13,6 +13,8 @@
 .cf-res{margin-top:14px;padding:12px 16px;border-radius:10px;border:1px solid var(--line2);border-left-width:4px;background:var(--bg2)}
 .cf-res.ok{border-left-color:var(--ok)}
 .cf-res.falha{border-left-color:var(--bad)}
+.cf-res.carregando{border-left-color:var(--line2)}
+.cf-video .cf-rot{margin:14px 0 4px}
 .cf-msg{margin:0;font:700 15px var(--mono);color:var(--txt);overflow-wrap:anywhere}
 .cf-res.ok .cf-msg{color:var(--ok)}
 .cf-res ul{margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.5;color:var(--txt2)}

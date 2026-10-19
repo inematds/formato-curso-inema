@@ -125,6 +125,19 @@ if _confs:
         _ui = json.loads((RAIZ / "conteudo" / args.lang / "curso.json").read_text()).get("ui", {})
         _lg = {"pt": "pt", "en": "en", "es": "es"}.get(args.lang, "pt")
         for nome, s in _confs:
+            if any(r.get("tipo") == "video" for r in s.get("regras", [])):
+                # 7.12.15: modo vídeo — os clipes de exemplo existem, o certo passa e o errado falha (ffprobe)
+                for k in ("ok", "video_ok", "video_erro"):
+                    if not s.get(k): erros.append(f"{nome}: conferidor de vídeo sem '{k}'")
+                    elif k != "ok" and not (RAIZ / s[k]).exists(): erros.append(f"{nome}: clipe de exemplo ausente: {s[k]}")
+                if not all(s.get(k) for k in ("ok", "video_ok", "video_erro")): continue
+                if _cf.sonda(RAIZ / s["video_ok"]) is None:
+                    erros.append(f"{nome}: conferidor de vídeo — sem ffprobe ou clipe ilegível ({s['video_ok']})"); continue
+                ok, msg, faltas = _cf.conferir_video(_cf.sonda(RAIZ / s["video_ok"]), s, _ui, _lg)
+                if not ok: erros.append(f"{nome}: conferidor de vídeo — o clipe que passa falhou: {'; '.join(faltas[:3])}")
+                if _cf.conferir_video(_cf.sonda(RAIZ / s["video_erro"]), s, _ui, _lg)[0]: erros.append(f"{nome}: conferidor de vídeo — o clipe com erro passou")
+                if _cf.conferir_video(None, s, _ui, _lg)[0]: erros.append(f"{nome}: conferidor de vídeo aceita arquivo ilegível")
+                continue
             for k in ("regras", "ok", "exemplo", "exemplo_errado"):
                 if not s.get(k): erros.append(f"{nome}: conferidor sem '{k}'")
             if not s.get("regras") or not s.get("exemplo"): continue

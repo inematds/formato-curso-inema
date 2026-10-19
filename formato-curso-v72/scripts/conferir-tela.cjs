@@ -10,7 +10,7 @@ let pw; for (const p of [process.env.PLAYWRIGHT_PATH, 'playwright', '/home/nmald
 if (!pw) { console.error('playwright não encontrado (defina PLAYWRIGHT_PATH)'); process.exit(2); }
 const a = process.argv.slice(2), raiz = path.resolve(a[0] || '.');
 const iS = a.indexOf('--saida'), saida = path.resolve(iS > 0 ? a[iS + 1] : path.join(raiz, '.telas'));
-const TIPOS = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.png': 'image/png', '.vtt': 'text/vtt', '.json': 'application/json' };
+const TIPOS = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.png': 'image/png', '.vtt': 'text/vtt', '.json': 'application/json', '.mp4': 'video/mp4', '.webm': 'video/webm' };
 const srv = http.createServer((q, r) => {
   let f = path.join(raiz, decodeURIComponent(q.url.split('?')[0]));
   if (!f.startsWith(raiz)) { r.writeHead(403); return r.end(); }
@@ -63,7 +63,9 @@ srv.listen(0, '127.0.0.1', async () => {
           const confs = await p.$$('.confer');
           for (let ci = 0; ci < confs.length; ci++) {
             const cf = confs[ci], pref = await cf.getAttribute('data-ok-prefixo');
+            // 7.12.15: no modo vídeo a resposta chega depois do loadedmetadata (classe "carregando" até lá)
             const roda = async (q) => { const b = await cf.$(`[data-cf-ex="${q}"]`); await b.scrollIntoViewIfNeeded(); await b.click(); await p.waitForTimeout(120);
+              await cf.$eval('.cf-res', el => new Promise(ok => { const t0 = Date.now(); (function v() { if ((!el.hidden && !el.classList.contains('carregando')) || Date.now() - t0 > 15000) ok(); else setTimeout(v, 100); })(); }));
               return cf.$eval('.cf-res', el => [el.className, el.querySelector('.cf-msg')?.textContent || '', el.hidden]); };
             const [c1, m1, h1] = await roda('errado');
             if (h1 || !/\bfalha\b/.test(c1)) erros.push(`${nome} @${W}: conferidor aceitou o exemplo com erro`);

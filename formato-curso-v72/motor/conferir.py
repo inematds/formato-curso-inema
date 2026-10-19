@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Conferidor de texto do INEMA Learning 7.11.14 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
+"""Conferidor do INEMA Learning 7.12.15 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
 
 O aluno escreve um arquivo (ficha, cartão, decupagem) e a página confere. Este script é a opção para quem tem
 terminal: confere o mesmo arquivo, com as regras escritas no JSON da aula.
@@ -19,6 +19,9 @@ Sai 0 quando passa ("OK: ...") e 1 quando falta algo. Regras (lista "regras" da 
               min: rótulo ("som:") só vale com >= min letras depois dele, até o próximo |
   duracao     {min, max}                     cada plano tem "N s"; a soma fica entre min e max
   termos      {grupos: [{rot, termos}]}      o texto todo cita um termo de cada grupo
+  video       {min, max, proporcao?, largura_min?}   7.12.15: modo vídeo — o argumento é o arquivo de vídeo
+              (duração e tamanho pelo ffprobe); proporcao "16:9" ou lista ["16:9", "9:16"]; clipes de exemplo
+              em video_ok / video_erro (caminhos no repo)
 """
 import json, pathlib, re, sys, unicodedata
 
@@ -37,7 +40,72 @@ UI = {  # padrões (iguais a CONF_UI do gerar.py); o curso.json → ui pode troc
     "conf_duracao": "Os planos somam {s} s; o pedido é de {x} a {y} s.",
     "conf_termo": "Falta citar {g}.",
     "conf_mais": "… e mais {n}.",
+    # 7.12.15: modo vídeo (regra "video")
+    "conf_video_dur": "O vídeo tem {s} s; o pedido é de {x} a {y} s.",
+    "conf_video_prop": "O vídeo é {w}×{h} ({p}); o pedido é {q}.",
+    "conf_video_larg": "O vídeo tem {w} px de largura; o mínimo é {x} px.",
+    "conf_video_ler": "Não consegui ler este vídeo. Exporte em MP4 (H.264) ou WebM e tente de novo.",
 }
+
+PROPORCOES = {"16:9": 16 / 9, "9:16": 9 / 16, "1:1": 1.0, "4:5": 4 / 5, "4:3": 4 / 3, "2.39:1": 2.39, "1.85:1": 1.85}
+
+
+def regra_video(sec):
+    """7.12.15: a regra {tipo: "video", min, max, proporcao?, largura_min?} do conferidor, ou None (modo texto)."""
+    return next((r for r in sec.get("regras", []) if r.get("tipo") == "video"), None)
+
+
+def nome_proporcao(w, h):
+    """1920×1080 → '16:9'; fora das conhecidas (2 % de folga), a razão reduzida ('5:3')."""
+    if not w or not h:
+        return "?"
+    for nome, v in PROPORCOES.items():
+        if abs(w / h - v) / v <= 0.02:
+            return nome
+    from math import gcd
+    g = gcd(int(w), int(h)) or 1
+    return f"{int(w) // g}:{int(h) // g}"
+
+
+def seg1(v, lang):
+    """Duração com uma casa: 8.016 → '8,0' (pt/es) ou '8.0' (en)."""
+    s = f"{v:.1f}"
+    return s if lang == "en" else s.replace(".", ",")
+
+
+def conferir_video(info, sec, ui=None, lang="pt"):
+    """info = (duração em s, largura, altura) ou None quando o arquivo não pôde ser lido. Mesmas mensagens do JS."""
+    T = {**UI, **(ui or {})}
+    r = regra_video(sec)
+    if not info or not info[0] or not info[1]:
+        return False, T["conf_falta"], [T["conf_video_ler"]]
+    d, w, h = info
+    faltas, p = [], nome_proporcao(w, h)
+    if not r.get("min", 0) <= round(d, 1) <= r.get("max", 10 ** 6):
+        faltas.append(fmt(T["conf_video_dur"], s=seg1(d, lang), x=r.get("min", 0), y=r.get("max", "∞")))
+    props = r.get("proporcao") or []
+    props = [props] if isinstance(props, str) else props
+    if props and p not in props:
+        faltas.append(fmt(T["conf_video_prop"], w=w, h=h, p=p, q=" / ".join(props)))
+    if r.get("largura_min") and w < r["largura_min"]:
+        faltas.append(fmt(T["conf_video_larg"], w=w, x=r["largura_min"]))
+    if faltas:
+        return False, T["conf_falta"], faltas
+    return True, fmt(sec["ok"], s=seg1(d, lang), w=w, h=h, p=p), []
+
+
+def sonda(caminho):
+    """(duração, largura, altura) pelo ffprobe; None se não houver ffprobe ou o arquivo não for vídeo."""
+    import subprocess
+    try:
+        out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                              "stream=width,height:format=duration", "-of", "json", str(caminho)],
+                             capture_output=True, text=True, timeout=60).stdout
+        j = json.loads(out or "{}")
+        st = (j.get("streams") or [{}])[0]
+        return float(j.get("format", {}).get("duration", 0)), int(st.get("width", 0)), int(st.get("height", 0))
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
 
 
 def norm(t):
@@ -192,6 +260,13 @@ def main(argv):
     _, _, sec, ui = alvo[0]
     if len(argv) < 2:
         print("uso: python3 conferir.py <aula> <arquivo.txt> | --exemplo | --errado"); return 2
+    if regra_video(sec):  # 7.12.15: modo vídeo — o argumento é o arquivo de vídeo (ffprobe)
+        alvo_v = {"--exemplo": RAIZ / sec.get("video_ok", ""), "--errado": RAIZ / sec.get("video_erro", "")}.get(argv[1], argv[1])
+        ok, msg, faltas = conferir_video(sonda(alvo_v), sec, ui, lang)
+        print(msg)
+        for f in faltas:
+            print(" - " + f)
+        return 0 if ok else 1
     if argv[1] == "--exemplo":
         texto = sec["exemplo"]
     elif argv[1] == "--errado":
