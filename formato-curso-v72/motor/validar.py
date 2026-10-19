@@ -84,6 +84,20 @@ for p in aulas:
         if not (p.parent / src).resolve().exists(): erros.append(f"{nome}: arquivo local ausente {src}")
 if not (base / "index.html").exists(): erros.append("index.html ausente")
 
+# viés do teste (7.7.9): a certa sempre na mesma posição, ou sempre a mais longa, deixa o aluno acertar sem ler
+qs = []
+for j in sorted((RAIZ / "conteudo" / args.lang / "aulas").glob("*.json")):
+    for s in json.loads(j.read_text()).get("secoes", []):
+        if s.get("tipo") == "quiz": qs += [q for q in s.get("perguntas", []) if q.get("opcoes")]
+if len(qs) >= 8:
+    pos = [q["certa"] for q in qs]
+    topo = max(set(pos), key=pos.count)
+    if pos.count(topo) / len(qs) > 0.5:
+        erros.append(f"teste: a certa é a opção {topo + 1} em {pos.count(topo)} de {len(qs)} perguntas; varie a posição")
+    longa = sum(1 for q in qs if len(q["opcoes"][q["certa"]]) > max(len(o) for i, o in enumerate(q["opcoes"]) if i != q["certa"]))
+    if longa / len(qs) > 0.5:
+        erros.append(f"teste: a certa é a opção mais longa em {longa} de {len(qs)} perguntas; deixe as erradas do mesmo tamanho")
+
 # a capa da página inicial e a foto de cada aula são obrigatórias (o gerador usa sem conferir)
 for img in ["assets/img/hero/inicio.jpg", *[f"assets/img/hero/{p.parent.name}.jpg" for p in aulas]]:
     if not (RAIZ / img).exists(): erros.append(f"imagem ausente: {img}")

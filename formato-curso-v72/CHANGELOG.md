@@ -67,3 +67,6 @@
 
 ## 7.7.10 — 19/10/2026
 - Novo `scripts/resolver-kit.py`: em curso técnico com `kit/`, o JSON das aulas usa marcadores `@@bloco:<nome>@@` (texto de `kit/blocos/<nome>.sh`), `@@arquivo:<caminho>@@` (arquivo do kit) e `@@saida:<nome>@@` (`<pre>` escapado de `kit/saidas/<nome>.txt|.md`); o script troca em lugar e confere bloco "Terminal …" × `kit/blocos/*.sh` e "Arquivo · kit/X" × `kit/X` (`--conferir`, saída 1 se divergir). O bloco copiável e a saída capturada passam a nascer do arquivo rodado, em vez de colados à mão. SKILL.md (passo 4) cita o fluxo. Criado no `loop-r-eng-seguranca-v72` (Formação LOOP-R Engenharia, curso 4: 21 blocos). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.8.10 — 19/10/2026
+- `validar.py`: confere o viés do teste no curso inteiro (lê `conteudo/<lang>/aulas/*.json`, a partir de 8 perguntas). Erro quando a resposta certa está na mesma posição em mais de metade das perguntas, ou quando ela é a opção mais longa em mais de metade. Nos pilotos da Formação Gestão de IA a certa era a 2ª em 30 de 35 (G3) e 34 de 36 (G4), e a mais longa em 32 e 36: dava para acertar sem ler. Achado pelo revisor da formação durante o G5 `gestao-ia-governanca-v72` (certa em A/B/C/D 10/8/10/7; mais longa em 4 de 35). Cursos antigos que reprovarem: redistribuir as posições e igualar o tamanho das erradas.
