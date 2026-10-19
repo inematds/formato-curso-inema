@@ -1,5 +1,7 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Depois do `traduzir.py`, o `validar.py --lang en/es` pode reprovar o viés de tamanho do teste mesmo com o PT aprovado: no DICA 2 o PT tinha a certa como a mais longa em 13 de 33 perguntas, e o EN ficou com 21 de 33. Deixe folga no PT, com a certa mais longa em no máximo um terço das perguntas. Se reprovar no idioma, alongue a errada no cache `i18n/<lang>.json` e rode o `traduzir.py` de novo, que regrava a partir do cache. Mensagem de cliente entre aspas dentro de bloco `codigo` (ex.: "vcs abrem sábado?") voltou em PT no EN e no ES sem o script acusar; procure palavras PT linha a linha nos `blocos` traduzidos. E termo com explicação só na primeira menção, como "LGPD (Brazil's data protection law)", não vai no glossário, que repetiria a explicação em todo lugar: ponha a explicação no cache, na primeira frase de cada aula (19/10/2026, formacao-dica-entrega-v72).
+
 - `mapa.resultado.total` é um span que não quebra linha: texto longo ("8 exercícios no mapa · 14 no curso") transbordou 19 px no celular (iacultivada-v72). Mantenha curto, tipo "8 exercícios" (19/10/2026).
 
 - simconversa: um fim alcançável já na primeira fala não pode citar fato que o personagem só conta numa fala seguinte (o fim citava "preço antigo" antes de o cliente mencionar). Escreva os fins genéricos ou um fim por caminho (19/10/2026).
