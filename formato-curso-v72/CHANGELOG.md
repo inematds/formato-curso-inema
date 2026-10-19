@@ -61,3 +61,6 @@
 
 ## 7.6.9 — 19/10/2026
 - `scripts/traduzir.py` (`problema`): tradução igual ao original, com mais de 40 caracteres e palavra portuguesa ("não", "você", "está", "-ção"…), passa a ser recusada ("igual ao original") e vai para a nova tentativa, em vez de entrar no cache e sair em PT no `en/`/`es/` com "0 textos sem tradução". Achado duas vezes no mesmo dia: no `formacao-inemaseo-medicao-v72` (frase cheia de citações no ES) e no G4 `gestao-ia-recursos-v72` (os 3 blocos de código da aula 3 voltaram em PT no EN). Nomes próprios e textos curtos idênticos continuam aceitos. Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.6.10 — 19/10/2026
+- `scripts/traduzir.py` (`problema`): em bloco de código, a regra "igual ao original" (7.6.9) só olha os comentários (`# …`, `// …`). Bloco de código puro com "não" numa string (ex.: `'sim' if escreve else 'não'`, que tem de ficar igual para bater com a saída capturada) era recusado 3 vezes e ficava "sem tradução válida" em EN e ES. Comentário em PT devolvido igual continua recusado; prosa não muda. Achado no `loop-r-eng-multiagente-v72` (Formação LOOP-R Engenharia, curso 3, aula 2).
