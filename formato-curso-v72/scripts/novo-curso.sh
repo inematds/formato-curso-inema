@@ -34,4 +34,6 @@ When I correct you, or you catch yourself making a mistake: before continuing, a
 
 $(sed -n '/^- /p' "$SKILL/references/LICOES.md")
 EOF
+# repositório já na branch main: o Pages (source[branch]=main) recusa repo que subiu como master
+[ -d "$DEST/.git" ] || git -C "$DEST" init -q -b main
 echo "curso criado em $DEST (id $SLUG). Próximo: escrever conteudo/pt/curso.json + aulas/*.json; imagens em assets/img/ (capa.jpg, hero/inicio.jpg, hero/<slug>.jpg)."

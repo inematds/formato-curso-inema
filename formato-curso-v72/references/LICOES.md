@@ -1,5 +1,6 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Repo do curso tem de nascer na branch `main` (o `novo-curso.sh` 7.6.8 já faz `git init -b main`): subindo como `master`, o Pages da raiz responde 422 "The main branch must exist" (19/10/2026, curso gestao-ia-processos-v72).
 - Depois do `traduzir.py`, procure no cache `i18n/<lang>.json` entradas com tradução igual ao original e palavra PT ("não", "você", "é"): frase cheia de citações entre aspas ("Do zero" vira "desde cero") voltou sem tradução no ES e o script não acusou. Corrija no JSON do idioma e no cache (19/10/2026, curso formacao-inemaseo-medicao-v72).
 
 - Cursos construídos em paralelo por subagentes dividem o MESMO scratchpad: pasta de imagens com nome genérico (`img/`, `gerar.sh`, `capa/`, `inicio/`) colide, o script de um agente pula a imagem porque a `arte.png` do outro já existe, e um Write sobrescreve o script que o outro está rodando. Use sempre `scratchpad/<id-do-curso>-img/` e confira o prompt no `log-1.txt` antes de usar a imagem (19/10/2026, curso formacao-inemaseo-sistemas-v72).

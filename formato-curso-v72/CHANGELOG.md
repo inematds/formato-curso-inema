@@ -55,3 +55,6 @@
 
 ## 7.6.7 — 19/10/2026
 - `gerar.py` (`sec_video`): vídeo por idioma. Campo opcional `videos.<chave>.idiomas.<lang>` com `mp4`, `vtt`, `duracao` e `pagina`; em `en/` e `es/` o player usa a versão do idioma (legenda com `srclang`/rótulo certos) e, sem ela, continua no vídeo PT com legenda PT. O `traduzir.py` já pula `mp4`/`vtt` (PULA), então as URLs e caminhos ficam intactos. Antes o EN/ES tocava o vídeo PT com legenda PT mesmo quando havia versão traduzida publicada. Achado no curso `loop-r-eng-base-v72` (Formação LOOP-R Engenharia, curso 0: vídeos AI harness e LOOP-R trilha 2, ambos com EN/ES). Regressão: curso sem `idiomas` gera o mesmo HTML (só o meta generator).
+
+## 7.6.8 — 19/10/2026
+- `scripts/novo-curso.sh`: cria o repositório git do curso já na branch `main` (`git init -b main`, só se ainda não houver `.git`). Com `git init` sem `-b`, o `gh repo create --source . --push` subia `master` e o `POST .../pages` com `source[branch]=main` respondia 422 ("The main branch must exist"); era preciso renomear, trocar a branch padrão e apagar a `master` remota. Achado no curso `gestao-ia-processos-v72` (Formação Gestão de IA 2027, G2). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
