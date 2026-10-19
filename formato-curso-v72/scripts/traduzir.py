@@ -141,7 +141,9 @@ def problema(pt, tr, codigo):
         return "vazio"
     # 7.6.9: texto longo devolvido igual ao PT, com palavra portuguesa, é tradução que não aconteceu
     # 7.6.10: em bloco de código, só os comentários contam (código puro com 'não' numa string fica igual de propósito)
-    alvo = "\n".join(re.findall(r"(?:^|\s)(?:#|//)\s(.*)", pt)) if codigo else pt
+    # 7.7.11: em HTML, o que está em <pre> e <code> é saída/comando real e fica igual de propósito
+    alvo = ("\n".join(re.findall(r"(?:^|\s)(?:#|//)\s(.*)", pt)) if codigo
+            else re.sub(r"<pre>.*?</pre>|<code>.*?</code>", "", pt, flags=re.S))
     if tr.strip() == pt.strip() and len(pt) > 40 and re.search(r"\b(não|você|são|está|também|então|para o|para a)\b|ção\b|ções\b", alvo):
         return "igual ao original (não traduzido)"
     tags = lambda s: sorted(re.findall(r"</?([a-zA-Z][a-zA-Z0-9]*)", s))

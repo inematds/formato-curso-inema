@@ -70,3 +70,6 @@
 
 ## 7.8.10 — 19/10/2026
 - `validar.py`: confere o viés do teste no curso inteiro (lê `conteudo/<lang>/aulas/*.json`, a partir de 8 perguntas). Erro quando a resposta certa está na mesma posição em mais de metade das perguntas, ou quando ela é a opção mais longa em mais de metade. Nos pilotos da Formação Gestão de IA a certa era a 2ª em 30 de 35 (G3) e 34 de 36 (G4), e a mais longa em 32 e 36: dava para acertar sem ler. Achado pelo revisor da formação durante o G5 `gestao-ia-governanca-v72` (certa em A/B/C/D 10/8/10/7; mais longa em 4 de 35). Cursos antigos que reprovarem: redistribuir as posições e igualar o tamanho das erradas.
+
+## 7.7.11 — 19/10/2026
+- `scripts/traduzir.py` (`problema`): a regra "igual ao original" (7.6.9) ignora o que está dentro de `<pre>` e `<code>` em texto HTML. Aba de saída que é só `<pre>` com a saída real em PT (ex.: "mudança não commitada preservada", que tem de ficar igual para bater com o terminal) era recusada 3 vezes e ficava "sem tradução válida" em EN e ES. Prosa em PT devolvida igual fora do `<pre>` continua recusada. Achado no `loop-r-eng-seguranca-v72` (Formação LOOP-R Engenharia, curso 4, aula 5). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
