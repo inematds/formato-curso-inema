@@ -5,3 +5,7 @@
 - Motor: `gerar.py` igual ao do curso; `validar.py` lê a própria URL do `curso.json` (antes fixa) e passa a exigir `capa.jpg`, `hero/inicio.jpg` e `hero/<slug>.jpg`.
 - Novos: `scripts/novo-curso.sh` (cria curso a partir do motor), `scripts/conferir-tela.cjs` (HTTP local, 1366 e 390 px, transbordo, diagrama, quiz, erros JS, capturas).
 - Referências: `ESQUEMA.md`, `LICOES.md`; exemplos de aula reais em `examples/`.
+
+## 7.2.1 — 19/10/2026
+- `v71.js`: o `.ics` do gerador de plano sai como `plano-<id-do-curso>.ics` (antes fixo `plano-do-chat-ao-agente.ics`; achado no curso de Filas).
+- SKILL.md: capa aceita 1400×788 (padrão do v72).

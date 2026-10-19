@@ -27,7 +27,7 @@ description: >-
 1. **Criar a pasta:** `scripts/novo-curso.sh ~/projetos/<repo> "<Nome>"` — copia o motor (`gerar.py`, `validar.py`, `assets/v71.*`, `assets/v72.*`), um `curso.json` modelo com `ui` pronto e o `CLAUDE.md` com as lições. Nome da pasta = nome do repo.
 2. **Plano (curto, antes do conteúdo):** 6–8 aulas; para cada uma, objetivo em uma linha + que diagrama + qual prática com "pronto quando". Conteúdo vem da fonte (repo, guia, área do eventos) — não inventar fato, comando nem número.
 3. **Escrever** `conteudo/pt/curso.json` e `conteudo/pt/aulas/NN-<slug>.json`. Ordem típica de uma aula: `diagrama` → `passos` → `codigo` → `simfila` (se ensina) → `pratica` → `video` → `quiz` → `resumo` → `links`.
-4. **Imagens** (obrigatórias, o validador cobra): `assets/img/capa.jpg` (og:image, 1200×630), `assets/img/hero/inicio.jpg` e `assets/img/hero/<slug>.jpg` por aula (1536×1024). Geradas pelo Codex na assinatura (`codex exec` com image_gen), luz neutra, sem texto na imagem; flux2-klein local só como reserva. Opcional `assets/img/voce.jpg` (foto do nó "Você").
+4. **Imagens** (obrigatórias, o validador cobra): `assets/img/capa.jpg` (og:image; 1400×788 como no v72, ou 1200×630 se o texto da arte couber), `assets/img/hero/inicio.jpg` e `assets/img/hero/<slug>.jpg` por aula (1536×1024). Geradas pelo Codex na assinatura (`codex exec` com image_gen), luz neutra, sem texto na imagem; flux2-klein local só como reserva. Opcional `assets/img/voce.jpg` (foto do nó "Você").
 5. **Vídeos:** só já publicados (MP4 em release do GitHub + poster e `.vtt` locais). Avatar novo só com pedido do dono.
 6. **Portão:**
    ```bash

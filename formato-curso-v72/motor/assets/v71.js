@@ -346,7 +346,7 @@
       var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//INEMA//" + D.curso + "//PT"];
       ultimo.cal.forEach(function (c, i) { L.push("BEGIN:VEVENT", "UID:" + ymd(c.ini) + "-" + i + "@inema", "DTSTAMP:" + ymd(new Date()) + "T000000Z", "DTSTART;VALUE=DATE:" + ymd(c.ini), "DTEND;VALUE=DATE:" + ymd(soma(c.fim, 1)), "SUMMARY:" + esc(D.curso + " · " + c.t), "DESCRIPTION:" + esc(c.d), "END:VEVENT"); });
       L.push("END:VCALENDAR");
-      baixa("plano-do-chat-ao-agente.ics", "text/calendar", L.join("\r\n"));
+      baixa("plano-" + (document.body.dataset.curso || "curso") + ".ics", "text/calendar", L.join("\r\n"));
     });
   });
 })();
