@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Traduz um curso v7.2 (conteudo/pt → conteudo/en e conteudo/es) pelo Codex da ASSINATURA (gpt-6-luna).
+"""Traduz um curso v7.2 (conteudo/pt → conteudo/en e conteudo/es) pela ASSINATURA: Sonnet 5.5 (`claude -p`, padrão
+desde 19/10/2026) ou Codex (`--motor codex`). Nunca API.
 
-    python3 traduzir.py <pasta-do-curso> [en es] [--modelo gpt-6-luna]
+    python3 traduzir.py <pasta-do-curso> [en es] [--motor claude|codex] [--modelo ...] [--publico "..."]
 
 Só os TEXTOS do JSON vão para o modelo: chaves, slugs, ícones, URLs, ids e números ficam iguais.
 Cada texto é validado (mesmas tags HTML, mesmos links, linhas de comando idênticas, nada vazio);
@@ -30,7 +31,7 @@ GLOSSARIO = {
 }
 SISTEMA = """You translate the text of an online course from Brazilian Portuguese to {nome}.
 Rules:
-- Audience: adults learning to work with AI agents (terminal, Git, Telegram bots, queues, social media), reading on a phone.
+- Audience: {publico}, reading on a phone.
   Plain, warm, direct, short sentences; address the reader as "you" ({tu}). Keep the same length and tone; no hype.
 - Keep EXACTLY: HTML tags and attributes (<b>, <code>, <a href="...">, <br>, <pre>, <ul>...), URLs, numbers, emoji,
   product names (INEMA.CLUB, INEMA.PRO, OSWork, INTELECTO, Jarvis, inemaccbot, Claude Code, Codex, OpenRouter, Ollama,
@@ -42,6 +43,22 @@ Rules:
   Markdown headings/labels of a template may be translated.
 - Glossary (use consistently): {glossario}
 Return ONLY a JSON object with the same keys and the translated strings as values."""
+
+
+PUBLICO_PADRAO = "adults learning to work with AI agents (terminal, Git, Telegram bots, queues, social media)"
+MODELO_PADRAO = {"claude": "claude-sonnet-5-5", "codex": "gpt-6-luna"}
+
+
+def via_claude(pedido, modelo):
+    """Claude Code da assinatura em modo texto, sem ferramentas. Recusa rodar com ANTHROPIC_API_KEY no ambiente."""
+    env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "CLAUDECODE")}
+    with tempfile.TemporaryDirectory() as d:
+        r = subprocess.run(["claude", "-p", "--model", modelo, "--output-format", "text", "--tools", ""],
+                           input=pedido, capture_output=True, text=True, timeout=900, cwd=d, env=env)
+    if r.returncode:
+        raise RuntimeError(f"claude -p rc={r.returncode}: {(r.stderr or r.stdout)[-300:]}")
+    txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", r.stdout.strip())
+    return json.loads(txt[txt.index("{"):txt.rindex("}") + 1])
 
 
 def via_codex(pedido, modelo):
@@ -99,16 +116,17 @@ def problema(pt, tr, codigo):
     return None
 
 
-def traduz_lote(itens, lang, modelo, glos):
+def traduz_lote(itens, lang, modelo, glos, motor="claude", publico=PUBLICO_PADRAO):
     """itens: {chave: texto_pt}. Devolve {chave: tradução válida}; tenta de novo só os inválidos."""
     sistema = SISTEMA.format(nome=NOMES[lang], tu="you" if lang == "en" else "tú",
-                             glossario=json.dumps(glos, ensure_ascii=False))
+                             glossario=json.dumps(glos, ensure_ascii=False), publico=publico)
+    chama = via_claude if motor == "claude" else via_codex
     ok, pend = {}, dict(itens)
     for tentativa in range(3):
         if not pend:
             break
         try:
-            r = via_codex(sistema + "\n\nINPUT JSON:\n" + json.dumps(pend, ensure_ascii=False), modelo)
+            r = chama(sistema + "\n\nINPUT JSON:\n" + json.dumps(pend, ensure_ascii=False), modelo)
         except Exception as e:
             print(f"  [{lang}] lote falhou ({e}); nova tentativa", file=sys.stderr)
             continue
@@ -124,8 +142,11 @@ def traduz_lote(itens, lang, modelo, glos):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("pasta"); ap.add_argument("langs", nargs="*", default=["en", "es"])
-    ap.add_argument("--modelo", default="gpt-6-luna"); ap.add_argument("--lote", type=int, default=45)
+    ap.add_argument("--motor", choices=["claude", "codex"], default="claude")
+    ap.add_argument("--modelo"); ap.add_argument("--lote", type=int, default=45)
+    ap.add_argument("--publico", default=PUBLICO_PADRAO, help="quem lê o curso (vai no pedido de tradução, em inglês)")
     a = ap.parse_args()
+    a.modelo = a.modelo or MODELO_PADRAO[a.motor]
     raiz = pathlib.Path(a.pasta).resolve()
     pt = raiz / "conteudo" / "pt"
     arquivos = [pt / "curso.json", *sorted((pt / "aulas").glob("*.json"))]
@@ -151,7 +172,7 @@ def main():
         print(f"[{lang}] {len(lista)} textos novos em {len(lotes)} lotes ({len(cache)} no cache)")
         def roda(lote):
             itens = {("c:" if cod else "t:") + str(i): t for i, (t, cod) in enumerate(lote)}
-            ok, pend = traduz_lote(itens, lang, a.modelo, glos)
+            ok, pend = traduz_lote(itens, lang, a.modelo, glos, a.motor, a.publico)
             return {itens[k]: v for k, v in ok.items()}, len(pend)
         with ThreadPoolExecutor(4) as ex:
             for novos, n_pend in ex.map(roda, lotes):

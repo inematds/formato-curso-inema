@@ -15,3 +15,7 @@
 - Novo `scripts/traduzir.py` (Codex da assinatura, por texto, com validação e cache).
 - `conferir-tela.cjs` abre também `en/` e `es/` e acusa imagem quebrada; `validar.py` ignora links para o próprio site em qualquer idioma.
 - Topo: nome do curso encurta com reticências em vez de passar por baixo dos botões.
+
+## 7.4.1 — 19/10/2026
+- `traduzir.py`: tradução pelo **Sonnet 5.5 da assinatura** (`claude -p --model claude-sonnet-5-5`, sem ferramentas) como padrão; `--motor codex` mantém o caminho antigo. Remove `ANTHROPIC_API_KEY` do ambiente do subprocesso (nunca API).
+- `traduzir.py --publico "..."`: o público do pedido de tradução deixa de ser fixo no do-chat-ao-agente.
