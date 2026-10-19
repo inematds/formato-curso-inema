@@ -39,3 +39,6 @@
 
 ## 7.5.3 — 19/10/2026
 - `validar.py`: acusa tag desconhecida no texto visível fora de bloco de código (ex.: placeholder `<o gatilho>` num `exemplo.texto`). O navegador lê `<o gatilho>` como tag e o trecho some da tela; o tradutor também recusava a frase por "tags diferentes". Lista de tags HTML/SVG conhecidas em `TAGS_HTML`; elementos com `-` passam. Regressão: `do-chat-ao-agente-v72`, `formacao-vendas-ia-consultoria-v72`, `-fundamentos-v72` e `-primeiro-cliente-v72` continuam OK em PT/EN/ES (achado no `formacao-vendas-ia-masterclass-v72`).
+
+## 7.5.4 — 19/10/2026
+- `gerar.py` + `v72.css`: campo opcional `inicio.cursos` — seção "Os N cursos completos" na página inicial, logo depois dos números, com cartão (capa 16:9, rótulo, título, resumo, "Abrir o curso") para cada curso da formação. `href_idioma: true` faz `en/` e `es/` apontarem para a versão traduzida do curso irmão; `img` aceita `-en`/`-es`. Classes próprias (`.ini-curso`), sem conflito com o progresso das aulas. Pedido do Nei na visão geral `do-chat-ao-agente-v72` ("e o link para os cursos"): antes os cursos completos só apareciam no fim de cada aula.

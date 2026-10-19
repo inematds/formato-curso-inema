@@ -267,3 +267,13 @@ html[data-tema="papel"] .idiomas a.on{background:#FACC15;color:#0c0c10}
 /* nome do curso encurta com reticências em vez de passar por baixo do seletor de idioma */
 .topo .esq{flex:1 1 auto}.topo .dir{flex:0 0 auto}
 .marca{min-width:0;overflow:hidden}.marca>span{overflow:hidden;text-overflow:ellipsis}
+/* 7.5.4: cartões dos cursos completos de uma formação (inicio.cursos) */
+.ini-cursos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}
+.ini-curso{display:flex;flex-direction:column;gap:16px;text-decoration:none;color:inherit}
+.ini-curso .ia-img{aspect-ratio:16/9}
+.ini-curso:hover .ia-img img{transform:scale(1.035)}
+.ini-curso:hover .ia-t{color:var(--amb-t)}
+.ini-curso .ia-l{-webkit-line-clamp:4}
+.ic-ir{display:inline-flex;align-items:center;gap:8px;margin-top:4px;font-weight:600;font-size:15.5px;color:var(--amb-t)}
+.ic-ir .ico{width:16px;height:16px}
+@media (max-width:640px){.ini-cursos{grid-template-columns:minmax(0,1fr)}}

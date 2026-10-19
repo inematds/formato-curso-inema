@@ -14,7 +14,7 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 | `lado_card` | `{rot, t, texto, link, href}` — cartão no pé da barra lateral |
 | `rodape` | HTML do rodapé (manter "INEMA.CLUB · conteúdo aberto e gratuito · formato INEMA Learning v7.2") |
 | `videos` | `{chave: {titulo, duracao, mp4, poster, vtt, pagina}}` — `mp4` é URL publicada (release do GitHub); `poster` e `vtt` são caminhos locais em `assets/` |
-| `inicio` | página inicial: `kicker`, `titulo`, `lead`, `cta`, `cta2 {t, href}`, `capa_alt`, `numeros [{v, t}]`, `aulas_titulo`, `aulas_sub`, `blocos [{t, itens[]}]` (ex.: "Para quem é" / "O que você sai fazendo") |
+| `inicio` | página inicial: `kicker`, `titulo`, `lead`, `cta`, `cta2 {t, href}`, `capa_alt`, `numeros [{v, t}]`, `aulas_titulo`, `aulas_sub`, `blocos [{t, itens[]}]` (ex.: "Para quem é" / "O que você sai fazendo"); opcional `cursos {titulo, sub, abrir, itens [{rot, t, l, href, href_idioma, img}]}` — cartões para os cursos completos de uma formação, logo depois dos números (7.5.4; `href_idioma: true` leva `en/`/`es/` ao curso irmão traduzido; `img` 16:9, aceita `-en`/`-es`) |
 | `ui` | textos de interface — copiar do modelo e não mexer (só traduzir em EN/ES) |
 
 ## `conteudo/pt/aulas/NN-<slug>.json` (uma aula por arquivo, ordem pelo nome)

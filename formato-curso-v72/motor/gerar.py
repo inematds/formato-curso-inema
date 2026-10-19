@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.5.1"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.5.4"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -523,6 +523,19 @@ def pagina_inicio(curso, aulas, ui, lang):
     numeros = "".join(f'<li><b>{n["v"]}</b><span>{n["t"]}</span></li>' for n in p["numeros"])
     duas = "".join(f'<div><h2>{b["t"]}</h2><ol>{"".join(f"<li><span class=dn>{i + 1}</span><span>{x}</span></li>" for i, x in enumerate(b["itens"]))}</ol></div>' for b in p["blocos"])
     pontos = "".join(f'<a href="aulas/{x["slug"]}/index.html" class="pt" data-slug="{x["slug"]}" title="{attr(x["titulo"])}"><span class="sr">{x["titulo"]}</span></a>' for x in aulas)
+    # 7.5.4: inicio.cursos (opcional) — cartões para os cursos completos de uma formação, logo depois dos números.
+    # href_idioma: true → em en/ e es/ o link vai para <href><lang>/ (curso irmão também traduzido)
+    cursos = ""
+    if p.get("cursos"):
+        cs = p["cursos"]
+        def href(c):
+            return c["href"] + (f"{LANG}/" if LANG != "pt" and c.get("href_idioma") else "")
+        cursos = (f'<section class="secao" id="cursos"><div class="sec-cab"><div><h2>{cs["titulo"]}</h2><p>{cs["sub"]}</p></div></div><ol class="ini-cursos">'
+                  + "".join(f'<li><a class="ini-curso" href="{attr(href(c))}">'
+                            f'<span class="ia-img"><img src="{ativo(prefixo)}{img_idioma(c["img"])}" alt="" loading="lazy" width="1400" height="788"/></span>'
+                            f'<span class="ia-txt"><span class="kicker">{c["rot"]}</span><span class="ia-t">{c["t"]}</span><span class="ia-l">{c["l"]}</span>'
+                            f'<span class="ic-ir">{cs["abrir"]} {ic("seta")}</span></span></a></li>' for c in cs["itens"])
+                  + '</ol></section>')
     return (cabeca(f'{curso["nome"]} · INEMA', p["lead"], prefixo, lang, curso["url"], id_curso(curso))
             + f'<body class="inicio" data-curso="{id_curso(curso)}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">' + topo(curso, aulas, ui, prefixo)
             + '<div class="casca">' + lado(curso, aulas, ui, prefixo, "")
@@ -532,7 +545,7 @@ def pagina_inicio(curso, aulas, ui, lang):
             + f'<div class="ini-acoes"><a class="comecar" href="aulas/{aulas[0]["slug"]}/index.html">{p["cta"]} {ic("seta")}</a>'
             + f'<a class="ini-link" href="{p["cta2"]["href"]}">{p["cta2"]["t"]}</a></div></div>'
             + f'<figure class="ah-img"><img src="{ativo(prefixo)}{img_idioma('assets/img/hero/inicio.jpg')}" alt="{attr(p["capa_alt"])}" width="1536" height="1024"/></figure></div>'
-            + f'<ul class="ini-num">{numeros}</ul>'
+            + f'<ul class="ini-num">{numeros}</ul>' + cursos
             + f'<section class="secao" id="aulas"><div class="sec-cab"><div><h2>{p["aulas_titulo"]}</h2><p>{p["aulas_sub"]}</p></div></div><ol class="ini-aulas">{lista}</ol></section>'
             + f'<section class="secao"><div class="ini-duas">{duas}</div></section>'
             + rodape(curso) + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script></body></html>\n')
