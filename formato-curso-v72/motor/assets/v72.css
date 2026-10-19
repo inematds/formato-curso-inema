@@ -257,3 +257,13 @@ a.es-aula:hover{color:var(--amb-t)}
 .es-importar:focus-within{outline:2px solid var(--amb-b);outline-offset:2px}
 .es-msg{margin:10px 0 0;color:var(--txt2);font-size:14px}
 .es-msg:empty{display:none}
+/* 7.3: seletor de idioma no topo (PT · EN · ES) */
+.idiomas{display:inline-flex;align-items:center;gap:0;margin-left:8px;border:1px solid var(--line2);border-radius:999px;padding:2px}
+.idiomas a{font:600 11.5px var(--inter);letter-spacing:.04em;color:var(--txt2);text-decoration:none;padding:5px 8px;border-radius:999px;line-height:1}
+.idiomas a:hover{color:var(--txt)}
+.idiomas a.on{background:var(--amb,#FACC15);color:#0c0c10}
+html[data-tema="papel"] .idiomas a.on{background:#FACC15;color:#0c0c10}
+@media (max-width:560px){.idiomas{margin-left:4px}.idiomas a{padding:5px 6px;font-size:11px}}
+/* nome do curso encurta com reticências em vez de passar por baixo do seletor de idioma */
+.topo .esq{flex:1 1 auto}.topo .dir{flex:0 0 auto}
+.marca{min-width:0;overflow:hidden}.marca>span{overflow:hidden;text-overflow:ellipsis}

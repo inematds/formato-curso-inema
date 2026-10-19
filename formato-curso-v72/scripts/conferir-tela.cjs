@@ -19,19 +19,20 @@ srv.listen(0, '127.0.0.1', async () => {
   const base = `http://127.0.0.1:${srv.address().port}/`;
   const aulas = fs.readdirSync(path.join(raiz, 'aulas')).filter(d => fs.existsSync(path.join(raiz, 'aulas', d, 'index.html'))).sort();
   const paginas = ['', ...aulas.map(s => `aulas/${s}/`)];
+  for (const lg of ['en', 'es']) if (fs.existsSync(path.join(raiz, lg, 'index.html'))) paginas.push(`${lg}/`, ...aulas.map(s => `${lg}/aulas/${s}/`));
   fs.mkdirSync(saida, { recursive: true });
   const erros = []; const b = await pw.chromium.launch({ args: ['--disable-gpu'] });
   try {
     for (const W of [1366, 390]) {
       const ctx = await b.newContext({ viewport: { width: W, height: W < 700 ? 844 : 900 } });
       for (const pg of paginas) {
-        const nome = (pg || 'inicio').replace(/aulas\/|\//g, '') || 'inicio';
+        const nome = (pg.replace(/aulas\//, '').replace(/\/$/, '').replace(/\//g, '-')) || 'inicio';
         const p = await ctx.newPage(); const jsErr = [];
         p.on('pageerror', e => jsErr.push(e.message));
         await p.goto(base + pg, { waitUntil: 'load' }); await p.waitForTimeout(300);
         const sw = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         if (sw[0] > sw[1]) erros.push(`${nome} @${W}: transbordo horizontal (${sw[0]} > ${sw[1]})`);
-        if (pg) {
+        if (pg.includes('aulas/')) {
           const no = await p.$('button.dg-no');
           if (no) { await no.click({ force: true }); await p.waitForTimeout(150);
             if (!(await p.$eval('.dg-detalhe, .sc-cap', el => el.textContent.trim().length > 0).catch(() => false))) erros.push(`${nome} @${W}: diagrama não mostrou detalhe`); }
@@ -42,6 +43,8 @@ srv.listen(0, '127.0.0.1', async () => {
           const sw2 = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
           if (sw2[0] > sw2[1]) erros.push(`${nome} @${W}: transbordo depois de interagir (${sw2[0]} > ${sw2[1]})`);
         }
+        const quebradas = await p.$$eval('img', is => is.filter(i => i.complete && i.naturalWidth === 0).map(i => i.getAttribute('src')));
+        quebradas.forEach(src => erros.push(`${nome} @${W}: imagem quebrada ${src}`));
         jsErr.forEach(m => erros.push(`${nome} @${W}: erro JS ${m}`));
         await p.evaluate(() => scrollTo(0, 0));
         await p.screenshot({ path: path.join(saida, `${nome}-${W}.png`) });

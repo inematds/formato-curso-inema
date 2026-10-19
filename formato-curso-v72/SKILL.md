@@ -47,8 +47,13 @@ description: >-
 - **Teste comentado**: cada pergunta explica a certa e o erro comum; `ref` aponta a seção para rever.
 - Conteúdo aberto e gratuito (INEMA.CLUB); nada de "compre", "oferta".
 
-## Outros idiomas
-`conteudo/en/` e `conteudo/es/` com os mesmos arquivos traduzidos (inclusive `ui`); `python3 gerar.py --lang en` gera em `en/`; `python3 validar.py --lang en`. Tradução pela assinatura (`codex exec -m gpt-6-luna`), nunca API.
+## Outros idiomas (EN/ES) — 7.3
+PT fica na raiz; EN e ES em `en/` e `es/`, reaproveitando `assets/` da raiz. O topo ganha o seletor PT · EN · ES e cada página ganha `hreflang`; o progresso do aluno fica separado por idioma.
+1. `python3 ~/.claude/skills/formato-curso-v72/scripts/traduzir.py . en es` — traduz só os textos do JSON pelo Codex da assinatura (`gpt-6-luna`, nunca API), em lotes, com validação por texto (tags, links, comandos dos blocos de código) e cache em `i18n/<lang>.json`. Grava `conteudo/en/` e `conteudo/es/`. Glossário extra opcional em `i18n/glossario.json`.
+2. Imagem com texto desenhado (a capa, às vezes a foto de abertura): versão por idioma `capa-en.jpg`, `hero/inicio-es.jpg`… pelo Codex image_gen editando a original; o gerador usa sozinho quando existir. Conferir o texto com zoom.
+3. `python3 gerar.py && python3 gerar.py --lang en && python3 gerar.py --lang es`, depois `python3 validar.py --links` + `--lang en` + `--lang es` e `conferir-tela.cjs .` (ele abre também `en/` e `es/`).
+4. Varredura de sobras: nenhuma palavra PT comum ("você", "não", "aula") no texto visível de `en/` e `es/`.
+5. Seção nova com JS próprio (`assets/<curso>.js`): todo texto dela vem do JSON, nunca fixo no JS; e o caminho dos arquivos usa `ativo(prefixo)`, não `prefixo`.
 
 ## O que não fazer
 - Editar HTML gerado à mão (some no próximo `gerar.py`).

@@ -40,7 +40,7 @@ for img in ["assets/img/hero/inicio.jpg", *[f"assets/img/hero/{p.parent.name}.jp
 if not (RAIZ / "assets/img/capa.jpg").exists(): erros.append("imagem ausente: assets/img/capa.jpg (og:image)")
 
 if args.links:
-    PROPRIO = json.loads((RAIZ / "conteudo" / args.lang / "curso.json").read_text())["url"]
+    PROPRIO = json.loads((RAIZ / "conteudo" / "pt" / "curso.json").read_text())["url"]  # raiz: vale para PT, en/ e es/
     urls = set()
     for p in [base / "index.html", *aulas]:
         urls |= set(re.findall(r'(?:href|src)="(https://[^"]+)"', p.read_text()))

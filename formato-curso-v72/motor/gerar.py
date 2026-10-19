@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""INEMA Learning v7.2 — gera o curso a partir de conteudo/.
+"""INEMA Learning v7.2 — gera o curso a partir de conteudo/ (PT na raiz; EN/ES em en/ e es/).
 
     python3 gerar.py            # PT (raiz)
     python3 gerar.py --lang en  # quando existir conteudo/en/
@@ -12,6 +12,34 @@ import argparse, html, json, pathlib, re, sys
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
+LANG = "pt"          # idioma em geração; PT fica na raiz, os outros em <lang>/ (definido em main)
+IDIOMAS = ["pt"]     # idiomas com conteudo/<lang>/curso.json (seletor e hreflang)
+URL_RAIZ = ""        # URL publicada da raiz (versão PT)
+ROT_IDIOMA = {"pt": "PT", "en": "EN", "es": "ES"}
+HREFLANG = {"pt": "pt-BR", "en": "en", "es": "es"}
+
+
+def ativo(prefixo):
+    """Caminho até a RAIZ do repo (assets/), a partir da página: em en/ e es/ sobe um nível a mais."""
+    return prefixo + ("" if LANG == "pt" else "../")
+
+
+def img_idioma(rel):
+    """assets/img/capa.jpg → assets/img/capa-en.jpg quando existir a versão do idioma (imagem com texto)."""
+    if LANG != "pt":
+        alt = re.sub(r"(\.\w+)$", f"-{LANG}\\1", rel)
+        if (RAIZ / alt).exists():
+            return alt
+    return rel
+
+
+def url_idioma(lg, pag=""):
+    return URL_RAIZ + ("" if lg == "pt" else f"{lg}/") + pag
+
+
+def id_curso(curso):
+    """Progresso separado por idioma."""
+    return curso["id"] if LANG == "pt" else f'{curso["id"]}-{LANG}'
 
 ICONES = {  # traço fino estilo Lucide (MIT)
     "chat": '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
@@ -198,9 +226,9 @@ def sec_pratica(s, ui, slug):
 
 def sec_video(s, ui, curso, prefixo):
     v = curso["videos"][s["chave"]]
-    return (f'<div class="video"><video controls preload="metadata" playsinline poster="{prefixo}{v["poster"]}">'
+    return (f'<div class="video"><video controls preload="metadata" playsinline poster="{ativo(prefixo)}{v["poster"]}">'
             f'<source src="{v["mp4"]}" type="video/mp4"/>'
-            f'<track kind="subtitles" srclang="pt" label="Português" src="{prefixo}{v["vtt"]}" default/></video>'
+            f'<track kind="subtitles" srclang="pt" label="Português" src="{ativo(prefixo)}{v["vtt"]}" default/></video>'
             f'<div class="video-leg"><span><b>{v["titulo"]}</b> · {v["duracao"]}</span><a href="{v["pagina"]}" target="_blank" rel="noopener">{ui["video_pagina"]} →</a></div></div>')
 
 
@@ -284,7 +312,9 @@ def sec_links(s, ui):
 
 
 # ---------- página ----------
-def cabeca(titulo, desc, prefixo, lang, canon, curso_id):
+def cabeca(titulo, desc, prefixo, lang, canon, curso_id, pag=""):
+    at = ativo(prefixo)
+    alternos = "".join(f'<link rel="alternate" hreflang="{HREFLANG[l]}" href="{url_idioma(l, pag)}"/>' for l in IDIOMAS) if len(IDIOMAS) > 1 else ""
     return f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -294,14 +324,14 @@ def cabeca(titulo, desc, prefixo, lang, canon, curso_id):
 <meta name="description" content="{attr(desc)}"/>
 <meta property="og:title" content="{attr(titulo)}"/>
 <meta property="og:description" content="{attr(desc)}"/>
-<meta property="og:image" content="{canon.split('/aulas/')[0].rstrip('/')}/assets/img/capa.jpg"/>
+<meta property="og:image" content="{URL_RAIZ}{img_idioma("assets/img/capa.jpg")}"/>
 <meta name="theme-color" content="#0c0c10"/>
-<link rel="icon" href="{prefixo}assets/img/favicon.svg" type="image/svg+xml"/>
-<link rel="canonical" href="{canon}"/>
+<link rel="icon" href="{at}assets/img/favicon.svg" type="image/svg+xml"/>
+<link rel="canonical" href="{canon}"/>{alternos}
 <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Sora:wght@600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="{prefixo}assets/v71.css"/>
-<link rel="stylesheet" href="{prefixo}assets/v72.css"/>
+<link rel="stylesheet" href="{at}assets/v71.css"/>
+<link rel="stylesheet" href="{at}assets/v72.css"/>
 <script>try{{if(JSON.parse(localStorage.getItem("{curso_id}:tema"))==="papel")document.documentElement.setAttribute("data-tema","papel")}}catch(e){{}}</script>
 </head>"""
 
@@ -320,12 +350,18 @@ def topo(curso, aulas, ui, prefixo, atual=""):
           f'</div></div></div>')
     sol_lua = (f'<button type="button" class="tema-btn" title="{attr(ui.get("trocar_tema", "Trocar tema claro/escuro"))}">'
                f'{ic("sol", "ico sol")}{ic("lua", "ico lua")}<span class="sr">{ui.get("trocar_tema", "Trocar tema claro/escuro")}</span></button>')
+    pag = f"aulas/{atual}/" if atual else ""
+    idiomas = ""
+    if len(IDIOMAS) > 1:
+        idiomas = '<span class="idiomas" aria-label="Idioma / Language">' + "".join(
+            f'<a href="{url_idioma(l, pag)}" hreflang="{HREFLANG[l]}" lang="{HREFLANG[l]}"' + (' class="on" aria-current="true"' if l == LANG else "") + f'>{ROT_IDIOMA[l]}</a>'
+            for l in IDIOMAS) + "</span>"
     return (f'<a class="skip" href="#conteudo">{ui["pular"]}</a><header class="topo"><div class="esq">'
             f'<button type="button" class="menu-btn" aria-expanded="false" aria-controls="lado">{ic("menu")}<span class="sr">{ui["aulas"]}</span></button>'
             f'<a class="marca" href="{prefixo}index.html">{ic(curso["icone"])}<span>{curso["nome"]}</span></a>'
             f'<span class="sep">|</span><a class="club" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>'
             f'<span class="tr">-</span><a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a></div>'
-            f'<nav class="dir" aria-label="{attr(ui["aulas"])}">{links}{sol_lua}{aa}</nav></header>')
+            f'<nav class="dir" aria-label="{attr(ui["aulas"])}">{links}{idiomas}{sol_lua}{aa}</nav></header>')
 
 
 def total_ex(aulas):
@@ -385,7 +421,8 @@ def rodape(curso):
 
 def pagina_aula(curso, aulas, a, idx, ui, lang):
     global PREFIXO
-    prefixo = PREFIXO = "../../"
+    prefixo = "../../"
+    PREFIXO = ativo(prefixo)
     secs = []
     refs, k = {}, 0
     for x in a["secoes"]:
@@ -422,8 +459,8 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
                 else f'<a class="btn" href="{prefixo}index.html">{ui["voltar_inicio"]} {ic("seta")}</a>')
     aprende = "".join(f'<li><b class="dn">{i + 1}</b><span>{x["t"]}</span></li>' for i, x in enumerate(a["aprende"]))
     pontos = "".join(f'<a href="{prefixo}aulas/{x["slug"]}/index.html" class="pt{" on" if x["slug"] == a["slug"] else ""}" data-slug="{x["slug"]}" title="{attr(x["titulo"])}"><span class="sr">{x["titulo"]}</span></a>' for x in aulas)
-    hero_img = f'assets/img/hero/{a["slug"]}.jpg'
-    fig = (f'<figure class="ah-img"><img src="{prefixo}{hero_img}" alt="{attr(a.get("hero_alt", ""))}" width="1536" height="1024"/></figure>'
+    hero_img = img_idioma(f'assets/img/hero/{a["slug"]}.jpg')
+    fig = (f'<figure class="ah-img"><img src="{ativo(prefixo)}{hero_img}" alt="{attr(a.get("hero_alt", ""))}" width="1536" height="1024"/></figure>'
            if (RAIZ / hero_img).exists() else "")
     btn_prox_cheio = btn_prox.replace('class="btn"', 'class="btn cheio"')
     btn_ant = (f'<a class="btn neutro" href="{prefixo}aulas/{ant["slug"]}/index.html">{ic("voltar")}{ui["aula_anterior"]}</a>' if ant else "<span></span>")
@@ -431,8 +468,8 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
                f'<button type="button" class="btn neutro concluir" aria-pressed="false">{ic("check")}{ui["marcar_concluida"]}</button>{btn_prox_cheio}</div>')
     canon = f'{curso["url"]}aulas/{a["slug"]}/'
     titulo = f'{a["titulo"]} · {curso["nome"]} · INEMA'
-    return (cabeca(titulo, a["lead"], prefixo, lang, canon, curso["id"])
-            + f'<body data-curso="{curso["id"]}" data-aula="{a["slug"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">'
+    return (cabeca(titulo, a["lead"], prefixo, lang, canon, id_curso(curso), f'aulas/{a["slug"]}/')
+            + f'<body data-curso="{id_curso(curso)}" data-aula="{a["slug"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">'
             + topo(curso, aulas, ui, prefixo, a["slug"])
             + '<div class="casca">' + lado(curso, aulas, ui, prefixo, a["slug"])
             + f'<main class="principal" id="conteudo"><div class="miolo" data-competencias="{attr(";".join(a["competencias"]))}">'
@@ -441,7 +478,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
             + f'<a class="comecar" href="#s1">{ui.get("comecar", "Começar a aula")} {ic("seta")}</a></div>{fig}</div>'
             + f'<div class="nesta2"><h2>{ui.get("nesta_vai", "Nesta aula você vai")}</h2><ol>{aprende}</ol><p class="objetivo"><b>{ui["objetivo"]}</b> {a["objetivo"]}</p></div>'
             + "".join(secs) + nav_fim + rodape(curso)
-            + f'</div></main></div><script src="{prefixo}assets/v71.js"></script><script src="{prefixo}assets/v72.js"></script></body></html>\n')
+            + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script></body></html>\n')
 
 
 def pagina_inicio(curso, aulas, ui, lang):
@@ -449,31 +486,35 @@ def pagina_inicio(curso, aulas, ui, lang):
     prefixo = ""
     # v7.2: mesma direção das aulas — abertura com foto que funde no fundo, aulas como lista editorial com foto
     lista = "".join(f'<li><a class="ini-aula" data-slug="{a["slug"]}" href="aulas/{a["slug"]}/index.html">'
-                    f'<span class="ia-img"><img src="assets/img/hero/{a["slug"]}.jpg" alt="" loading="lazy" width="1536" height="1024"/></span>'
+                    f'<span class="ia-img"><img src="{ativo(prefixo)}{img_idioma(f'assets/img/hero/{a["slug"]}.jpg')}" alt="" loading="lazy" width="1536" height="1024"/></span>'
                     f'<span class="ia-txt"><span class="kicker">{ui["aula"]} {a["num"]} · {a["minutos"]} min<span class="ia-ok" aria-hidden="true">{ic("check")}</span></span>'
                     f'<span class="ia-t">{a["titulo"]}</span><span class="ia-l">{a["lead"]}</span></span></a></li>' for a in aulas)
     numeros = "".join(f'<li><b>{n["v"]}</b><span>{n["t"]}</span></li>' for n in p["numeros"])
     duas = "".join(f'<div><h2>{b["t"]}</h2><ol>{"".join(f"<li><span class=dn>{i + 1}</span><span>{x}</span></li>" for i, x in enumerate(b["itens"]))}</ol></div>' for b in p["blocos"])
     pontos = "".join(f'<a href="aulas/{x["slug"]}/index.html" class="pt" data-slug="{x["slug"]}" title="{attr(x["titulo"])}"><span class="sr">{x["titulo"]}</span></a>' for x in aulas)
-    return (cabeca(f'{curso["nome"]} · INEMA', p["lead"], prefixo, lang, curso["url"], curso["id"])
-            + f'<body class="inicio" data-curso="{curso["id"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">' + topo(curso, aulas, ui, prefixo)
+    return (cabeca(f'{curso["nome"]} · INEMA', p["lead"], prefixo, lang, curso["url"], id_curso(curso))
+            + f'<body class="inicio" data-curso="{id_curso(curso)}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">' + topo(curso, aulas, ui, prefixo)
             + '<div class="casca">' + lado(curso, aulas, ui, prefixo, "")
             + '<main class="principal" id="conteudo"><div class="miolo">'
             + f'<div class="aula-hero com-img ini-hero"><div class="ah-txt"><nav class="pontos" aria-label="{attr(ui["aulas"])}">{pontos}</nav>'
             + f'<p class="kicker">{p["kicker"]}</p><h1>{p["titulo"]}</h1><p class="lead">{p["lead"]}</p>'
             + f'<div class="ini-acoes"><a class="comecar" href="aulas/{aulas[0]["slug"]}/index.html">{p["cta"]} {ic("seta")}</a>'
             + f'<a class="ini-link" href="{p["cta2"]["href"]}">{p["cta2"]["t"]}</a></div></div>'
-            + f'<figure class="ah-img"><img src="assets/img/hero/inicio.jpg" alt="{attr(p["capa_alt"])}" width="1536" height="1024"/></figure></div>'
+            + f'<figure class="ah-img"><img src="{ativo(prefixo)}{img_idioma('assets/img/hero/inicio.jpg')}" alt="{attr(p["capa_alt"])}" width="1536" height="1024"/></figure></div>'
             + f'<ul class="ini-num">{numeros}</ul>'
             + f'<section class="secao" id="aulas"><div class="sec-cab"><div><h2>{p["aulas_titulo"]}</h2><p>{p["aulas_sub"]}</p></div></div><ol class="ini-aulas">{lista}</ol></section>'
             + f'<section class="secao"><div class="ini-duas">{duas}</div></section>'
-            + rodape(curso) + '</div></main></div><script src="assets/v71.js"></script><script src="assets/v72.js"></script></body></html>\n')
+            + rodape(curso) + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script></body></html>\n')
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", default="pt")
     args = ap.parse_args()
+    global LANG, IDIOMAS, URL_RAIZ
+    LANG = args.lang
+    IDIOMAS = [l for l in ("pt", "en", "es") if (RAIZ / "conteudo" / l / "curso.json").exists()]
+    URL_RAIZ = json.loads((RAIZ / "conteudo" / "pt" / "curso.json").read_text())["url"]
     base = RAIZ / "conteudo" / args.lang
     curso = json.loads((base / "curso.json").read_text())
     ui = curso["ui"]

@@ -9,3 +9,9 @@
 ## 7.2.1 — 19/10/2026
 - `v71.js`: o `.ics` do gerador de plano sai como `plano-<id-do-curso>.ics` (antes fixo `plano-do-chat-ao-agente.ics`; achado no curso de Filas).
 - SKILL.md: capa aceita 1400×788 (padrão do v72).
+
+## 7.3.1 — 19/10/2026
+- EN/ES: `gerar.py --lang` grava em `en/`/`es/` com os arquivos da raiz (`ativo()`), seletor PT · EN · ES no topo, `hreflang`, og:image e fotos por idioma quando existirem (`capa-en.jpg`), progresso separado por idioma.
+- Novo `scripts/traduzir.py` (Codex da assinatura, por texto, com validação e cache).
+- `conferir-tela.cjs` abre também `en/` e `es/` e acusa imagem quebrada; `validar.py` ignora links para o próprio site em qualquer idioma.
+- Topo: nome do curso encurta com reticências em vez de passar por baixo dos botões.
