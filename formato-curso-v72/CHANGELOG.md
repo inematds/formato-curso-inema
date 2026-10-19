@@ -64,3 +64,6 @@
 
 ## 7.6.10 — 19/10/2026
 - `scripts/traduzir.py` (`problema`): em bloco de código, a regra "igual ao original" (7.6.9) só olha os comentários (`# …`, `// …`). Bloco de código puro com "não" numa string (ex.: `'sim' if escreve else 'não'`, que tem de ficar igual para bater com a saída capturada) era recusado 3 vezes e ficava "sem tradução válida" em EN e ES. Comentário em PT devolvido igual continua recusado; prosa não muda. Achado no `loop-r-eng-multiagente-v72` (Formação LOOP-R Engenharia, curso 3, aula 2).
+
+## 7.7.10 — 19/10/2026
+- Novo `scripts/resolver-kit.py`: em curso técnico com `kit/`, o JSON das aulas usa marcadores `@@bloco:<nome>@@` (texto de `kit/blocos/<nome>.sh`), `@@arquivo:<caminho>@@` (arquivo do kit) e `@@saida:<nome>@@` (`<pre>` escapado de `kit/saidas/<nome>.txt|.md`); o script troca em lugar e confere bloco "Terminal …" × `kit/blocos/*.sh` e "Arquivo · kit/X" × `kit/X` (`--conferir`, saída 1 se divergir). O bloco copiável e a saída capturada passam a nascer do arquivo rodado, em vez de colados à mão. SKILL.md (passo 4) cita o fluxo. Criado no `loop-r-eng-seguranca-v72` (Formação LOOP-R Engenharia, curso 4: 21 blocos). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
