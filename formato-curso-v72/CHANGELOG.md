@@ -45,3 +45,6 @@
 
 ## 7.5.5 — 19/10/2026
 - `gerar.py` (`figura_rolagem`): a aba da rolagem guiada tira o "N · " do começo do título quando ele repete o número da própria aba. Antes, nó com título "2 · Recebe" virava a aba "2 · 2 · Recebe" (o exemplo `aula-rolagem-guiada.json` numera os nós). Achado no piloto `gestao-ia-agentes-v72` (Formação Gestão de IA 2027, G3). Regressão: `do-chat-ao-agente-v72` gera igual, exceto o meta generator e as abas numeradas.
+
+## 7.5.6 — 19/10/2026
+- `validar.py`: "TODO" só conta como sobra se for palavra inteira. Link para `docs/METODO.md` (método inemaSEO) dava "sobra 'TODO'" em 3 aulas (achado no piloto `formacao-inemaseo-fundacao-v72`). As outras sobras (`[Nome`, `lorem`, `undefined`…) continuam por trecho.

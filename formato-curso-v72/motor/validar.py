@@ -68,7 +68,9 @@ for p in aulas:
     if not re.search(r'data-competencias="[^"]+"', h): erros.append(f"{nome}: sem data-competencias")
     texto = re.sub(r"<(pre|script|template)[^>]*>.*?</\1>", "", h, flags=re.S)
     for ruim in ("[Nome", "[Resultado", "TODO", "lorem", "{a}", "undefined"):
-        if ruim in texto: erros.append(f"{nome}: sobra '{ruim}'")
+        # TODO só como palavra inteira: "METODO.md" não é sobra (7.5.5)
+        achou = re.search(r"\bTODO\b", texto) if ruim == "TODO" else ruim in texto
+        if achou: erros.append(f"{nome}: sobra '{ruim}'")
     # placeholder tipo <o gatilho> fora de bloco de código vira tag e some na tela (7.5.2)
     for tag in sorted(set(re.findall(r"<([^\s/!>][^\s/>]*)", texto))):
         if tag.lower() not in TAGS_HTML and "-" not in tag:
