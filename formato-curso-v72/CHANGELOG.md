@@ -33,3 +33,6 @@
 - Modelo: `ui` com as chaves `conv_*`. Novo `examples/aula-simconversa.json`. Regressão: `do-chat-ao-agente-v72` gera e valida em PT/EN/ES com o motor novo (só muda o meta generator).
 - `traduzir.py`: linha de comando dos blocos de código só conta com o comando como palavra inteira (antes "Deliver" casava com `del` e a tradução era recusada).
 - `conferir-tela.cjs`: esconde `.topo`/`.skip` só durante a captura da simconversa (a captura maior que a tela desenhava os elementos fixos por cima).
+
+## 7.5.2 — 19/10/2026
+- `traduzir.py`: `del`, `set`, `type`, `copy`, `export` e `dir` só contam como linha de comando se o próximo token parece caminho, opção ou variável (tem `. / \ - = $ % :` ou aspas). Em espanhol, uma linha de prompt começando por "del problema…" era lida como o comando `del` e a tradução era recusada 3 vezes (achado no curso `formacao-vendas-ia-primeiro-cliente-v72`).
