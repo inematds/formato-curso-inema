@@ -101,3 +101,6 @@
 ## 7.11.15 — 19/10/2026
 - `motor/validar.py`: reprova elemento HTML citado no texto da aula (`<audio> com id`, `<Composition …/>`): como `audio`, `video`, `canvas`… estão em `TAGS_HTML`, o validador antigo deixava passar e a página ganhava um elemento de verdade no lugar da palavra. Confere o JSON de `conteudo/<lang>/aulas/` (fora de `conteudo` e `html`) e pede `<code>&lt;audio&gt;</code>`. `VERSAO` 7.11.15.
 - Novo `scripts/capturar-kit.sh <curso> [bloco…]`: roda `kit/blocos/*.sh` um por vez com TMPDIR próprio (troca por `/tmp` e `$HOME` por `~` na saída), `timeout` e `MemoryMax` via `systemd-run`, e grava `kit/saidas/<bloco>.txt`. Para cursos técnicos com render de vídeo numa máquina carregada. Piloto `formacao-cinema-ia-motion-v72` (Formação Cinema com IA, curso 3).
+
+## 7.11.15 — 19/10/2026
+- `scripts/traduzir.py`: a chave `termos` (vocabulário do conferidor) fica fora da tradução. O tradutor traduzia cada família de um jeito (algumas ficavam em PT, outras viravam só o termo inglês) e o exemplo traduzido deixava de passar no EN/ES (5 de 8 conferidores no `formacao-cinema-ia-direcao-v72`). Regra nova no ESQUEMA: cada família já traz PT, EN e ES.
