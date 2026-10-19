@@ -14,7 +14,7 @@ html{background:var(--bg);scroll-behavior:smooth;scroll-padding-top:calc(var(--t
 body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 var(--inter);-webkit-font-smoothing:antialiased}
 a{color:var(--amb2);text-underline-offset:3px}
 img,video,svg{max-width:100%}
-code{font-family:var(--mono);font-size:.88em;background:var(--sf2);border:1px solid var(--line);border-radius:6px;padding:.08em .38em;color:var(--txt)}
+code{font-family:var(--mono);font-size:.88em;background:var(--sf2);border:1px solid var(--line);border-radius:6px;padding:.08em .38em;color:var(--txt);overflow-wrap:anywhere}
 :focus-visible{outline:2px solid var(--amb);outline-offset:3px;border-radius:8px}
 .skip{position:fixed;left:16px;top:-60px;z-index:99;background:var(--amb);color:var(--amb-ink);padding:8px 14px;border-radius:10px;font-weight:700}
 .skip:focus{top:10px}
@@ -192,6 +192,13 @@ h1{margin:0;font:800 clamp(30px,4vw,46px)/1.12 var(--sora);letter-spacing:-.02em
 .saida-corpo[hidden]{display:none}
 .saida-corpo ol,.saida-corpo ul{margin:0;padding-left:20px}
 .saida-corpo li{margin:5px 0}
+/* 7.5.7: saída de terminal (<pre>) e tabela de números dentro da aba de saída; rola em vez de cortar */
+.saida-tabs{flex-wrap:wrap}
+.saida-corpo pre{margin:0 0 10px;padding:12px 14px;overflow-x:auto;white-space:pre;font:12.5px/1.6 var(--mono);color:#e4e4ea;background:#0f0f15;border:1px solid var(--line);border-radius:10px}
+.saida-corpo p{margin:8px 0 0}
+.saida-corpo table{width:100%;border-collapse:collapse;font-size:13.5px;margin:0 0 6px}
+.saida-corpo th,.saida-corpo td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.saida-corpo th{color:var(--txt);font-weight:600}
 .selo{display:inline-block;margin-bottom:8px;font:700 11px var(--inter);letter-spacing:.06em;text-transform:uppercase;color:var(--mut);border:1px solid var(--line2);border-radius:99px;padding:2px 9px}
 .selo.real{color:var(--ok);border-color:rgba(74,222,128,.4)}
 

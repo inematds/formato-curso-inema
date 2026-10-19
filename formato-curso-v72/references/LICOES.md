@@ -1,5 +1,7 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Curso técnico: saída de terminal vai num `<pre>` dentro de `saida.abas[].html` (motor 7.5.7 estiliza e rola) e `selo: "real"` só para saída capturada de verdade, com a data na aba ("Saída capturada (DD/MM/AAAA)"); "<" e ">" da saída viram &amp;lt; &amp;gt;. One-liner longo em `<code>` no "pronto quando" transbordava o celular antes do 7.5.7 (19/10/2026).
+
 - Validador acusando "sobra TODO" em link ou palavra (METODO.md): é falso positivo corrigido no 7.5.6 (TODO só como palavra inteira); recopie o motor em vez de mudar o texto (19/10/2026).
 - Nó de diagrama com rolagem guiada não precisa de número no título: a aba já numera (o motor 7.5.5 tira o "N · " repetido). Com 6 nós em escada no desktop, títulos de uma ou duas palavras evitam quebra (19/10/2026).
 - Placeholder com `<…>` só dentro de bloco `codigo`; em texto (passos, exemplo, falas) ele vira tag invisível e trava a tradução: use [colchetes] ou reescreva. O `validar.py` 7.5.3 acusa (19/10/2026).

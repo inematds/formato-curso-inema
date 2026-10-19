@@ -48,3 +48,7 @@
 
 ## 7.5.6 — 19/10/2026
 - `validar.py`: "TODO" só conta como sobra se for palavra inteira. Link para `docs/METODO.md` (método inemaSEO) dava "sobra 'TODO'" em 3 aulas (achado no piloto `formacao-inemaseo-fundacao-v72`). As outras sobras (`[Nome`, `lorem`, `undefined`…) continuam por trecho.
+
+## 7.5.7 — 19/10/2026
+- `v71.css`: saída de terminal dentro da aba de saída do `codigo` — `.saida-corpo pre` com rolagem horizontal, fonte mono e fundo escuro (antes o `<pre>` não tinha estilo e era cortado pelo `overflow:hidden` da `.saida`); `.saida-corpo table/th/td` para tabela de números medidos; `.saida-tabs` quebra linha com 3 abas no celular.
+- `v71.css`: `code` inline com `overflow-wrap:anywhere`. Um "pronto quando" com one-liner longo (`python3 -c "import json,os;…"`) transbordava a página em 390 px (762 > 390) e em 1366 px. Achado no piloto `loop-r-eng-execucao-longa-v72` (Formação LOOP-R Engenharia, curso 2), que mostra saída real do kit em `<pre>`. Regressão: só CSS; `pre` com `white-space:pre` não muda.
