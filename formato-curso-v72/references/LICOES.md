@@ -1,5 +1,7 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Depois do `traduzir.py`, procure no cache `i18n/<lang>.json` entradas com tradução igual ao original e palavra PT ("não", "você", "é"): frase cheia de citações entre aspas ("Do zero" vira "desde cero") voltou sem tradução no ES e o script não acusou. Corrija no JSON do idioma e no cache (19/10/2026, curso formacao-inemaseo-medicao-v72).
+
 - Cursos construídos em paralelo por subagentes dividem o MESMO scratchpad: pasta de imagens com nome genérico (`img/`, `gerar.sh`, `capa/`, `inicio/`) colide, o script de um agente pula a imagem porque a `arte.png` do outro já existe, e um Write sobrescreve o script que o outro está rodando. Use sempre `scratchpad/<id-do-curso>-img/` e confira o prompt no `log-1.txt` antes de usar a imagem (19/10/2026, curso formacao-inemaseo-sistemas-v72).
 
 - Vídeo que tem versão EN/ES publicada: declare `videos.<chave>.idiomas.<lang>` (mp4, vtt, duracao, pagina) no curso.json PT antes de traduzir; sem isso o `en/`/`es/` toca o vídeo PT com legenda PT (motor 7.6.7). E antes do portão de tela, recopie `assets/` e `gerar.py` do motor: o curso base da Formação LOOP-R transbordou em 390 px por um `v71.css` de horas antes (19/10/2026).
