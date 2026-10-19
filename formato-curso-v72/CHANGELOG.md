@@ -36,3 +36,6 @@
 
 ## 7.5.2 — 19/10/2026
 - `traduzir.py`: `del`, `set`, `type`, `copy`, `export` e `dir` só contam como linha de comando se o próximo token parece caminho, opção ou variável (tem `. / \ - = $ % :` ou aspas). Em espanhol, uma linha de prompt começando por "del problema…" era lida como o comando `del` e a tradução era recusada 3 vezes (achado no curso `formacao-vendas-ia-primeiro-cliente-v72`).
+
+## 7.5.3 — 19/10/2026
+- `validar.py`: acusa tag desconhecida no texto visível fora de bloco de código (ex.: placeholder `<o gatilho>` num `exemplo.texto`). O navegador lê `<o gatilho>` como tag e o trecho some da tela; o tradutor também recusava a frase por "tags diferentes". Lista de tags HTML/SVG conhecidas em `TAGS_HTML`; elementos com `-` passam. Regressão: `do-chat-ao-agente-v72`, `formacao-vendas-ia-consultoria-v72`, `-fundamentos-v72` e `-primeiro-cliente-v72` continuam OK em PT/EN/ES (achado no `formacao-vendas-ia-masterclass-v72`).

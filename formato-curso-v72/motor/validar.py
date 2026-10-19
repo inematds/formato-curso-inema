@@ -11,7 +11,13 @@ ap = argparse.ArgumentParser(); ap.add_argument("--links", action="store_true");
 args = ap.parse_args()
 base = RAIZ if args.lang == "pt" else RAIZ / args.lang
 erros = []
-
+TAGS_HTML = set("""a abbr article aside audio b blockquote body br button canvas caption circle code col dd defs details dialog
+div dl dt ellipse em fieldset figcaption figure footer form g h1 h2 h3 h4 h5 h6 head header hr html i iframe img input
+kbd label legend li line lineargradient link main mark marker meta nav noscript ol optgroup option p path pattern
+picture polygon polyline pre radialgradient rect script section select small source span stop strong style sub summary
+sup svg symbol table tbody td template text textarea tfoot th thead time title tr track tspan u ul use var video wbr
+q s cite del ins data output progress meter object embed map area base colgroup address bdi bdo dfn ruby rt rp samp slot
+foreignobject clippath mask filter desc animate animatetransform""".split())
 
 def confere_conversas(h):
     """7.5.1: cada simconversa — início existe, todo "vai" aponta para fala que existe, fala sem fim tem 2–4 opções
@@ -63,6 +69,10 @@ for p in aulas:
     texto = re.sub(r"<(pre|script|template)[^>]*>.*?</\1>", "", h, flags=re.S)
     for ruim in ("[Nome", "[Resultado", "TODO", "lorem", "{a}", "undefined"):
         if ruim in texto: erros.append(f"{nome}: sobra '{ruim}'")
+    # placeholder tipo <o gatilho> fora de bloco de código vira tag e some na tela (7.5.2)
+    for tag in sorted(set(re.findall(r"<([^\s/!>][^\s/>]*)", texto))):
+        if tag.lower() not in TAGS_HTML and "-" not in tag:
+            erros.append(f"{nome}: '<{tag}…>' fora de bloco de código vira tag invisível; use [colchetes] ou reescreva")
     for blk in re.findall(r'<p class="lead">(.*?)</p>', h):
         if len(re.sub("<[^>]+>", "", blk).split()) > 70: erros.append(f"{nome}: lead com mais de 70 palavras")
     for par in re.findall(r"<p>(.*?)</p>", texto, re.S):

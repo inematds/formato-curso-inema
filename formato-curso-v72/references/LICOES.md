@@ -1,5 +1,6 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Placeholder com `<…>` só dentro de bloco `codigo`; em texto (passos, exemplo, falas) ele vira tag invisível e trava a tradução: use [colchetes] ou reescreva. O `validar.py` 7.5.3 acusa (19/10/2026).
 - Tradução para espanhol: "del" (e "set", "type") é prosa comum; detector de comando só aceita essas palavras seguidas de caminho, opção ou variável (19/10/2026).
 - simconversa: o placar máximo é o caminho de MAIOR soma, e um desvio (resposta "meio" que leva a uma fala extra) soma uma fala a mais; dê nota baixa à saída do desvio ou o placar máximo passa a premiar o desvio em vez da resposta direta. Some os caminhos à mão antes do portão (19/10/2026).
 - Tradução de bloco de código: o detector de linha de comando tem de casar palavra inteira; "Entregue" → "Deliver" virava o comando `del` e a tradução era recusada 3 vezes (19/10/2026).
