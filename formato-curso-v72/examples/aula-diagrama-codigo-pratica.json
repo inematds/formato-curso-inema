@@ -1,0 +1,343 @@
+{
+  "slug": "terminal",
+  "num": 2,
+  "titulo": "Degrau 1: do chat para o terminal (OSWork)",
+  "titulo_curto": "Terminal (OSWork)",
+  "minutos": 12,
+  "lead": "O terminal é só outra janela. Com seis comandos você anda pelas suas pastas; com um AGENTS.md o agente sabe quem você é e o que pode fazer; com o Git você desfaz qualquer erro.",
+  "objetivo": "montar a pasta de trabalho do agente com regras, rede de segurança e segredos fora do texto.",
+  "competencias": [
+    "estruturar-pasta-agente",
+    "escrever-agents-md",
+    "versionar-com-git",
+    "proteger-segredos"
+  ],
+  "aprende": [
+    {
+      "icone": "terminal",
+      "t": "Andar pelas pastas pelo terminal"
+    },
+    {
+      "icone": "arquivo",
+      "t": "Escrever o manual do agente (AGENTS.md)"
+    },
+    {
+      "icone": "git",
+      "t": "Desfazer qualquer mudança com o Git"
+    },
+    {
+      "icone": "cadeado",
+      "t": "Manter chaves fora do texto"
+    }
+  ],
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Como as peças se ligam",
+      "sub": "Você dá a tarefa, o agente trabalha dentro da pasta e você confere.",
+      "nos": [
+        {
+          "icone": "usuario",
+          "titulo": "Você",
+          "sub": "Dá a tarefa",
+          "itens": [
+            {
+              "icone": "chat",
+              "t": "\"Crie um index.html sobre mim\""
+            }
+          ],
+          "detalhe": "Você continua sendo quem decide: pede, confere o resultado e aceita ou desfaz. Dar a tarefa, conferir e decidir é gestão."
+        },
+        {
+          "icone": "terminal",
+          "titulo": "Terminal",
+          "sub": "cmd, Terminal do Mac ou do Linux",
+          "itens": [
+            {
+              "icone": "pasta",
+              "t": "cd, mkdir, dir / ls"
+            },
+            {
+              "icone": "robo",
+              "t": "claude ou codex"
+            }
+          ],
+          "detalhe": "É por onde você chega à pasta e chama o agente. No Windows, o cmd; no Mac e no Linux, o Terminal."
+        },
+        {
+          "icone": "pasta",
+          "titulo": "Pasta do projeto",
+          "sub": "projetos/meu-primeiro-agente",
+          "itens": [
+            {
+              "icone": "arquivo",
+              "t": "AGENTS.md",
+              "sub": "regras e quem é você"
+            },
+            {
+              "icone": "arquivo",
+              "t": "index.html",
+              "sub": "o trabalho"
+            },
+            {
+              "icone": "cadeado",
+              "t": ".env (fora do Git)",
+              "sub": "chaves e senhas"
+            },
+            {
+              "icone": "git",
+              "t": ".git",
+              "sub": "histórico para desfazer"
+            }
+          ],
+          "detalhe": "Tudo o que o agente precisa saber fica aqui: as regras no AGENTS.md, o trabalho nos arquivos, as chaves no .env (que o Git ignora) e o histórico no .git.",
+          "forte": true
+        },
+        {
+          "icone": "robo",
+          "titulo": "Agente",
+          "sub": "Claude Code ou Codex",
+          "itens": [
+            {
+              "icone": "lupa",
+              "t": "Lê o AGENTS.md"
+            },
+            {
+              "icone": "arquivo",
+              "t": "Cria e edita arquivos"
+            },
+            {
+              "icone": "check",
+              "t": "Diz o que mudou"
+            }
+          ],
+          "detalhe": "O agente lê o AGENTS.md antes de começar, trabalha nos arquivos da pasta e, se a regra pedir, diz o que mudou e como você confere."
+        }
+      ],
+      "volta": "Não gostou? git restore volta o arquivo para a última versão salva",
+      "legenda": "Os mesmos arquivos servem para o Claude Code e para o Codex: os dois leem o AGENTS.md.",
+      "rolagem": true,
+      "rolagem_fim": {
+        "titulo": "O ciclo completo",
+        "texto": "Você pede, o agente trabalha dentro da pasta seguindo o AGENTS.md e diz o que mudou. Você confere. Gostou, commit; não gostou, git restore."
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "O ciclo de trabalho com o agente",
+      "sub": "Clique em cada etapa.",
+      "passos": [
+        {
+          "titulo": "Pedir",
+          "sub": "Uma tarefa clara",
+          "texto": [
+            "Dentro da pasta, chame <code>claude</code> ou <code>codex</code> e peça uma coisa só, com o resultado que você espera.",
+            "Comece pedindo para ler o AGENTS.md: assim ele usa as suas regras."
+          ],
+          "exemplo": {
+            "rot": "Pedido",
+            "texto": "Leia o AGENTS.md. Crie um index.html com uma página simples sobre mim, usando o que está lá."
+          }
+        },
+        {
+          "titulo": "Executar",
+          "sub": "O agente trabalha",
+          "texto": [
+            "O agente cria e edita arquivos na pasta. Ele pode pedir permissão antes de rodar comandos.",
+            "Seu papel aqui é ler o que ele propõe, não digitar por ele."
+          ],
+          "exemplo": {
+            "rot": "O que aparece",
+            "texto": "O agente cria o index.html e explica o que fez."
+          }
+        },
+        {
+          "titulo": "Conferir",
+          "sub": "Abrir e olhar",
+          "texto": [
+            "Abra o resultado (a página no navegador, o resumo, o arquivo) e compare com o que você pediu.",
+            "Peça pelo menos uma correção: é o hábito que separa usar de gerenciar."
+          ],
+          "exemplo": {
+            "rot": "Correção",
+            "texto": "Troque o título por \"Consultoria de RH\" e acrescente uma seção de contato."
+          }
+        },
+        {
+          "titulo": "Salvar ou desfazer",
+          "sub": "Git",
+          "texto": [
+            "Gostou? <code>git add .</code> e <code>git commit -m \"...\"</code> guardam a versão.",
+            "Não gostou? <code>git restore index.html</code> volta ao que estava salvo, sem pânico."
+          ],
+          "exemplo": {
+            "rot": "Regra de ouro",
+            "texto": "Faça um commit antes de pedir uma mudança grande."
+          }
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Os arquivos e comandos da sequência",
+      "sub": "Copie e use. Troque o texto entre os sinais < > pelo seu.",
+      "blocos": [
+        {
+          "rot": "Terminal · primeira pasta",
+          "icone": "terminal",
+          "conteudo": "mkdir projetos\ncd projetos\nmkdir meu-primeiro-agente\ncd meu-primeiro-agente\ndir      # Windows (no Mac e no Linux: ls)"
+        },
+        {
+          "rot": "AGENTS.md",
+          "icone": "arquivo",
+          "conteudo": "# Quem sou\n<seu nome, sua profissão, para quem você trabalha>\n\n# Regras deste projeto\n- Escreva em português, frases curtas.\n- Não apague arquivos sem perguntar.\n- Antes de terminar, diga o que mudou e como eu confiro.\n- Nunca escreva chaves ou senhas em arquivo de texto; elas ficam no .env.\n\n# O que tem aqui\n- index.html: minha página"
+        },
+        {
+          "rot": "Terminal · Git e segredo fora do texto",
+          "icone": "git",
+          "conteudo": "git init\necho .env> .gitignore\ngit add .\ngit commit -m \"primeira versão\"\n\n# desfazer uma mudança do agente:\ngit restore index.html\n\n# o .env NÃO pode aparecer aqui:\ngit status"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Como conferir",
+            "html": "<ol><li>Você chega à pasta só pelo terminal e sabe dizer em que pasta está.</li><li>O AGENTS.md tem pelo menos três regras escritas por você.</li><li>A página abre no navegador e você pediu ao menos uma correção.</li><li><code>git status</code> não mostra o <code>.env</code>.</li></ol>"
+          },
+          {
+            "rot": "Erros comuns",
+            "html": "<ul><li><b>Pular o Git</b>: a primeira mudança ruim do agente vira retrabalho manual.</li><li><b>Chave no AGENTS.md</b>: tudo o que está em texto pode ir parar no GitHub. Chave só no .env.</li><li><b>Pedido vago</b>: \"melhore a página\" gera mudança que você não sabe conferir. Peça um resultado que dá para ver.</li></ul>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática: os 6 exercícios da sequência 1",
+      "sub": "Faça na ordem. Só passe para o próximo quando o \"pronto quando\" for verdade.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Primeira pasta pelo terminal",
+          "min": "10 min",
+          "texto": "Crie projetos/meu-primeiro-agente, entre nela e liste o conteúdo. Abra a mesma pasta no Explorador (ou Finder) e compare.",
+          "pronto": "você chega à pasta só pelo terminal, sem o mouse, e sabe dizer em que pasta está."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · O manual do funcionário",
+          "min": "15 min",
+          "texto": "Crie o AGENTS.md com quem você é, as regras do projeto e o que tem na pasta.",
+          "pronto": "o arquivo existe e tem pelo menos três regras suas, escritas por você."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · A primeira tarefa",
+          "min": "15 min",
+          "texto": "Chame o agente e peça o index.html a partir do AGENTS.md. Abra no navegador e peça uma mudança.",
+          "pronto": "a página abre e você pediu pelo menos uma correção ao agente."
+        },
+        {
+          "id": "e4",
+          "titulo": "E4 · A rede de segurança",
+          "min": "20 min",
+          "texto": "git init, add e commit. Peça uma mudança grande e, se não gostar, volte com git restore.",
+          "pronto": "você desfez uma mudança do agente com um comando, sem pânico."
+        },
+        {
+          "id": "e5",
+          "titulo": "E5 · Segredo não entra no texto",
+          "min": "10 min",
+          "texto": "Crie um .env com uma chave falsa e um .gitignore com a linha .env. Acrescente a regra ao AGENTS.md.",
+          "pronto": "git status não mostra o .env."
+        },
+        {
+          "id": "e6",
+          "titulo": "E6 · O agente lê os seus arquivos",
+          "min": "20 min",
+          "texto": "Coloque três textos seus na pasta e peça um resumo.md com 5 decisões e 5 pendências, citando a origem de cada uma.",
+          "pronto": "você achou no original pelo menos duas das frases citadas."
+        }
+      ],
+      "fonte": "Exercícios completos, com o desafio extra (repetir com o outro agente): <a href=\"https://github.com/inematds/jornada-agentes/blob/main/exercicios/01-oswork.md\" target=\"_blank\" rel=\"noopener\">jornada-agentes/exercicios/01-oswork.md</a>."
+    },
+    {
+      "tipo": "video",
+      "titulo": "A sequência 1 em vídeo",
+      "sub": "Seis comandos, um AGENTS.md e a primeira tarefa.",
+      "chave": "seq1-oswork"
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste o que aprendeu",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "Onde fica a chave de uma API no projeto?",
+          "opcoes": [
+            "No AGENTS.md, para o agente saber usar.",
+            "No .env, que está listado no .gitignore.",
+            "No index.html, comentada.",
+            "Num e-mail para você mesmo."
+          ],
+          "certa": 1,
+          "explica": "Chave só no .env, e o .env no .gitignore. Assim o git status não mostra o arquivo e ele não vai para o GitHub.",
+          "cert": true,
+          "ref": "codigo"
+        },
+        {
+          "p": "O agente fez uma mudança grande que você não aprovou. O que fazer?",
+          "opcoes": [
+            "Apagar a pasta e começar de novo.",
+            "Pedir ao agente que tente lembrar como era.",
+            "git restore no arquivo, voltando à última versão salva.",
+            "Copiar o arquivo antigo de um backup manual."
+          ],
+          "certa": 2,
+          "explica": "Com um commit antes da mudança, git restore volta o arquivo em um comando. Por isso a regra: commit antes de pedir mudança grande.",
+          "ref": "passos"
+        },
+        {
+          "p": "Para que serve o AGENTS.md?",
+          "opcoes": [
+            "Para listar os comandos do terminal.",
+            "Para guardar senhas de forma segura.",
+            "É o manual que o agente lê antes de trabalhar: quem você é, as regras e o que tem na pasta.",
+            "É obrigatório só no Codex."
+          ],
+          "certa": 2,
+          "explica": "O AGENTS.md é o manual do funcionário. Claude Code e Codex leem o mesmo arquivo, então as regras valem para os dois.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para aprofundar o degrau 1",
+      "links": [
+        {
+          "t": "OSWork Quick: o caminho curto em 7 aulas",
+          "href": "https://inematds.github.io/oswork-quick/",
+          "icone": "terminal"
+        },
+        {
+          "t": "OSWork v6.2: passo a passo para iniciantes",
+          "href": "https://inematds.github.io/oswork-v62/",
+          "icone": "lista"
+        },
+        {
+          "t": "Área OSWork no Eventos",
+          "href": "https://eventos.inema.pro/oswork/",
+          "icone": "camadas"
+        },
+        {
+          "t": "Vídeo: OSWork na prática, comando por comando",
+          "href": "https://inematds.github.io/oswork-terminal/videos/",
+          "icone": "video"
+        }
+      ]
+    }
+  ],
+  "menu": "Terminal"
+}

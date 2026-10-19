@@ -1,0 +1,4 @@
+__pycache__/
+longrun/*/logs/
+*.mp4
+.telas/

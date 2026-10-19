@@ -1,0 +1,232 @@
+{
+  "slug": "plano",
+  "num": 6,
+  "titulo": "Seu plano: um degrau de cada vez",
+  "titulo_curto": "Seu plano e o vídeo final",
+  "minutos": 10,
+  "lead": "Você já viu os quatro degraus. Agora é montar o plano com datas, fazer os exercícios na ordem e só subir quando o \"pronto quando\" for verdade.",
+  "objetivo": "sair com um plano de execução datado e saber medir se cada degrau ficou firme.",
+  "competencias": [
+    "planejar-jornada",
+    "medir-pronto-quando",
+    "sequenciar-adocao"
+  ],
+  "aprende": [
+    {
+      "icone": "calendario",
+      "t": "Montar o plano com datas"
+    },
+    {
+      "icone": "check",
+      "t": "Medir com o \"pronto quando\""
+    },
+    {
+      "icone": "video",
+      "t": "Rever a jornada inteira em vídeo"
+    },
+    {
+      "icone": "alvo",
+      "t": "Validar o que aprendeu"
+    }
+  ],
+  "secoes": [
+    {
+      "tipo": "mapa",
+      "titulo": "O mapa da formação",
+      "sub": "Os quatro degraus, os 23 exercícios e o que cada degrau entrega. Clique num exercício para ver o \"pronto quando\".",
+      "degraus": [
+        {
+          "aula": "terminal",
+          "icone": "terminal",
+          "quando": "Semana 1",
+          "titulo": "Terminal",
+          "sub": "Pasta, AGENTS.md, Git e .env",
+          "saida": "Agente trabalhando na sua pasta, com rede de segurança.",
+          "passo": "A base de tudo. Seis exercícios levam você do primeiro mkdir ao agente lendo os seus arquivos e citando a origem. Sem este degrau firme, os outros três empacam."
+        },
+        {
+          "aula": "jarvis",
+          "icone": "robo",
+          "quando": "Semana 2",
+          "titulo": "Seu Jarvis",
+          "sub": "INTELECTO no Telegram",
+          "saida": "Assistente seu, com memória e uma rotina em uso.",
+          "passo": "Requer o degrau 1 (terminal, pastas e .env). Do desenho no meu-jarvis.md à rotina usada cinco dias seguidos; o teste de memória leva dois dias."
+        },
+        {
+          "aula": "filas",
+          "icone": "fila",
+          "quando": "Semana 3",
+          "titulo": "Filas",
+          "sub": "inemaccbot e portão",
+          "saida": "Tarefas rodando à noite, com portão no que importa.",
+          "passo": "Requer os degraus 1 e 2. A fila no papel e a fila caseira vêm antes do bot; a noite de tarefas mostra quantas saem certas na primeira."
+        },
+        {
+          "aula": "redes",
+          "icone": "megafone",
+          "quando": "Semana 4 em diante",
+          "titulo": "Redes",
+          "sub": "r7e, promoavatar, xviral",
+          "saida": "Canal do nicho com fonte na tela e agenda com portão.",
+          "passo": "Requer os três anteriores: sem fila e sem portão, automatizar rede social vira postar errado mais rápido. Termina com uma semana de aprovação manual."
+        }
+      ],
+      "resultado": {
+        "titulo": "Ao final da formação",
+        "texto": "Agente na pasta, assistente seu, fila com portões e canal com fonte na tela.",
+        "total": "23 exercícios"
+      },
+      "rolagem_fim": {
+        "titulo": "A formação inteira",
+        "texto": "Quatro degraus em sequência, cada um com a sua lista de exercícios e um critério verificável. Só suba quando o \"pronto quando\" do degrau anterior for verdade."
+      },
+      "legenda": "Ordem obrigatória: cada degrau usa o que o anterior montou."
+    },
+    {
+      "tipo": "gerador",
+      "titulo": "Gere o seu plano com datas",
+      "sub": "Escolha a data de início e quanto tempo você tem por semana. O plano respeita os exercícios que pedem dias de uso real.",
+      "curso": "Do chat ao agente",
+      "horas_padrao": 5,
+      "degraus": [
+        {
+          "titulo": "Degrau 1 · Terminal",
+          "aula": "terminal"
+        },
+        {
+          "titulo": "Degrau 2 · Seu Jarvis",
+          "aula": "jarvis"
+        },
+        {
+          "titulo": "Degrau 3 · Filas",
+          "aula": "filas"
+        },
+        {
+          "titulo": "Degrau 4 · Redes",
+          "aula": "redes"
+        }
+      ],
+      "txt": {
+        "titulo": "Plano — Do chat ao agente",
+        "inicio": "Início",
+        "ritmo": "Ritmo",
+        "termino": "Término previsto",
+        "ate": "até",
+        "pronto": "pronto quando",
+        "semanas": "semanas",
+        "travou": "## O que travou e a regra que criei",
+        "h": "h por semana",
+        "exs": "exercícios"
+      }
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "A formação em três frases",
+      "itens": [
+        {
+          "t": "Mude de lugar",
+          "texto": "O ganho não vem de um modelo novo: vem de tirar o trabalho do chat e pôr numa pasta com regras, Git e segredos fora do texto."
+        },
+        {
+          "t": "Um degrau por vez",
+          "texto": "Terminal, assistente, fila e redes. Cada um usa o anterior, e o \"pronto quando\" diz quando subir."
+        },
+        {
+          "t": "Você continua decidindo",
+          "texto": "Portão antes do que importa, recusa que vira regra e fonte na tela. Automatizar não é largar."
+        }
+      ]
+    },
+    {
+      "tipo": "video",
+      "titulo": "Vídeo explicativo: a formação inteira",
+      "sub": "Dois minutos e meio para rever os quatro degraus antes de começar.",
+      "chave": "jornada-ia"
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste final",
+      "sub": "Quatro perguntas sobre a formação inteira.",
+      "perguntas": [
+        {
+          "p": "Qual é a ordem dos degraus?",
+          "opcoes": [
+            "Redes, filas, assistente, terminal.",
+            "Terminal, assistente, filas, redes.",
+            "Assistente, terminal, redes, filas.",
+            "Qualquer ordem, são independentes."
+          ],
+          "certa": 1,
+          "explica": "Terminal, assistente (Jarvis), filas e redes. Cada degrau usa o anterior.",
+          "cert": true,
+          "ref": "mapa"
+        },
+        {
+          "p": "O que o \"pronto quando\" garante?",
+          "opcoes": [
+            "Que o exercício levou o tempo indicado.",
+            "Um critério verificável para saber se pode avançar.",
+            "Que o agente não vai errar.",
+            "Que o certificado foi emitido."
+          ],
+          "certa": 1,
+          "explica": "É o critério que você confere: só passe para o próximo exercício quando ele for verdade.",
+          "ref": "pratica"
+        },
+        {
+          "p": "Qual destes itens nunca deve ir para um arquivo de texto do projeto?",
+          "opcoes": [
+            "As regras do agente.",
+            "A lista de tarefas da fila.",
+            "O token do bot do Telegram.",
+            "As regras do nicho."
+          ],
+          "certa": 2,
+          "explica": "Token e chaves ficam só no .env, que está no .gitignore. Vale do degrau 1 ao 4.",
+          "ref": "mapa"
+        },
+        {
+          "p": "Um fluxo vai publicar em nome da empresa toda madrugada. O que não pode faltar no começo?",
+          "opcoes": [
+            "Um portão humano antes de publicar.",
+            "Um modelo local.",
+            "Um reel com mais de 60 segundos.",
+            "Desligar os avisos de falha."
+          ],
+          "certa": 0,
+          "explica": "Sem fila e sem portão, automatizar rede social vira postar errado mais rápido. O portão só sai depois de dias seguidos sem recusa.",
+          "cert": true,
+          "ref": "mapa"
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Continue por aqui",
+      "links": [
+        {
+          "t": "Área Do chat ao agente",
+          "href": "https://eventos.inema.pro/do-chat-ao-agente/",
+          "icone": "camadas"
+        },
+        {
+          "t": "Os 23 exercícios (guia da jornada)",
+          "href": "https://inematds.github.io/jornada-agentes/guia/",
+          "icone": "lista"
+        },
+        {
+          "t": "Série de vídeos com roteiros",
+          "href": "https://inematds.github.io/jornada-agentes/serie/jornada-ia/",
+          "icone": "video"
+        },
+        {
+          "t": "Cursos abertos no INEMA.CLUB",
+          "href": "https://inema.club/",
+          "icone": "seta"
+        }
+      ]
+    }
+  ],
+  "menu": "Plano"
+}

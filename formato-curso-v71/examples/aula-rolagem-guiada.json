@@ -1,0 +1,257 @@
+{
+  "slug": "visao-geral",
+  "num": 1,
+  "titulo": "Do chat ao agente: os quatro degraus",
+  "titulo_curto": "Os quatro degraus",
+  "minutos": 6,
+  "lead": "No chat você dirige o tempo todo e, quando fecha a janela, o trabalho para. O agente lê os seus arquivos, executa tarefas e continua enquanto você faz outra coisa. A virada não é trocar de modelo: é mudar de lugar.",
+  "objetivo": "dizer em que degrau você está hoje e qual é o próximo passo concreto.",
+  "competencias": [
+    "mapear-maturidade",
+    "sequenciar-adocao"
+  ],
+  "aprende": [
+    {
+      "icone": "chat",
+      "t": "Por que o chat tem um teto"
+    },
+    {
+      "icone": "camadas",
+      "t": "Os quatro degraus e a ordem entre eles"
+    },
+    {
+      "icone": "alvo",
+      "t": "Achar o seu ponto de partida"
+    },
+    {
+      "icone": "lista",
+      "t": "Montar o seu diagnóstico de uma página"
+    }
+  ],
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Visão geral",
+      "sub": "Cada degrau usa o anterior. Quem pula o primeiro empaca nos outros três.",
+      "estilo": "escada",
+      "nos": [
+        {
+          "icone": "terminal",
+          "titulo": "1 · Terminal",
+          "sub": "OSWork",
+          "itens": [
+            {
+              "icone": "pasta",
+              "t": "Pasta do projeto",
+              "sub": "onde o agente trabalha"
+            },
+            {
+              "icone": "arquivo",
+              "t": "AGENTS.md",
+              "sub": "as regras que ele lê"
+            },
+            {
+              "icone": "git",
+              "t": "Git para desfazer",
+              "sub": "volta qualquer erro"
+            }
+          ],
+          "detalhe": "O agente (Claude Code ou Codex) trabalha dentro de uma pasta sua, lê um manual de regras (AGENTS.md) e você desfaz qualquer erro com o Git. É a base de tudo o que vem depois.",
+          "forte": true
+        },
+        {
+          "icone": "robo",
+          "titulo": "2 · Assistente",
+          "sub": "Seu Jarvis",
+          "itens": [
+            {
+              "icone": "enviar",
+              "t": "Fala pelo Telegram"
+            },
+            {
+              "icone": "memoria",
+              "t": "Lembra das conversas"
+            },
+            {
+              "icone": "usuario",
+              "t": "Personalidade sua"
+            }
+          ],
+          "detalhe": "Com o INTELECTO, um assistente seu no Telegram, com memória e o jeito que você definir, usando um modelo na nuvem ou local."
+        },
+        {
+          "icone": "fila",
+          "titulo": "3 · Filas",
+          "sub": "Dez tarefas e vá dormir",
+          "itens": [
+            {
+              "icone": "fila",
+              "t": "Fila durável"
+            },
+            {
+              "icone": "relogio",
+              "t": "Retoma se cair"
+            },
+            {
+              "icone": "portao",
+              "t": "Portão humano"
+            }
+          ],
+          "detalhe": "O inemaccbot guarda cada pedido como tarefa, retoma do ponto onde parou e para num portão quando precisa da sua aprovação."
+        },
+        {
+          "icone": "megafone",
+          "titulo": "4 · Redes",
+          "sub": "Canal do seu nicho",
+          "itens": [
+            {
+              "icone": "video",
+              "t": "Reel em 7 etapas"
+            },
+            {
+              "icone": "lupa",
+              "t": "Fonte na tela"
+            },
+            {
+              "icone": "calendario",
+              "t": "Agenda com portão"
+            }
+          ],
+          "detalhe": "r7e, promoavatar e os xviral (finviral, saudeviral, advviral) publicando com regularidade, com número conferido e fonte na tela."
+        }
+      ],
+      "volta": "Cada degrau reaproveita o anterior: pasta, regras, segredos e portão",
+      "legenda": "Sem milagre: não existe \"render enquanto dorme\" se o sistema não roda correto.",
+      "rolagem": true,
+      "rolagem_fim": {
+        "titulo": "Os quatro juntos",
+        "texto": "Cada degrau reaproveita o anterior: a pasta e as regras do terminal, o .env com as chaves, a fila que guarda as tarefas e o portão antes do que importa. Por isso a ordem não é opcional."
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Ache o seu ponto de partida",
+      "sub": "Clique na situação que mais parece com a sua hoje.",
+      "passos": [
+        {
+          "titulo": "Uso só o chat",
+          "sub": "ChatGPT, Claude, Gemini",
+          "texto": [
+            "Comece pelo degrau 1. Faça o <b>OSWork Quick</b> e logo depois os seis exercícios da sequência 1.",
+            "Meta da primeira semana: chegar à sua pasta só pelo terminal e ver o agente criar um arquivo lá dentro."
+          ],
+          "exemplo": {
+            "rot": "Primeiro passo",
+            "texto": "Abrir o terminal e criar a pasta projetos/meu-primeiro-agente."
+          }
+        },
+        {
+          "titulo": "Já uso o terminal",
+          "sub": "Claude Code ou Codex",
+          "texto": [
+            "Você já está no degrau 1. Confira se tem AGENTS.md, Git e .env no .gitignore; se tiver, suba para o degrau 2.",
+            "Instale o seu Jarvis com o <b>INTELECTO</b> e faça o curso dele."
+          ],
+          "exemplo": {
+            "rot": "Primeiro passo",
+            "texto": "Escrever o meu-jarvis.md antes de instalar qualquer coisa."
+          }
+        },
+        {
+          "titulo": "Já tenho um assistente",
+          "sub": "Rodando no Telegram",
+          "texto": [
+            "Hora da fila. Antes de instalar o <b>inemaccbot</b>, rode a fila caseira em 30 linhas para entender entrada, feito e falhou.",
+            "Depois, liste 10 tarefas repetitivas e marque onde precisa de portão."
+          ],
+          "exemplo": {
+            "rot": "Primeiro passo",
+            "texto": "Preencher a tabela das 10 tarefas, com pelo menos duas com portão."
+          }
+        },
+        {
+          "titulo": "Já tenho fila",
+          "sub": "E quero publicar",
+          "texto": [
+            "Degrau 4. Use o <b>r7e</b> para o formato e o <b>finviral</b> como molde do canal do seu nicho.",
+            "Escreva as regras do nicho antes de automatizar: sem fila e sem portão, automatizar rede social vira postar errado mais rápido."
+          ],
+          "exemplo": {
+            "rot": "Primeiro passo",
+            "texto": "Escolher 5 canais de referência e escrever canais.md e regras.md."
+          }
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Seu diagnóstico de uma página",
+      "sub": "Copie, preencha e guarde na pasta do seu projeto. Ele vira o mapa da sua formação.",
+      "blocos": [
+        {
+          "rot": "diagnostico.md",
+          "icone": "arquivo",
+          "conteudo": "# Meu diagnóstico — Do chat ao agente\n\n## Onde estou hoje\n- [ ] Uso só o chat\n- [ ] Uso o terminal com Claude Code ou Codex\n- [ ] Tenho um assistente meu rodando\n- [ ] Tenho fila de tarefas com portão\n\n## O que me faz perder tempo (3 itens)\n1.\n2.\n3.\n\n## Próximo degrau e data\nDegrau:\nPrimeiro exercício:\nAté (data):\n\n## Como vou saber que deu certo\n\"Pronto quando\":"
+        }
+      ],
+      "saida": {
+        "selo": "simulacao",
+        "abas": [
+          {
+            "rot": "Exemplo preenchido",
+            "html": "<ul><li><b>Onde estou:</b> uso o Claude no navegador todo dia.</li><li><b>Perco tempo:</b> reescrever propostas, resumir reuniões, responder as mesmas perguntas.</li><li><b>Próximo degrau:</b> 1 · Terminal. Exercício E1 até sexta.</li><li><b>Pronto quando:</b> chego à pasta só pelo terminal e sei dizer em que pasta estou.</li></ul>"
+          },
+          {
+            "rot": "Por que escrever",
+            "html": "<p>Escrever o ponto de partida evita o erro mais comum: pular o degrau 1 porque parece simples. O diagnóstico também é o primeiro arquivo que o agente vai ler quando você chegar ao terminal.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste o que aprendeu",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "Qual é a diferença central entre o chat e o agente?",
+          "opcoes": [
+            "O agente usa um modelo mais inteligente.",
+            "O agente trabalha nos seus arquivos e continua sem você dirigir cada passo.",
+            "O agente é sempre gratuito.",
+            "O chat não consegue escrever código."
+          ],
+          "certa": 1,
+          "explica": "A virada não é trocar de modelo: é mudar de lugar. O agente lê a sua pasta, executa tarefas e segue trabalhando quando você fecha a janela.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Por que não vale pular a sequência 1?",
+          "opcoes": [
+            "Porque o terminal é obrigatório só no Windows.",
+            "Porque pastas, terminal, AGENTS.md e segredos fora do texto são a base das outras três.",
+            "Porque o Jarvis só roda depois de um mês de uso.",
+            "Porque o curso exige ordem para emitir certificado."
+          ],
+          "certa": 1,
+          "explica": "Quem pula a sequência 1 empaca nas outras três. Assistente, fila e redes usam pasta, regras, .env e Git o tempo todo.",
+          "cert": true,
+          "ref": "diagrama"
+        },
+        {
+          "p": "Você já usa Claude Code na sua pasta, tem AGENTS.md e Git. Qual o próximo passo?",
+          "opcoes": [
+            "Automatizar as redes sociais.",
+            "Instalar a fila antes do assistente.",
+            "Desenhar e instalar o seu Jarvis (degrau 2).",
+            "Voltar ao chat para treinar prompts."
+          ],
+          "certa": 2,
+          "explica": "Com o degrau 1 firme, o próximo é o assistente próprio: desenhar o meu-jarvis.md e instalar o INTELECTO.",
+          "ref": "passos"
+        }
+      ]
+    }
+  ],
+  "menu": "Degraus"
+}

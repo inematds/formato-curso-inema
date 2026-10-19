@@ -1,0 +1,293 @@
+{
+  "slug": "filas",
+  "num": 4,
+  "titulo": "Degrau 3: filas — dez tarefas e vá dormir",
+  "titulo_curto": "Filas (inemaccbot)",
+  "minutos": 12,
+  "lead": "Um agente sozinho faz uma coisa por vez e só enquanto você olha. Com uma fila durável, cada pedido vira uma tarefa guardada, retomada se cair, e os fluxos param num portão antes do que importa.",
+  "objetivo": "decidir o que vai para a fila, onde ficam os portões e como conferir o resultado no dia seguinte.",
+  "competencias": [
+    "desenhar-fila",
+    "definir-portao-humano",
+    "retomar-tarefa",
+    "avaliar-resultado-lote"
+  ],
+  "aprende": [
+    {
+      "icone": "fila",
+      "t": "Como uma fila durável funciona"
+    },
+    {
+      "icone": "relogio",
+      "t": "Retomar do ponto onde parou"
+    },
+    {
+      "icone": "portao",
+      "t": "Onde pôr o portão humano"
+    },
+    {
+      "icone": "grafico",
+      "t": "Medir quantas saíram certas"
+    }
+  ],
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "O caminho de uma tarefa",
+      "sub": "Do pedido ao resultado, com retomada e portão.",
+      "nos": [
+        {
+          "icone": "enviar",
+          "titulo": "Pedidos",
+          "sub": "Telegram ou pasta",
+          "itens": [
+            {
+              "icone": "arquivo",
+              "t": "Transcrever reunião"
+            },
+            {
+              "icone": "arquivo",
+              "t": "Post da semana"
+            },
+            {
+              "icone": "arquivo",
+              "t": "Vídeo explicativo"
+            }
+          ],
+          "detalhe": "Cada pedido vira uma tarefa: no inemaccbot, uma mensagem no Telegram; na fila caseira, um arquivo .md na pasta entrada/."
+        },
+        {
+          "icone": "fila",
+          "titulo": "Fila durável",
+          "sub": "Guardada, não na memória",
+          "itens": [
+            {
+              "icone": "memoria",
+              "t": "Sobrevive a quedas",
+              "sub": "tarefa guardada em disco"
+            },
+            {
+              "icone": "relogio",
+              "t": "Retoma de onde parou",
+              "sub": "rodando/ volta para a entrada"
+            }
+          ],
+          "detalhe": "A tarefa fica guardada. Se o computador desligar ou você interromper, a próxima rodada pega o que sobrou, sem refazer o que já foi feito.",
+          "forte": true
+        },
+        {
+          "icone": "robo",
+          "titulo": "Agente",
+          "sub": "Uma tarefa por vez",
+          "itens": [
+            {
+              "icone": "check",
+              "t": "feito/"
+            },
+            {
+              "icone": "x",
+              "t": "falhou/"
+            }
+          ],
+          "detalhe": "O agente executa uma tarefa por vez. Deu certo, a resposta vai para feito; deu erro, vai para falhou, com o motivo, para você olhar."
+        },
+        {
+          "icone": "portao",
+          "titulo": "Portão",
+          "sub": "Sua aprovação",
+          "itens": [
+            {
+              "icone": "usuario",
+              "t": "Ler, corrigir, aprovar"
+            }
+          ],
+          "detalhe": "Nos fluxos que importam, o bot escreve e para. Você lê, corrige se precisar e só então aprova. É o momento em que você gerencia, em vez de fazer."
+        }
+      ],
+      "volta": "Rodar de novo só pega o que sobrou",
+      "legenda": "Exemplos de fluxos que viram tarefas no inemaccbot: transcrever, dublar, vídeo explicativo, curso e reel.",
+      "rolagem": true,
+      "rolagem_fim": {
+        "titulo": "Uma noite de fila",
+        "texto": "Você manda as tarefas e vai dormir. A fila guarda, o agente executa uma por vez e para no portão do que importa. De manhã, você olha feito/ e falhou/."
+      }
+    },
+    {
+      "tipo": "simfila",
+      "titulo": "Veja a fila funcionando",
+      "sub": "Rode, interrompa no meio e rode de novo. É o que a fila caseira faz.",
+      "tarefas": [
+        "Transcrever a reunião de segunda",
+        "Resumir os 3 PDFs do cliente",
+        "Rascunho do post da semana",
+        "Explicativo de 2 min do produto",
+        "Lista de perguntas frequentes"
+      ],
+      "falha": 3,
+      "rot": {
+        "entrada": "entrada/",
+        "rodando": "rodando/",
+        "feito": "feito/",
+        "falhou": "falhou/",
+        "rodar": "Rodar a fila",
+        "parar": "Interromper (Ctrl+C)",
+        "zerar": "Recomeçar"
+      },
+      "msg": {
+        "inicio": "5 tarefas em entrada/. Clique em \"Rodar a fila\".",
+        "rodando": "Rodando: uma tarefa por vez, de entrada/ para rodando/ e depois feito/ ou falhou/.",
+        "parou": "Interrompido. A tarefa do meio ficou em rodando/. Rode de novo para ver a retomada.",
+        "retoma": "Retomada: o que estava em rodando/ voltou para entrada/. O que já estava em feito/ não é refeito.",
+        "fim": "Fila vazia: tudo em feito/.",
+        "fimfalha": "Fila vazia. Uma tarefa foi para falhou/ com o motivo: é ela que você olha de manhã."
+      },
+      "legenda": "Simulação ilustrativa no navegador: as tarefas não rodam de verdade. A falha é proposital, para mostrar a pasta falhou/."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "A fila caseira e a fila no papel",
+      "sub": "Entenda a ideia com 30 linhas antes de instalar o bot.",
+      "blocos": [
+        {
+          "rot": "Terminal · fila caseira (no repositório jornada-agentes)",
+          "icone": "terminal",
+          "conteudo": "mkdir -p fila/entrada\necho \"Resuma em 5 linhas o que é uma fila de tarefas.\" > fila/entrada/01.md\necho \"Liste 3 riscos de deixar um agente rodando sozinho.\" > fila/entrada/02.md\n./ferramentas/fila-caseira.sh fila          # motor padrão: claude\n./ferramentas/fila-caseira.sh fila codex    # ou o codex"
+        },
+        {
+          "rot": "fila-no-papel.md",
+          "icone": "arquivo",
+          "conteudo": "| Tarefa | Roda sozinha? | Precisa de portão? | Onde está o portão |\n|---|---|---|---|\n| Transcrever a reunião | sim | não | — |\n| Post da semana | sim | sim | antes de publicar |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Comandos do bot",
+            "html": "<ul><li><code>/ping</code>: confere se o bot responde (fim da instalação).</li><li><code>/ajuda</code>: lista os comandos.</li><li><code>/fila</code>: mostra as filas.</li><li><code>/promoavatar</code>: exemplo de fluxo com portão — o bot escreve os textos e para para você aprovar.</li></ul>"
+          },
+          {
+            "rot": "Como a fila caseira decide",
+            "html": "<ol><li>O que ficou em <code>rodando/</code> (queda, Ctrl+C) volta para <code>entrada/</code>.</li><li>Pega uma tarefa por vez de <code>entrada/</code>.</li><li>Resposta vazia ou erro: vai para <code>falhou/</code> com o motivo.</li><li>No fim, mostra quantas estão em entrada, feito e falhou.</li></ol>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática: os 5 exercícios da sequência 3",
+      "sub": "Pré-requisito: sequências 1 e 2.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · A fila no papel",
+          "min": "15 min",
+          "texto": "Liste 10 tarefas repetitivas e marque se rodam sozinhas, se precisam de portão e onde.",
+          "pronto": "as 10 linhas estão preenchidas e pelo menos duas têm portão."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Fila caseira em 30 linhas",
+          "min": "30 min",
+          "texto": "Crie duas tarefas em fila/entrada e rode a fila-caseira.sh. Interrompa uma rodada com Ctrl+C.",
+          "pronto": "as duas estão em fila/feito e você viu a fila continuar de onde parou."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Instalar o inemaccbot",
+          "min": "1 h",
+          "texto": "Siga o guia até o bot responder no Telegram. Depois teste /ajuda e /fila.",
+          "pronto": "/ping responde no seu Telegram."
+        },
+        {
+          "id": "e4",
+          "titulo": "E4 · Dez tarefas e vá dormir",
+          "min": "1 noite",
+          "texto": "Mande 5 a 10 tarefas da sua lista e vá fazer outra coisa.",
+          "pronto": "no dia seguinte você conferiu cada resultado e anotou quantas saíram certas na primeira.",
+          "dias": 1
+        },
+        {
+          "id": "e5",
+          "titulo": "E5 · O portão",
+          "min": "30 min",
+          "texto": "Use um fluxo com portão, como o /promoavatar: leia, corrija e só então aprove.",
+          "pronto": "você recusou ou corrigiu pelo menos um texto antes de aprovar."
+        }
+      ],
+      "fonte": "Exercícios completos e o desafio extra (uma regra nova para a tarefa que mais falhou): <a href=\"https://github.com/inematds/jornada-agentes/blob/main/exercicios/03-filas.md\" target=\"_blank\" rel=\"noopener\">jornada-agentes/exercicios/03-filas.md</a>."
+    },
+    {
+      "tipo": "video",
+      "titulo": "A sequência 3 em vídeo",
+      "sub": "A fila durável do inemaccbot e o portão de aprovação.",
+      "chave": "seq3-filas"
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste o que aprendeu",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "Você interrompeu a fila no meio de uma tarefa. O que acontece quando roda de novo?",
+          "opcoes": [
+            "Tudo é refeito desde o começo.",
+            "A tarefa interrompida volta para a entrada e a fila segue com o que sobrou.",
+            "A tarefa interrompida é perdida.",
+            "A fila só volta a funcionar no dia seguinte."
+          ],
+          "certa": 1,
+          "explica": "É o que torna a fila durável: o que ficou em rodando/ volta para entrada/, e o que já está em feito/ não é refeito.",
+          "ref": "simfila"
+        },
+        {
+          "p": "Em qual tarefa o portão humano é mais importante?",
+          "opcoes": [
+            "Transcrever uma reunião interna.",
+            "Resumir PDFs para você mesmo ler.",
+            "Publicar um post em nome da empresa.",
+            "Listar arquivos de uma pasta."
+          ],
+          "certa": 2,
+          "explica": "Portão vai antes do que tem consequência fora: publicar, enviar, gastar. Transcrever para uso interno pode rodar sozinho.",
+          "cert": true,
+          "ref": "diagrama"
+        },
+        {
+          "p": "Qual é o sinal de que você está gerenciando, e não só usando?",
+          "opcoes": [
+            "Mandar mais tarefas por noite.",
+            "Recusar ou corrigir um resultado antes de aprovar, e transformar a falha em regra.",
+            "Trocar de modelo a cada semana.",
+            "Desligar todos os portões."
+          ],
+          "certa": 1,
+          "explica": "O E5 e o desafio extra mostram isso: você lê, corrige, aprova, e a tarefa que mais falhou ganha uma regra nova no AGENTS.md ou no prompt.",
+          "ref": "pratica"
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para aprofundar o degrau 3",
+      "links": [
+        {
+          "t": "inemaccbot: guia de instalação e arquitetura",
+          "href": "https://inematds.github.io/inemaccbot/guia/",
+          "icone": "fila"
+        },
+        {
+          "t": "Curso INEMACCBOT com Promoavatar",
+          "href": "https://eventos.inema.pro/inemaccbot.html",
+          "icone": "lista"
+        },
+        {
+          "t": "Repositório jornada-agentes (fila caseira)",
+          "href": "https://github.com/inematds/jornada-agentes",
+          "icone": "git"
+        }
+      ]
+    }
+  ],
+  "menu": "Filas"
+}

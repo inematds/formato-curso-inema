@@ -26,3 +26,12 @@ VERIFICACAO.md         # relatório de verificação (45/45 em navegador real)
 ```
 
 Verificado em navegador real: **smoke 23/23 · temas 10/10 · contrato 12/12**.
+
+## Formatos v7.x — INEMA Learning (19/10/2026)
+
+| Skill | O que é | Curso de referência |
+|---|---|---|
+| `formato-curso-v72/` | Plataforma (barra lateral, progresso, gaveta "seu estudo") + didática v7: diagrama clicável primeiro, texto curto, simulação, copiar, prática com "pronto quando", teste comentado. Conteúdo em JSON → `gerar.py`; portão `validar.py` + `conferir-tela.cjs`. | [do-chat-ao-agente-v72](https://inematds.github.io/do-chat-ao-agente-v72/) |
+| `formato-curso-v71/` | A mesma base sem a camada de estudo nem as fotos por aula. | [do-chat-ao-agente-v71](https://inematds.github.io/do-chat-ao-agente-v71/) |
+
+Curso novo: `formato-curso-v72/scripts/novo-curso.sh ~/projetos/<repo> "<Nome>"`.

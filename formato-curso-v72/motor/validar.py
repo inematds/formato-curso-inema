@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Portão de qualidade do curso v7.2.
+
+    python3 validar.py            # estrutura de cada aula
+    python3 validar.py --links    # também confere os links externos (HTTP 200)
+"""
+import argparse, json, pathlib, re, sys, urllib.request
+
+RAIZ = pathlib.Path(__file__).resolve().parent
+ap = argparse.ArgumentParser(); ap.add_argument("--links", action="store_true"); ap.add_argument("--lang", default="pt")
+args = ap.parse_args()
+base = RAIZ if args.lang == "pt" else RAIZ / args.lang
+erros = []
+aulas = sorted((base / "aulas").glob("*/index.html"))
+if not aulas: erros.append("nenhuma aula gerada")
+for p in aulas:
+    h = p.read_text(); nome = p.parent.name
+    m = re.search(r'<p class="objetivo"><b>[^<]*</b>(.*?)</p>', h, re.S)
+    if not m or len(re.sub("<[^>]+>", "", m.group(1)).strip()) > 160: erros.append(f"{nome}: objetivo ausente ou longo")
+    nos = len(re.findall(r'class="[^"]*\bdg-no\b', h))
+    if not nos: erros.append(f"{nome}: sem diagrama")
+    elif nos < 3: erros.append(f"{nome}: diagrama com menos de 3 blocos")
+    if 'class="copiar"' not in h: erros.append(f"{nome}: sem botão copiar")
+    if 'class="q-op"' not in h or "<template class=\"ok\">" not in h: erros.append(f"{nome}: sem quiz com resposta oculta")
+    if not re.search(r'data-competencias="[^"]+"', h): erros.append(f"{nome}: sem data-competencias")
+    texto = re.sub(r"<(pre|script|template)[^>]*>.*?</\1>", "", h, flags=re.S)
+    for ruim in ("[Nome", "[Resultado", "TODO", "lorem", "{a}", "undefined"):
+        if ruim in texto: erros.append(f"{nome}: sobra '{ruim}'")
+    for blk in re.findall(r'<p class="lead">(.*?)</p>', h):
+        if len(re.sub("<[^>]+>", "", blk).split()) > 70: erros.append(f"{nome}: lead com mais de 70 palavras")
+    for par in re.findall(r"<p>(.*?)</p>", texto, re.S):
+        if len(re.sub("<[^>]+>", "", par).split()) > 75: erros.append(f"{nome}: parágrafo com mais de 75 palavras")
+    for src in re.findall(r'(?:src|poster)="(\.\./\.\./[^"]+)"', h):
+        if not (p.parent / src).resolve().exists(): erros.append(f"{nome}: arquivo local ausente {src}")
+if not (base / "index.html").exists(): erros.append("index.html ausente")
+
+# a capa da página inicial e a foto de cada aula são obrigatórias (o gerador usa sem conferir)
+for img in ["assets/img/hero/inicio.jpg", *[f"assets/img/hero/{p.parent.name}.jpg" for p in aulas]]:
+    if not (RAIZ / img).exists(): erros.append(f"imagem ausente: {img}")
+if not (RAIZ / "assets/img/capa.jpg").exists(): erros.append("imagem ausente: assets/img/capa.jpg (og:image)")
+
+if args.links:
+    PROPRIO = json.loads((RAIZ / "conteudo" / args.lang / "curso.json").read_text())["url"]
+    urls = set()
+    for p in [base / "index.html", *aulas]:
+        urls |= set(re.findall(r'(?:href|src)="(https://[^"]+)"', p.read_text()))
+    urls = {u for u in urls if "fonts.g" not in u and not u.startswith(PROPRIO)}
+    for u in sorted(urls):
+        try:
+            req = urllib.request.Request(u, method="HEAD" if u.endswith(".mp4") else "GET", headers={"User-Agent": "Mozilla/5.0"})
+            st = urllib.request.urlopen(req, timeout=20).status
+            if st != 200: erros.append(f"link {st}: {u}")
+        except Exception as e:
+            erros.append(f"link falhou ({e}): {u}")
+    print(f"{len(urls)} links externos conferidos")
+
+if erros:
+    print("FALHOU:"); [print(" -", e) for e in erros]; sys.exit(1)
+print(f"OK: {len(aulas)} aulas + index")
