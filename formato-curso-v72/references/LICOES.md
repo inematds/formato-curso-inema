@@ -1,5 +1,7 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Bloco de código que é modelo em prosa com muitos placeholders `<…>` (relatório, diagnóstico) pode voltar do `traduzir.py` meio traduzido no ES (só o glossário aplicado, frases em PT) sem o script acusar; e linha CSV com `[https://...]` como placeholder é recusada 3× ("URLs diferentes"). Leia os blocos-modelo traduzidos antes do portão e use placeholder sem URL ("[endereço do site]") (19/10/2026, formacao-inemaseo-profissional-v72).
+
 - Curso técnico com kit próprio (pasta `kit/` no repo do curso): escreva cada bloco "Terminal" como arquivo, rode-o para capturar a saída e compare o `conteudo` do JSON com esses arquivos antes do portão (deriva entre o bloco copiável e o que foi testado passa no `validar.py`). Passo com modelo real: "pronto quando" estrutural (código de saída, `grep -c`, `wc -l`), nunca o texto do modelo; e resposta ausente do modelo (limite da assinatura) é erro, não "nao" (19/10/2026, loop-r-eng-verificacao-v72).
 - Nome de ícone fora de `ICONES` do `gerar.py` (ex.: "estrela", "alerta", "codigo") passa pelo `validar.py` e sai sem ícone: confira a lista de chaves de `ICONES` antes do portão (curso formacao-inemaseo-ias-v72, 19/10/2026).
 
