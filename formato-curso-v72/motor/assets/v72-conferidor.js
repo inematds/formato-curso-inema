@@ -16,7 +16,7 @@
   function num(v) { var s = (v === Math.round(v)) ? String(v) : String(Math.round(v * 10) / 10); return LANG === "en" ? s : s.replace(".", ","); }
   function familias(g) {
     return (g.termos || []).map(function (fam) {
-      return fam.split("/").map(function (x) { return norm(x).trim(); }).filter(function (x) { return x; });
+      return (fam.indexOf(" / ") >= 0 ? fam.split(" / ") : fam.split("/")).map(function (x) { return norm(x).trim(); }).filter(function (x) { return x; });  // 7.13.16
     });
   }
   // para cada grupo, as famílias citadas na linha; termo dentro de termo maior (de qualquer grupo) não conta
@@ -116,7 +116,7 @@
   function gcd(a, b) { return b ? gcd(b, a % b) : a; }
   function nomeProp(w, h) {
     if (!w || !h) return "?";
-    for (var k in PROP) if (Math.abs(w / h - PROP[k]) / PROP[k] <= 0.02) return k;
+    for (var k in PROP) if (Math.abs(w / h - PROP[k]) / PROP[k] <= 0.03) return k;
     var g = gcd(w, h) || 1; return (w / g) + ":" + (h / g);
   }
   function seg1(v) { var s = (Math.round(v * 10) / 10).toFixed(1); return LANG === "en" ? s : s.replace(".", ","); }

@@ -114,3 +114,7 @@
 
 ## 7.13.15 — 19/10/2026
 - `scripts/resolver-kit.py --conferir`: bloco com rótulo `Trecho · kit/<arquivo>` passa a ser conferido — o conteúdo tem de existir igual dentro do arquivo do kit (antes só "Terminal" e "Arquivo · kit/" eram conferidos, e o trecho de conserto colado à mão podia divergir da solução testada). Uso: aula que mostra só a função consertada (`Trecho · kit/solucao/aula2/ferramentas.mjs`) em vez do arquivo inteiro. Piloto `formacao-webmcp-seguranca-v72` (Formação WebMCP, curso 4: 26 blocos + 2 trechos). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.13.16 — 19/10/2026
+- Conferidor: família de `termos` escrita com " / " (barra entre espaços) separa só ali, e o termo pode ter barra dentro (`"out/2026 / oct/2026 / octubre de 2026"`, `"16:9 / 4:3"`). Antes "out/2026" virava "out" e "2026" e qualquer "2026" no arquivo contava como a data. Família sem " / " separa em toda barra, como antes (nenhum curso v72 publicado muda: varredura de 19/10/2026).
+- Modo vídeo: tolerância da proporção de 2 % para 3 %. O 720p do Wan 2.2 5B sai 1280×704 (2,3 % de 16:9) e era chamado de "1.85:1" e recusado num curso que manda conferir o clipe aberto; 1.85:1 de verdade (4 % de 16:9) continua 1.85:1. Mesma mudança em `conferir.py` e `assets/v72-conferidor.js`; `VERSAO` 7.13.16. Achado pelo revisor independente do `formacao-cinema-ia-geracao-v72`.

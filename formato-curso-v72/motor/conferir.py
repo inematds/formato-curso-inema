@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Conferidor do INEMA Learning 7.12.15 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
+"""Conferidor do INEMA Learning 7.13.16 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
 
 O aluno escreve um arquivo (ficha, cartão, decupagem) e a página confere. Este script é a opção para quem tem
 terminal: confere o mesmo arquivo, com as regras escritas no JSON da aula.
@@ -60,7 +60,7 @@ def nome_proporcao(w, h):
     if not w or not h:
         return "?"
     for nome, v in PROPORCOES.items():
-        if abs(w / h - v) / v <= 0.02:
+        if abs(w / h - v) / v <= 0.03:  # 7.13.16: 3 % (1280×704 do Wan 2.2 5B = 16:9; 2 % recusava)
             return nome
     from math import gcd
     g = gcd(int(w), int(h)) or 1
@@ -115,7 +115,9 @@ def norm(t):
 
 def familias(grupo):
     """['close / close-up / primeiro plano', 'plano médio'] → [['close', 'close-up', 'primeiro plano'], ['plano medio']]"""
-    return [[norm(x).strip() for x in fam.split("/") if x.strip()] for fam in grupo.get("termos", [])]
+    # 7.13.16: família com " / " (barra entre espaços) separa só ali, e o termo pode ter barra ("out/2026", "16:9")
+    return [[norm(x).strip() for x in (fam.split(" / ") if " / " in fam else fam.split("/")) if x.strip()]
+            for fam in grupo.get("termos", [])]
 
 
 def achados(linha, grupos):
