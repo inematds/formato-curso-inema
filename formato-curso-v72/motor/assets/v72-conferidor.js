@@ -1,4 +1,4 @@
-/* INEMA Learning 7.9.12 — conferidor: o aluno cola (ou carrega) o arquivo que escreveu e a página confere.
+/* INEMA Learning 7.11.14 — conferidor: o aluno cola (ou carrega) o arquivo que escreveu e a página confere.
    Mesmas regras e mensagens do conferir.py (opção de terminal). Regras: campos, planos, cada_plano, duracao, termos.
    Tudo no navegador: nada é enviado. Rascunho guardado em localStorage "<data-curso>:conf:<id>:txt"; a última
    conferência certa em "<data-curso>:conf:<id>" ({ok, data}). Todo texto vem do JSON (ui do curso e da seção). */
@@ -38,6 +38,30 @@
     return out.map(function (o) { return Object.keys(o).length; }).map(function (n, i) { return { n: n, fams: out[i] }; });
   }
 
+  // 7.11.14: grupo-rótulo com "min" ("som:") só conta com >= min letras depois dele, até o próximo |
+  function preenchido(linha, g) {
+    var ln = norm(linha);
+    return familias(g).some(function (fam) {
+      return fam.some(function (termo) {
+        var re = new RegExp("(?<![a-z0-9])" + escRe(termo) + "(?![a-z0-9])", "g"), m;
+        while ((m = re.exec(ln))) {
+          if (ln.slice(m.index + m[0].length).split("|")[0].replace(/[^a-z0-9]/g, "").length >= g.min) return true;
+          if (!m[0].length) re.lastIndex++;
+        }
+        return false;
+      });
+    });
+  }
+  // 7.11.14: a coluna que é só a duração ("4 s") vale primeiro; senão, a primeira menção "N s" da linha
+  function duracaoDoPlano(linha) {
+    var cols = norm(linha).split("|").slice(1);
+    for (var k = 0; k < cols.length; k++) {
+      var m = /^\s*(\d+(?:[.,]\d+)?)\s*(?:s|seg|segundos?|seconds?|sec)\s*$/.exec(cols[k]);
+      if (m) return m;
+    }
+    return DURACAO.exec(norm(linha));
+  }
+
   function conferir(texto, D) {
     var T = D.txt, linhas = String(texto || "").split(/\r?\n/);
     if (!linhas.join("").trim()) return { ok: false, msg: T.conf_vazio, faltas: [] };
@@ -59,7 +83,7 @@
           var ach = achados(l, gs);
           gs.forEach(function (g, gi) {
             Object.keys(ach[gi].fams).forEach(function (f) { uso[gi][f] = 1; });
-            if (!ach[gi].n) faltas.push(fmt(T.conf_no_plano, { i: i + 1, g: g.rot }));
+            if (!ach[gi].n || (g.min && !preenchido(l, g))) faltas.push(fmt(T.conf_no_plano, { i: i + 1, g: g.rot }));
             else if (g.um_so && ach[gi].n > 1) faltas.push(fmt(T.conf_um_so, { i: i + 1, n: ach[gi].n, g: g.rot }));
           });
         });
@@ -70,7 +94,7 @@
       } else if (r.tipo === "duracao") {
         segs = 0;
         planos.forEach(function (l, i) {
-          var m = DURACAO.exec(norm(l));
+          var m = duracaoDoPlano(l);
           if (!m) { faltas.push(fmt(T.conf_sem_duracao, { i: i + 1 })); return; }
           segs += parseFloat(m[1].replace(",", "."));
         });

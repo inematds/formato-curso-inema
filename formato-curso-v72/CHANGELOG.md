@@ -94,3 +94,6 @@
 
 ## 7.10.14 — 19/10/2026
 - `motor/assets/v71.css`: opção do teste (`.q-op`) quebra palavra longa (`overflow-wrap:anywhere`, `min-width:0`) e a grade `.q-ops` passa a `minmax(0,1fr)`. Uma opção com nome de API inteiro (`document.modelContext.unregisterTool(nome).`) esticava o botão para 418 px e a aula transbordava no celular de 390 px; o texto não quebrava porque o nó de texto é item flex com `min-width:auto`. Conferido com a mesma opção depois da correção: `conferir-tela.cjs` OK. `VERSAO` 7.10.14. Achado no piloto `formacao-webmcp-site-v72` (Formação WebMCP, curso 2, aula 4).
+
+## 7.11.14 — 19/10/2026
+- Conferidor: grupo de `cada_plano` aceita `min` — rótulo como `som:` ou `efeito:` só conta com pelo menos N letras depois dele, até o próximo `|` (antes, `som:` vazio passava). A duração do plano passa a ser lida primeiro na coluna que é só `N s`; "2 s de silêncio" na descrição deixa de ser somado no lugar dela. Mesma mudança em `conferir.py` e `assets/v72-conferidor.js`. Achado pelo revisor independente do `formacao-cinema-ia-direcao-v72`.

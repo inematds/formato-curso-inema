@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Conferidor de texto do INEMA Learning 7.9.12 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
+"""Conferidor de texto do INEMA Learning 7.11.14 — as MESMAS regras do assets/v72-conferidor.js (seção "conferidor").
 
 O aluno escreve um arquivo (ficha, cartão, decupagem) e a página confere. Este script é a opção para quem tem
 terminal: confere o mesmo arquivo, com as regras escritas no JSON da aula.
@@ -13,9 +13,10 @@ terminal: confere o mesmo arquivo, com as regras escritas no JSON da aula.
 Sai 0 quando passa ("OK: ...") e 1 quando falta algo. Regras (lista "regras" da seção):
   campos      {campos: [rótulos], min}       cada rótulo numa linha "Rótulo: texto" com pelo menos <min> letras
   planos      {min, max}                     linhas que começam por número ("1 | ...", "2. ...") = planos
-  cada_plano  {grupos: [{rot, termos, um_so?, variar?}]}
+  cada_plano  {grupos: [{rot, termos, um_so?, variar?, min?}]}
               cada plano tem um termo de cada grupo; "a / b / c" num termo = sinônimos (contam como um);
-              um_so: no máximo uma família por plano; variar: N famílias diferentes no conjunto
+              um_so: no máximo uma família por plano; variar: N famílias diferentes no conjunto;
+              min: rótulo ("som:") só vale com >= min letras depois dele, até o próximo |
   duracao     {min, max}                     cada plano tem "N s"; a soma fica entre min e max
   termos      {grupos: [{rot, termos}]}      o texto todo cita um termo de cada grupo
 """
@@ -69,6 +70,27 @@ def achados(linha, grupos):
     return out
 
 
+def preenchido(linha, grupo):
+    """7.11.14: grupo-rótulo com "min" (ex.: "som:") só conta se depois do rótulo, até o próximo |, houver >= min letras."""
+    ln = norm(linha)
+    for fam in familias(grupo):
+        for termo in fam:
+            for m in re.finditer(r"(?<![a-z0-9])" + re.escape(termo) + r"(?![a-z0-9])", ln):
+                resto = ln[m.end():].split("|")[0]
+                if len(re.sub(r"[^a-z0-9]", "", resto)) >= grupo["min"]:
+                    return True
+    return False
+
+
+def duracao_do_plano(linha):
+    """7.11.14: a coluna que é só a duração ("4 s") vale primeiro; se não houver, a primeira menção "N s" da linha."""
+    for col in norm(linha).split("|")[1:]:
+        m = re.fullmatch(r"\s*(\d+(?:[.,]\d+)?)\s*(?:s|seg|segundos?|seconds?|sec)\s*", col)
+        if m:
+            return m
+    return DURACAO.search(norm(linha))
+
+
 def num(v, lang):
     s = str(round(v, 1)).rstrip("0").rstrip(".") if v != int(v) else str(int(v))
     return s if lang == "en" else s.replace(".", ",")
@@ -110,7 +132,7 @@ def conferir(texto, sec, ui=None, lang="pt"):
                 ach = achados(l, gs)
                 for gi, g in enumerate(gs):
                     uso[gi] |= ach[gi]
-                    if not ach[gi]:
+                    if not ach[gi] or (g.get("min") and not preenchido(l, g)):
                         faltas.append(fmt(T["conf_no_plano"], i=i, g=g["rot"]))
                     elif g.get("um_so") and len(ach[gi]) > 1:
                         faltas.append(fmt(T["conf_um_so"], i=i, n=len(ach[gi]), g=g["rot"]))
@@ -120,7 +142,7 @@ def conferir(texto, sec, ui=None, lang="pt"):
         elif t == "duracao":
             segs = 0.0
             for i, l in enumerate(planos, 1):
-                m = DURACAO.search(norm(l))
+                m = duracao_do_plano(l)
                 if not m:
                     faltas.append(fmt(T["conf_sem_duracao"], i=i)); continue
                 segs += float(m.group(1).replace(",", "."))
