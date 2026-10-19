@@ -2,6 +2,7 @@
 /* Portão de tela do curso v7.2: serve a pasta por HTTP local (nunca file://), abre a página inicial e
    cada aula em 1366 e 390 px e confere: sem transbordo horizontal, diagrama responde ao clique,
    quiz mostra a resposta, botão copiar existe, simconversa vai do início ao placar e recomeça (7.5.1),
+   conferidor aceita o exemplo que passa e recusa o exemplo com erro (7.9.12),
    sem erro de JavaScript. Salva capturas (a simconversa ganha captura própria: <aula>-conversa-<W>.png).
    Uso: node conferir-tela.cjs <pasta-do-curso> [--saida <pasta>]   → sai 0 se tudo OK */
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -57,6 +58,20 @@ srv.listen(0, '127.0.0.1', async () => {
             await oculta.evaluate(el => el.remove());
             await (await cv.$('.conv-recomecar'))?.click(); await p.waitForTimeout(100);
             if (!(await cv.$('.conv-op'))) erros.push(`${nome} @${W}: simconversa não recomeçou`);
+          }
+          // 7.9.12: conferidor — o exemplo que passa responde com o prefixo do "ok" (classe ok) e o exemplo com erro falha
+          const confs = await p.$$('.confer');
+          for (let ci = 0; ci < confs.length; ci++) {
+            const cf = confs[ci], pref = await cf.getAttribute('data-ok-prefixo');
+            const roda = async (q) => { const b = await cf.$(`[data-cf-ex="${q}"]`); await b.scrollIntoViewIfNeeded(); await b.click(); await p.waitForTimeout(120);
+              return cf.$eval('.cf-res', el => [el.className, el.querySelector('.cf-msg')?.textContent || '', el.hidden]); };
+            const [c1, m1, h1] = await roda('errado');
+            if (h1 || !/\bfalha\b/.test(c1)) erros.push(`${nome} @${W}: conferidor aceitou o exemplo com erro`);
+            const [c2, m2, h2] = await roda('ok');
+            if (h2 || !/\bok\b/.test(c2) || !m2.startsWith(pref)) erros.push(`${nome} @${W}: conferidor recusou o exemplo que passa ("${m2.slice(0, 60)}")`);
+            const oculta = await p.addStyleTag({ content: '.topo,.skip{visibility:hidden!important}' });
+            await cf.screenshot({ path: path.join(saida, `${nome}-conferidor${ci ? ci + 1 : ''}-${W}.png`) });
+            await oculta.evaluate(el => el.remove());
           }
           const sw2 = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
           if (sw2[0] > sw2[1]) erros.push(`${nome} @${W}: transbordo depois de interagir (${sw2[0]} > ${sw2[1]})`);

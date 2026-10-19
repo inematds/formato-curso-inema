@@ -98,6 +98,28 @@ if len(qs) >= 8:
     if longa / len(qs) > 0.5:
         erros.append(f"teste: a certa é a opção mais longa em {longa} de {len(qs)} perguntas; deixe as erradas do mesmo tamanho")
 
+# 7.9.12: conferidor — o exemplo que passa tem de passar e o exemplo com erro tem de falhar, pelas regras da seção
+# (mesmo motor do assets/v72-conferidor.js, em conferir.py); o "ok" precisa começar igual ao que a página mostra
+_confs = [(j.stem, s) for j in sorted((RAIZ / "conteudo" / args.lang / "aulas").glob("*.json"))
+          for s in json.loads(j.read_text()).get("secoes", []) if s.get("tipo") == "conferidor"]
+if _confs:
+    try:
+        sys.path.insert(0, str(RAIZ)); import conferir as _cf
+    except ImportError:
+        erros.append("conferidor: falta conferir.py na raiz do curso (recopie o motor)"); _cf = None
+    if _cf:
+        _ui = json.loads((RAIZ / "conteudo" / args.lang / "curso.json").read_text()).get("ui", {})
+        _lg = {"pt": "pt", "en": "en", "es": "es"}.get(args.lang, "pt")
+        for nome, s in _confs:
+            for k in ("regras", "ok", "exemplo", "exemplo_errado"):
+                if not s.get(k): erros.append(f"{nome}: conferidor sem '{k}'")
+            if not s.get("regras") or not s.get("exemplo"): continue
+            ok, msg, faltas = _cf.conferir(s["exemplo"], s, _ui, _lg)
+            if not ok: erros.append(f"{nome}: conferidor — o exemplo que passa falhou: {'; '.join(faltas[:3])}")
+            ok2, _, _ = _cf.conferir(s.get("exemplo_errado", ""), s, _ui, _lg)
+            if ok2: erros.append(f"{nome}: conferidor — o exemplo com erro passou")
+            if _cf.conferir("", s, _ui, _lg)[0]: erros.append(f"{nome}: conferidor aceita texto vazio")
+
 # a capa da página inicial e a foto de cada aula são obrigatórias (o gerador usa sem conferir)
 for img in ["assets/img/hero/inicio.jpg", *[f"assets/img/hero/{p.parent.name}.jpg" for p in aulas]]:
     if not (RAIZ / img).exists(): erros.append(f"imagem ausente: {img}")

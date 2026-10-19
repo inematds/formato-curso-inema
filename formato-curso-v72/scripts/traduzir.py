@@ -24,7 +24,19 @@ UI_PADRAO = {"aula": "Aula", "comecar": "Começar a aula", "nesta_vai": "Nesta a
              "conv_dica": "Escolha a sua resposta. O comentário aparece logo depois e a conversa segue conforme a escolha.",
              "conv_voce": "Você", "conv_escolha": "Sua resposta", "conv_boa": "Boa escolha", "conv_meio": "Dá para melhorar",
              "conv_ruim": "Escolha fraca", "conv_fim": "Fim da conversa", "conv_placar": "Você fez {p} de {m} pontos possíveis.",
-             "conv_licao": "Lição:", "conv_recomecar": "Recomeçar a conversa", "conv_feita": "Seu melhor placar: {p} de {m} pontos."}
+             "conv_licao": "Lição:", "conv_recomecar": "Recomeçar a conversa", "conv_feita": "Seu melhor placar: {p} de {m} pontos.",
+             # 7.9.12: conferidor (mesmos padrões de CONF_UI no gerar.py e UI no conferir.py)
+             "conf_vazio": "Cole o texto ou carregue o arquivo antes de conferir.",
+             "conf_falta": "Ainda não. O que falta:",
+             "conf_campo": "Falta a linha {c}: com a descrição (pelo menos {x} letras).",
+             "conf_planos": "Achei {n} planos numerados; o pedido é de {x} a {y}. Comece cada plano pelo número (1 | ...).",
+             "conf_no_plano": "Plano {i}: falta {g}.", "conf_um_so": "Plano {i}: {n} escolhas de {g}; fique com uma só.",
+             "conf_variedade": "Só {n} tipo(s) diferente(s) de {g} nos planos; varie para pelo menos {x}.",
+             "conf_sem_duracao": "Plano {i}: falta a duração em segundos (ex.: 4 s).",
+             "conf_duracao": "Os planos somam {s} s; o pedido é de {x} a {y} s.", "conf_termo": "Falta citar {g}.",
+             "conf_mais": "… e mais {n}.", "conf_rot": "Cole aqui o seu arquivo (ou carregue o .txt):",
+             "conf_conferir": "Conferir", "conf_exemplo": "Exemplo que passa", "conf_errado": "Exemplo com erro",
+             "conf_carregar": "Carregar .txt", "conf_baixar": "Baixar o arquivo", "conf_limpar": "Limpar"}
 # padrões do gerar.py: entram no ui para serem traduzidos
 CODIGO = {"conteudo"}            # blocos com botão copiar: comandos ficam, prosa/prompt traduz
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America, neutral, use 'tú')"}

@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.6.7"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.9.12"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -273,6 +273,46 @@ def sec_simconversa(s, ui, conv_id):
             f'<script type="application/json" class="conv-dados">{dados}</script></div>')
 
 
+CONF_UI = {  # 7.9.12: textos do conferidor; ficam em curso.json → ui (mesmos padrões de UI em conferir.py)
+    "conf_vazio": "Cole o texto ou carregue o arquivo antes de conferir.",
+    "conf_falta": "Ainda não. O que falta:",
+    "conf_campo": "Falta a linha {c}: com a descrição (pelo menos {x} letras).",
+    "conf_planos": "Achei {n} planos numerados; o pedido é de {x} a {y}. Comece cada plano pelo número (1 | ...).",
+    "conf_no_plano": "Plano {i}: falta {g}.",
+    "conf_um_so": "Plano {i}: {n} escolhas de {g}; fique com uma só.",
+    "conf_variedade": "Só {n} tipo(s) diferente(s) de {g} nos planos; varie para pelo menos {x}.",
+    "conf_sem_duracao": "Plano {i}: falta a duração em segundos (ex.: 4 s).",
+    "conf_duracao": "Os planos somam {s} s; o pedido é de {x} a {y} s.",
+    "conf_termo": "Falta citar {g}.",
+    "conf_mais": "… e mais {n}.",
+    "conf_rot": "Cole aqui o seu arquivo (ou carregue o .txt):",
+    "conf_conferir": "Conferir", "conf_exemplo": "Exemplo que passa", "conf_errado": "Exemplo com erro",
+    "conf_carregar": "Carregar .txt", "conf_baixar": "Baixar o arquivo", "conf_limpar": "Limpar",
+}
+
+
+def sec_conferidor(s, ui, conf_id):
+    """7.9.12: o aluno cola (ou carrega) o arquivo que escreveu e a página confere pelas regras da seção
+    (campos, planos, cada_plano, duracao, termos). "pronto quando" cita a resposta literal ("OK: ...").
+    Comportamento em assets/v72-conferidor.js; o mesmo motor em Python no conferir.py (opção de terminal)."""
+    txt = {k: ui.get(k, v) for k, v in CONF_UI.items()}
+    dados = json.dumps({"regras": s["regras"], "ok": s["ok"], "exemplo": s["exemplo"], "exemplo_errado": s["exemplo_errado"],
+                        "arquivo": s.get("arquivo", "arquivo.txt"), "txt": txt}, ensure_ascii=False).replace("</", "<\\/")
+    tid = f"cf-{conf_id}"
+    return (f'<div class="confer" data-conf="{attr(conf_id)}" data-ok-prefixo="{attr(re.split(r"[{:]", s["ok"])[0])}">'
+            f'<div class="cf-cab"><span class="cf-arquivo">{ic("arquivo")}{esc(s.get("arquivo", "arquivo.txt"))}</span>'
+            f'<span class="cf-exs"><button type="button" class="btn neutro" data-cf-ex="ok">{ic("check")}{txt["conf_exemplo"]}</button>'
+            f'<button type="button" class="btn neutro" data-cf-ex="errado">{ic("x")}{txt["conf_errado"]}</button></span></div>'
+            f'<label class="cf-rot" for="{tid}">{s.get("rot", txt["conf_rot"])}</label>'
+            f'<textarea id="{tid}" spellcheck="false" autocomplete="off" rows="10" placeholder="{attr(s.get("modelo", ""))}"></textarea>'
+            f'<div class="cf-acoes"><button type="button" class="btn cheio cf-ir">{ic("check")}{txt["conf_conferir"]}</button>'
+            f'<label class="btn neutro cf-arq-rot">{ic("carregar")}{txt["conf_carregar"]}<input type="file" class="sr cf-arq" accept=".txt,.md,text/plain"/></label>'
+            f'<button type="button" class="btn neutro cf-baixar">{ic("baixar")}{txt["conf_baixar"]}</button>'
+            f'<button type="button" class="btn neutro cf-limpar">{txt["conf_limpar"]}</button></div>'
+            f'<div class="cf-res" aria-live="polite" hidden></div>'
+            f'<script type="application/json" class="cf-dados">{dados}</script></div>')
+
+
 def sec_quiz(s, ui, refs):
     """refs: tipo de seção → (id, título), para o link "rever o conceito" de cada pergunta."""
     itens = []
@@ -474,6 +514,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         elif t == "video": corpo = sec_video(s, ui, curso, prefixo)
         elif t == "simfila": corpo = sec_simfila(s, ui)
         elif t == "simconversa": corpo = sec_simconversa(s, ui, f'{a["slug"]}-s{num}')
+        elif t == "conferidor": corpo = sec_conferidor(s, ui, f'{a["slug"]}-s{num}')
         elif t == "quiz": corpo = sec_quiz(s, ui, refs)
         elif t == "gerador": corpo = sec_gerador(s, ui, aulas)
         elif t == "texto": corpo = sec_texto(s, ui)
@@ -501,8 +542,9 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
     titulo = f'{a["titulo"]} · {curso["nome"]} · INEMA'
     # 7.5.1: arquivos de tipos opcionais entram só na aula que usa o tipo (curso antigo não precisa deles)
     tipos = {x["tipo"] for x in a["secoes"]}
-    css_extra = ["v72-conversa.css"] if "simconversa" in tipos else []
-    js_extra = "".join(f'<script src="{ativo(prefixo)}assets/{j}"></script>' for j in (["v72-conversa.js"] if "simconversa" in tipos else []))
+    css_extra = (["v72-conversa.css"] if "simconversa" in tipos else []) + (["v72-conferidor.css"] if "conferidor" in tipos else [])
+    js_extra = "".join(f'<script src="{ativo(prefixo)}assets/{j}"></script>' for j in
+                       (["v72-conversa.js"] if "simconversa" in tipos else []) + (["v72-conferidor.js"] if "conferidor" in tipos else []))
     return (cabeca(titulo, a["lead"], prefixo, lang, canon, id_curso(curso), f'aulas/{a["slug"]}/', css_extra)
             + f'<body data-curso="{id_curso(curso)}" data-aula="{a["slug"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">'
             + topo(curso, aulas, ui, prefixo, a["slug"])

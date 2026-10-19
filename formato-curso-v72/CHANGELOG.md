@@ -79,3 +79,9 @@
 
 ## 7.8.12 — 19/10/2026
 - `motor/gerar.py`: cartão de `inicio.cursos` com `href_idioma: true` não acrescenta `<lang>/` quando o href já termina em `/<lang>/` (o `traduzir.py` 7.8.11 já reescreve o link do curso irmão em `conteudo/<lang>/`; antes saía `…-v72/en/en/` → 404). Achado no loop-r-eng-aprende-v72.
+
+## 7.9.12 — 19/10/2026
+- Tipo novo **`conferidor`** (cursos sem terminal): o aluno cola ou carrega o arquivo de texto que escreveu (cartão, ficha, decupagem) e a própria página confere pelas regras do JSON — `campos`, `planos`, `cada_plano` (grupos de termos com sinônimos `a / b`, `um_so`, `variar`), `duracao`, `termos` — e responde `OK: …` ou a lista do que falta. Botões "Exemplo que passa" e "Exemplo com erro" (ensaio sem custo), carregar `.txt`, baixar o arquivo e rascunho guardado no navegador. `sec_conferidor` no `gerar.py` + `assets/v72-conferidor.js|css` (só nas aulas que usam o tipo); textos `conf_*` no `ui` (padrões em `CONF_UI`; o `traduzir.py` traduz).
+- Novo `motor/conferir.py` (copiado para a raiz do curso pelo `novo-curso.sh`): o mesmo motor em Python — opção de terminal para o aluno (`python3 conferir.py <aula> arquivo.txt`, sai 0 quando passa) e base do `validar.py`, que agora exige em cada conferidor: exemplo passa, exemplo com erro falha, texto vazio falha.
+- `conferir-tela.cjs`: clica nos dois exemplos de cada conferidor (o certo tem de responder com o prefixo do `ok`, o errado tem de falhar) e captura `<aula>-conferidor-<W>.png`.
+- `gerar.py`: `VERSAO` passa a 7.9.12 (estava parada em 7.6.7). Piloto: `formacao-cinema-ia-direcao-v72` (Formação Cinema com IA, curso 0).

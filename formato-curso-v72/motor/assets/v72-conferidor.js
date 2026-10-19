@@ -1,0 +1,131 @@
+/* INEMA Learning 7.9.12 — conferidor: o aluno cola (ou carrega) o arquivo que escreveu e a página confere.
+   Mesmas regras e mensagens do conferir.py (opção de terminal). Regras: campos, planos, cada_plano, duracao, termos.
+   Tudo no navegador: nada é enviado. Rascunho guardado em localStorage "<data-curso>:conf:<id>:txt"; a última
+   conferência certa em "<data-curso>:conf:<id>" ({ok, data}). Todo texto vem do JSON (ui do curso e da seção). */
+(function () {
+  var CURSO = document.body.getAttribute("data-curso") || "curso";
+  var LANG = (document.documentElement.getAttribute("lang") || "pt").slice(0, 2);
+  function ler(k) { try { return localStorage.getItem(CURSO + ":" + k); } catch (e) { return null; } }
+  function gravar(k, v) { try { localStorage.setItem(CURSO + ":" + k, v); } catch (e) {} }
+  var PLANO = /^\s*\d{1,2}\s*[|.)\-–—]/;
+  var DURACAO = /(\d+(?:[.,]\d+)?)\s*(?:s|seg|segundos?|seconds?|sec)\b/;
+  function norm(t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function fmt(t, k) { t = String(t); Object.keys(k).forEach(function (a) { t = t.split("{" + a + "}").join(String(k[a])); }); return t; }
+  function num(v) { var s = (v === Math.round(v)) ? String(v) : String(Math.round(v * 10) / 10); return LANG === "en" ? s : s.replace(".", ","); }
+  function familias(g) {
+    return (g.termos || []).map(function (fam) {
+      return fam.split("/").map(function (x) { return norm(x).trim(); }).filter(function (x) { return x; });
+    });
+  }
+  // para cada grupo, as famílias citadas na linha; termo dentro de termo maior (de qualquer grupo) não conta
+  function achados(linha, grupos) {
+    var ln = norm(linha), cand = [];
+    grupos.forEach(function (g, gi) {
+      familias(g).forEach(function (fam, fi) {
+        fam.forEach(function (termo) {
+          var re = new RegExp("(?<![a-z0-9])" + escRe(termo) + "(?![a-z0-9])", "g"), m;
+          while ((m = re.exec(ln))) { cand.push([m.index, m.index + m[0].length, gi, fi]); if (!m[0].length) re.lastIndex++; }
+        });
+      });
+    });
+    cand.sort(function (a, b) { return (b[1] - b[0]) - (a[1] - a[0]); });
+    var aceitos = [], out = grupos.map(function () { return {}; });
+    cand.forEach(function (c) {
+      if (aceitos.some(function (a) { return c[0] < a[1] && a[0] < c[1]; })) return;
+      aceitos.push(c); out[c[2]][c[3]] = 1;
+    });
+    return out.map(function (o) { return Object.keys(o).length; }).map(function (n, i) { return { n: n, fams: out[i] }; });
+  }
+
+  function conferir(texto, D) {
+    var T = D.txt, linhas = String(texto || "").split(/\r?\n/);
+    if (!linhas.join("").trim()) return { ok: false, msg: T.conf_vazio, faltas: [] };
+    var faltas = [], planos = linhas.filter(function (l) { return PLANO.test(l); }), segs = 0;
+    (D.regras || []).forEach(function (r) {
+      if (r.tipo === "campos") {
+        var mn = r.min == null ? 3 : r.min;
+        r.campos.forEach(function (c) {
+          var pad = new RegExp("^\\s*[-*•]?\\s*" + escRe(norm(c)) + "\\s*:\\s*(.*)$");
+          var ok = linhas.some(function (l) { var m = pad.exec(norm(l)); return m && m[1].replace(/[^a-z0-9]/g, "").length >= mn; });
+          if (!ok) faltas.push(fmt(T.conf_campo, { c: c, x: mn }));
+        });
+      } else if (r.tipo === "planos") {
+        var mi = r.min == null ? 1 : r.min, ma = r.max == null ? 99 : r.max;
+        if (planos.length < mi || planos.length > ma) faltas.push(fmt(T.conf_planos, { n: planos.length, x: mi, y: ma }));
+      } else if (r.tipo === "cada_plano") {
+        var gs = r.grupos, uso = gs.map(function () { return {}; });
+        planos.forEach(function (l, i) {
+          var ach = achados(l, gs);
+          gs.forEach(function (g, gi) {
+            Object.keys(ach[gi].fams).forEach(function (f) { uso[gi][f] = 1; });
+            if (!ach[gi].n) faltas.push(fmt(T.conf_no_plano, { i: i + 1, g: g.rot }));
+            else if (g.um_so && ach[gi].n > 1) faltas.push(fmt(T.conf_um_so, { i: i + 1, n: ach[gi].n, g: g.rot }));
+          });
+        });
+        gs.forEach(function (g, gi) {
+          var n = Object.keys(uso[gi]).length;
+          if (planos.length && g.variar && n < g.variar) faltas.push(fmt(T.conf_variedade, { n: n, g: g.rot, x: g.variar }));
+        });
+      } else if (r.tipo === "duracao") {
+        segs = 0;
+        planos.forEach(function (l, i) {
+          var m = DURACAO.exec(norm(l));
+          if (!m) { faltas.push(fmt(T.conf_sem_duracao, { i: i + 1 })); return; }
+          segs += parseFloat(m[1].replace(",", "."));
+        });
+        if (planos.length && (segs < r.min || segs > r.max)) faltas.push(fmt(T.conf_duracao, { s: num(segs), x: r.min, y: r.max }));
+      } else if (r.tipo === "termos") {
+        var tudo = linhas.join("\n");
+        r.grupos.forEach(function (g, gi) { if (!achados(tudo, r.grupos)[gi].n) faltas.push(fmt(T.conf_termo, { g: g.rot })); });
+      }
+    });
+    if (faltas.length) return { ok: false, msg: T.conf_falta, faltas: faltas };
+    var n = planos.length || (D.regras || []).reduce(function (s, r) { return s + (r.tipo === "campos" ? r.campos.length : 0); }, 0);
+    return { ok: true, msg: fmt(D.ok, { n: n, s: num(segs) }), faltas: [] };
+  }
+  window.INEMAConferir = conferir;  // para testes (conferir-tela.cjs)
+
+  document.querySelectorAll(".confer").forEach(function (box) {
+    var D; try { D = JSON.parse(box.querySelector(".cf-dados").textContent); } catch (e) { return; }
+    var id = box.getAttribute("data-conf"), ta = box.querySelector("textarea"), res = box.querySelector(".cf-res");
+    var rascunho = ler("conf:" + id + ":txt"); if (rascunho) ta.value = rascunho;
+    function mostra(r) {
+      res.hidden = false;
+      res.className = "cf-res " + (r.ok ? "ok" : "falha");
+      res.innerHTML = "";
+      var p = document.createElement("p"); p.className = "cf-msg"; p.textContent = r.msg; res.appendChild(p);
+      if (r.faltas.length) {
+        var ul = document.createElement("ul"), max = 8;
+        r.faltas.slice(0, max).forEach(function (f) { var li = document.createElement("li"); li.textContent = f; ul.appendChild(li); });
+        if (r.faltas.length > max) { var li = document.createElement("li"); li.textContent = fmt(D.txt.conf_mais, { n: r.faltas.length - max }); ul.appendChild(li); }
+        res.appendChild(ul);
+      }
+      if (r.ok) gravar("conf:" + id, JSON.stringify({ ok: true, data: new Date().toISOString() }));
+    }
+    function confere() { mostra(conferir(ta.value, D)); }
+    ta.addEventListener("input", function () { gravar("conf:" + id + ":txt", ta.value); });
+    box.querySelector(".cf-ir").addEventListener("click", confere);
+    box.querySelectorAll("[data-cf-ex]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        ta.value = b.getAttribute("data-cf-ex") === "ok" ? D.exemplo : D.exemplo_errado;
+        confere();
+      });
+    });
+    var lim = box.querySelector(".cf-limpar");
+    if (lim) lim.addEventListener("click", function () { ta.value = ""; gravar("conf:" + id + ":txt", ""); res.hidden = true; ta.focus(); });
+    var arq = box.querySelector(".cf-arq");
+    if (arq) arq.addEventListener("change", function () {
+      var f = arq.files && arq.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () { ta.value = String(rd.result || ""); gravar("conf:" + id + ":txt", ta.value); confere(); arq.value = ""; };
+      rd.readAsText(f);
+    });
+    var bx = box.querySelector(".cf-baixar");
+    if (bx) bx.addEventListener("click", function () {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([ta.value], { type: "text/plain;charset=utf-8" }));
+      a.download = D.arquivo || "arquivo.txt"; document.body.appendChild(a); a.click(); a.remove();
+    });
+  });
+})();

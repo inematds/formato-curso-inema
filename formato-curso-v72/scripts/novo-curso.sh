@@ -8,7 +8,7 @@ DEST="${1:?uso: novo-curso.sh <pasta> \"<nome>\"}"; NOME="${2:?falta o nome do c
 [ -e "$DEST/gerar.py" ] && { echo "já existe curso em $DEST — não sobrescrevo"; exit 1; }
 SLUG="$(basename "$DEST")"
 mkdir -p "$DEST/conteudo/pt/aulas" "$DEST/assets/img/hero" "$DEST/assets/vtt"
-cp "$SKILL"/motor/gerar.py "$SKILL"/motor/validar.py "$SKILL"/motor/.gitignore "$DEST/"
+cp "$SKILL"/motor/gerar.py "$SKILL"/motor/validar.py "$SKILL"/motor/conferir.py "$SKILL"/motor/.gitignore "$DEST/"
 cp "$SKILL"/motor/assets/*.css "$SKILL"/motor/assets/*.js "$DEST/assets/"
 cp "$SKILL"/motor/assets/img/favicon.svg "$DEST/assets/img/"
 python3 - "$SKILL/modelo/conteudo/pt/curso.json" "$DEST/conteudo/pt/curso.json" "$SLUG" "$NOME" <<'EOF'

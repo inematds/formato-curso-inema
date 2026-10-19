@@ -1,0 +1,20 @@
+/* INEMA Learning 7.9.12 — conferidor (o aluno cola o arquivo e a página confere). Só variáveis do tema. */
+.confer{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:clamp(14px,2.2vw,24px);max-width:900px}
+.cf-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.cf-arquivo{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--mono);color:var(--txt);min-width:0;overflow-wrap:anywhere}
+.cf-arquivo .ico{width:18px;height:18px;flex:none}
+.cf-exs{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.cf-exs .btn{padding:7px 12px;font-size:13.5px}
+.cf-rot{display:block;margin:14px 0 8px;font-size:14.5px;color:var(--txt2)}
+.confer textarea{display:block;width:100%;box-sizing:border-box;min-height:220px;resize:vertical;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;background:var(--bg2);color:var(--txt);font:13.5px/1.6 var(--mono);white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4}
+.confer textarea:focus-visible{outline:2px solid var(--amb);outline-offset:2px}
+.cf-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.cf-arq-rot{cursor:pointer}
+.cf-res{margin-top:14px;padding:12px 16px;border-radius:10px;border:1px solid var(--line2);border-left-width:4px;background:var(--bg2)}
+.cf-res.ok{border-left-color:var(--ok)}
+.cf-res.falha{border-left-color:var(--bad)}
+.cf-msg{margin:0;font:700 15px var(--mono);color:var(--txt);overflow-wrap:anywhere}
+.cf-res.ok .cf-msg{color:var(--ok)}
+.cf-res ul{margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.5;color:var(--txt2)}
+.cf-res li{margin:2px 0;overflow-wrap:anywhere}
+@media (max-width:560px){.cf-exs{margin-left:0}.confer textarea{font-size:12.5px;min-height:200px}}
