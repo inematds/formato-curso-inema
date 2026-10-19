@@ -139,6 +139,9 @@ def por(no, caminho, valor):
 def problema(pt, tr, codigo):
     if not isinstance(tr, str) or not tr.strip():
         return "vazio"
+    # 7.6.9: texto longo devolvido igual ao PT, com palavra portuguesa, é tradução que não aconteceu
+    if tr.strip() == pt.strip() and len(pt) > 40 and re.search(r"\b(não|você|são|está|também|então|para o|para a)\b|ção\b|ções\b", pt):
+        return "igual ao original (não traduzido)"
     tags = lambda s: sorted(re.findall(r"</?([a-zA-Z][a-zA-Z0-9]*)", s))
     if not codigo and tags(pt) != tags(tr):   # em bloco de código, <seu nome> é marcador, não tag
         return "tags diferentes"

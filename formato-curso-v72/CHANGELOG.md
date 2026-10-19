@@ -58,3 +58,6 @@
 
 ## 7.6.8 — 19/10/2026
 - `scripts/novo-curso.sh`: cria o repositório git do curso já na branch `main` (`git init -b main`, só se ainda não houver `.git`). Com `git init` sem `-b`, o `gh repo create --source . --push` subia `master` e o `POST .../pages` com `source[branch]=main` respondia 422 ("The main branch must exist"); era preciso renomear, trocar a branch padrão e apagar a `master` remota. Achado no curso `gestao-ia-processos-v72` (Formação Gestão de IA 2027, G2). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.6.9 — 19/10/2026
+- `scripts/traduzir.py` (`problema`): tradução igual ao original, com mais de 40 caracteres e palavra portuguesa ("não", "você", "está", "-ção"…), passa a ser recusada ("igual ao original") e vai para a nova tentativa, em vez de entrar no cache e sair em PT no `en/`/`es/` com "0 textos sem tradução". Achado duas vezes no mesmo dia: no `formacao-inemaseo-medicao-v72` (frase cheia de citações no ES) e no G4 `gestao-ia-recursos-v72` (os 3 blocos de código da aula 3 voltaram em PT no EN). Nomes próprios e textos curtos idênticos continuam aceitos. Motor (`gerar.py`, `validar.py`, assets) sem mudança.
