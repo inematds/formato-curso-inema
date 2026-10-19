@@ -51,7 +51,10 @@ srv.listen(0, '127.0.0.1', async () => {
             else if (!fimOk) erros.push(`${nome} @${W}: simconversa não chegou ao placar/recomeçar`);
             const salvo = await p.evaluate(() => Object.keys(localStorage).some(k => k.includes(':conv:')));
             if (!salvo) erros.push(`${nome} @${W}: simconversa não gravou a conclusão`);
+            // captura maior que a tela desenha os fixos (.topo, .skip) por cima: esconde só durante a foto
+            const oculta = await p.addStyleTag({ content: '.topo,.skip{visibility:hidden!important}' });
             await cv.screenshot({ path: path.join(saida, `${nome}-conversa${ci ? ci + 1 : ''}-${W}.png`) });
+            await oculta.evaluate(el => el.remove());
             await (await cv.$('.conv-recomecar'))?.click(); await p.waitForTimeout(100);
             if (!(await cv.$('.conv-op'))) erros.push(`${nome} @${W}: simconversa não recomeçou`);
           }

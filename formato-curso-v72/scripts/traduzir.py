@@ -29,8 +29,9 @@ UI_PADRAO = {"aula": "Aula", "comecar": "Começar a aula", "nesta_vai": "Nesta a
 CODIGO = {"conteudo"}            # blocos com botão copiar: comandos ficam, prosa/prompt traduz
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America, neutral, use 'tú')"}
 HTMLLANG = {"en": "en", "es": "es"}
-CMD = re.compile(r"^\s*(git|cd|ls|dir|mkdir|python3?|pip3?|npm|npx|node|ssh|scp|curl|wget|gh|codex|claude|cp|mv|rm|cat|echo|"
-                 r"chmod|sudo|systemctl|crontab|export|set|type|copy|del|ollama|docker|uv|\./|\$|>|#!)", re.I)
+# 7.5.1: comando só vale como palavra inteira ("Deliver" não é o comando del; "Cat" de "Categoria" não é cat)
+CMD = re.compile(r"^\s*(?:(?:git|cd|ls|dir|mkdir|python3?|pip3?|npm|npx|node|ssh|scp|curl|wget|gh|codex|claude|cp|mv|rm|cat|echo|"
+                 r"chmod|sudo|systemctl|crontab|export|set|type|copy|del|ollama|docker|uv)(?=\s|$)|\./|\$|>|#!)", re.I)
 GLOSSARIO = {
     "en": {"Do chat ao agente": "From chat to agent", "degrau": "step", "pronto quando": "done when",
            "fila": "queue", "portão": "gate", "INEMA.CLUB": "INEMA.CLUB"},

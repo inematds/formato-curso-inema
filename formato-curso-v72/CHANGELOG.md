@@ -31,3 +31,5 @@
 - `conferir-tela.cjs`: percorre a simconversa até o placar, testa recomeçar e a gravação, e captura `<aula>-conversa-<W>.png`.
 - `traduzir.py`: pula `vai` e `nota`, pula `inicio` quando é id; ids com `_` contam como slug; `UI_PADRAO` ganha as chaves `conv_*`; tradução que perde marcador `{p}`/`{m}`/`{n}` é recusada.
 - Modelo: `ui` com as chaves `conv_*`. Novo `examples/aula-simconversa.json`. Regressão: `do-chat-ao-agente-v72` gera e valida em PT/EN/ES com o motor novo (só muda o meta generator).
+- `traduzir.py`: linha de comando dos blocos de código só conta com o comando como palavra inteira (antes "Deliver" casava com `del` e a tradução era recusada).
+- `conferir-tela.cjs`: esconde `.topo`/`.skip` só durante a captura da simconversa (a captura maior que a tela desenhava os elementos fixos por cima).
