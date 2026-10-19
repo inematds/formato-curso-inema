@@ -91,3 +91,6 @@
 
 ## 7.10.13 — 19/10/2026
 - `scripts/resolver-kit.py`: resolve os marcadores de todas as aulas na memória e só depois grava. Antes, um `kit/saidas/<nome>.txt` faltando na aula 2 parava o script com as aulas anteriores já trocadas no disco e as seguintes ainda com `@@…@@` (estado misto: para refazer era preciso restaurar só parte dos JSON). Agora a falta aborta sem gravar nada (saída 1). Achado no `formacao-webmcp-mcp-v72` (Formação WebMCP, curso 1: a captura do `git clone` só existe depois de publicar). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.10.14 — 19/10/2026
+- `motor/assets/v71.css`: opção do teste (`.q-op`) quebra palavra longa (`overflow-wrap:anywhere`, `min-width:0`) e a grade `.q-ops` passa a `minmax(0,1fr)`. Uma opção com nome de API inteiro (`document.modelContext.unregisterTool(nome).`) esticava o botão para 418 px e a aula transbordava no celular de 390 px; o texto não quebrava porque o nó de texto é item flex com `min-width:auto`. Conferido com a mesma opção depois da correção: `conferir-tela.cjs` OK. `VERSAO` 7.10.14. Achado no piloto `formacao-webmcp-site-v72` (Formação WebMCP, curso 2, aula 4).

@@ -225,8 +225,8 @@ h1{margin:0;font:800 clamp(30px,4vw,46px)/1.12 var(--sora);letter-spacing:-.02em
 .quiz{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px;align-items:start}
 .q-cont{font-size:13px;color:var(--mut);margin:0 0 4px}
 .q-p{margin:0 0 14px;font:700 18px/1.35 var(--sora)}
-.q-ops{display:grid;gap:8px}
-.q-op{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line2);background:var(--card);color:var(--txt2);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px;cursor:pointer}
+.q-ops{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.q-op{display:flex;gap:12px;align-items:center;text-align:left;min-width:0;overflow-wrap:anywhere;border:1px solid var(--line2);background:var(--card);color:var(--txt2);border-radius:10px;padding:10px 12px;font:inherit;font-size:15px;cursor:pointer}
 .q-op .l{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;font:700 13px var(--sora)}
 .q-op:hover:not([disabled]){border-color:var(--line3)}
 .q-op.certa{border-color:var(--ok);background:var(--ok-a);color:var(--txt)}
