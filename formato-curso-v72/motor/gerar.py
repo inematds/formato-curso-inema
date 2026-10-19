@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.5.4"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.5.5"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -145,7 +145,7 @@ def figura_rolagem(figura, passos, leg, ui, dica=True):
                   f'<h3>{p["titulo"]}</h3><p>{p["texto"]}</p></li>' for i, p in enumerate(passos))
     p0 = passos[0]
     nav = "".join(f'<button type="button" class="sc-ir" data-ir="{i}" title="{attr(re.sub("<[^>]+>", "", p["titulo"]))}">'
-                  f'<b>{i + 1}</b><span>{p.get("curto", p["titulo"])}</span></button>' for i, p in enumerate(passos))
+                  f'<b>{i + 1}</b><span>{re.sub(rf"^{i + 1}\s*·\s*", "", p.get("curto", p["titulo"]))}</span></button>' for i, p in enumerate(passos))
     cap = (f'<div class="sc-cap" aria-hidden="true"><span class="sc-n">1/{len(passos)}</span>'
            f'<h3>{p0["titulo"]}</h3><p>{p0["texto"]}</p></div>')
     return (f'<div class="scrolly dg-bloco"><div class="sc-fig"><div class="painel">{figura}'

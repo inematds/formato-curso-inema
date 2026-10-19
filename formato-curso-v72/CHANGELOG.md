@@ -42,3 +42,6 @@
 
 ## 7.5.4 — 19/10/2026
 - `gerar.py` + `v72.css`: campo opcional `inicio.cursos` — seção "Os N cursos completos" na página inicial, logo depois dos números, com cartão (capa 16:9, rótulo, título, resumo, "Abrir o curso") para cada curso da formação. `href_idioma: true` faz `en/` e `es/` apontarem para a versão traduzida do curso irmão; `img` aceita `-en`/`-es`. Classes próprias (`.ini-curso`), sem conflito com o progresso das aulas. Pedido do Nei na visão geral `do-chat-ao-agente-v72` ("e o link para os cursos"): antes os cursos completos só apareciam no fim de cada aula.
+
+## 7.5.5 — 19/10/2026
+- `gerar.py` (`figura_rolagem`): a aba da rolagem guiada tira o "N · " do começo do título quando ele repete o número da própria aba. Antes, nó com título "2 · Recebe" virava a aba "2 · 2 · Recebe" (o exemplo `aula-rolagem-guiada.json` numera os nós). Achado no piloto `gestao-ia-agentes-v72` (Formação Gestão de IA 2027, G3). Regressão: `do-chat-ao-agente-v72` gera igual, exceto o meta generator e as abas numeradas.
