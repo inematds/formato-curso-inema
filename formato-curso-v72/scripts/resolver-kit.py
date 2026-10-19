@@ -7,8 +7,9 @@ Escreva as aulas (conteudo/pt/aulas/*.json) com marcadores e resolva depois de c
   "html": "@@saida:a3-ensaio@@<p>…</p>"  → <pre> com kit/saidas/a3-ensaio.txt (ou .md), já escapado
 
   python3 resolver-kit.py <curso>            # troca os marcadores em lugar (guarde uma cópia antes)
-  python3 resolver-kit.py <curso> --conferir # sem marcadores: confere bloco "Terminal …" × kit/blocos/*.sh
-                                             # e "Arquivo · kit/X" × kit/X; saída 1 se divergir
+  python3 resolver-kit.py <curso> --conferir # sem marcadores: confere bloco "Terminal …" × kit/blocos/*.sh,
+                                             # "Arquivo · kit/X" × kit/X (igual) e "Trecho · kit/X" (contido em kit/X);
+                                             # saída 1 se divergir
 Criado no curso loop-r-eng-seguranca-v72 (19/10/2026).
 """
 import html
@@ -50,6 +51,10 @@ def conferir(aulas, k):
                 elif rot.startswith("Arquivo · kit/"):
                     arq = k / rot.split("Arquivo · kit/")[1].split(" ")[0]
                     ok = arq.exists() and arq.read_text(encoding="utf-8").rstrip("\n") == c
+                elif rot.startswith("Trecho · kit/"):
+                    # trecho de um arquivo do kit (ex.: o conserto de uma função): tem de existir igual dentro dele
+                    arq = k / rot.split("Trecho · kit/")[1].split(" ")[0]
+                    ok = arq.exists() and c in arq.read_text(encoding="utf-8")
                 else:
                     continue
                 total += 1

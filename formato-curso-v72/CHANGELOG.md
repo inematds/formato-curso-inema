@@ -111,3 +111,6 @@
 
 ## 7.12.16 — 19/10/2026
 - `scripts/traduzir.py`: as mensagens do modo vídeo do conferidor (`conf_video_*`) entram em `UI_PADRAO`, como as `conf_*` do 7.9.12: curso cujo `curso.json` não traz essas chaves no `ui` recebia o padrão PT do `gerar.py` em `en/` e `es/` ("Escolher o vídeo", "O vídeo tem … s"). Achado no `formacao-cinema-ia-producao-v72` antes de traduzir.
+
+## 7.13.15 — 19/10/2026
+- `scripts/resolver-kit.py --conferir`: bloco com rótulo `Trecho · kit/<arquivo>` passa a ser conferido — o conteúdo tem de existir igual dentro do arquivo do kit (antes só "Terminal" e "Arquivo · kit/" eram conferidos, e o trecho de conserto colado à mão podia divergir da solução testada). Uso: aula que mostra só a função consertada (`Trecho · kit/solucao/aula2/ferramentas.mjs`) em vez do arquivo inteiro. Piloto `formacao-webmcp-seguranca-v72` (Formação WebMCP, curso 4: 26 blocos + 2 trechos). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
