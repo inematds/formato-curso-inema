@@ -76,3 +76,6 @@
 
 ## 7.8.11 — 19/10/2026
 - `scripts/traduzir.py`: link para outro curso v7.x (`https://inematds.github.io/<repo>-v7N/…`) passa a levar à versão do mesmo idioma ao gravar `conteudo/<lang>/` (`…/<repo>-v72/en/`, `…/es/aulas/headless/`). O href continua igual dentro da tradução (a validação de links não muda); `assets/` e caminhos que já têm idioma ficam como estão. Antes, o aluno do EN/ES caía na raiz PT do curso irmão. O pedido de tradução também diz que placeholder `[…]` dentro de `<code>` é prosa e se traduz (`"[pedido]"` ficava em PT no EN/ES). Achado pela revisão da Formação LOOP-R Engenharia (cursos 1, 2 e 4). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.8.12 — 19/10/2026
+- `motor/gerar.py`: cartão de `inicio.cursos` com `href_idioma: true` não acrescenta `<lang>/` quando o href já termina em `/<lang>/` (o `traduzir.py` 7.8.11 já reescreve o link do curso irmão em `conteudo/<lang>/`; antes saía `…-v72/en/en/` → 404). Achado no loop-r-eng-aprende-v72.

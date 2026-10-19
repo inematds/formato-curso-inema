@@ -533,7 +533,10 @@ def pagina_inicio(curso, aulas, ui, lang):
     if p.get("cursos"):
         cs = p["cursos"]
         def href(c):
-            return c["href"] + (f"{LANG}/" if LANG != "pt" and c.get("href_idioma") else "")
+            # 7.8.12: idempotente — o traduzir.py 7.8.11 já grava <href><lang>/ em conteudo/<lang>/
+            if LANG == "pt" or not c.get("href_idioma") or c["href"].endswith(f"/{LANG}/"):
+                return c["href"]
+            return c["href"] + f"{LANG}/"
         cursos = (f'<section class="secao" id="cursos"><div class="sec-cab"><div><h2>{cs["titulo"]}</h2><p>{cs["sub"]}</p></div></div><ol class="ini-cursos">'
                   + "".join(f'<li><a class="ini-curso" href="{attr(href(c))}">'
                             f'<span class="ia-img"><img src="{ativo(prefixo)}{img_idioma(c["img"])}" alt="" loading="lazy" width="1400" height="788"/></span>'
