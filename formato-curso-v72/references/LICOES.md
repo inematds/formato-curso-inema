@@ -1,5 +1,7 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Pôster de vídeo tirado do próprio MP4 com ffmpeg: o PT abre com a capa do vídeo (6 s serve), mas o EN/ES começa direto na cena 1 com texto sendo digitado ("DELEGATION ca…"); tire o quadro do EN/ES lá pelos 30 s e olhe os seis pôsteres antes do portão. E diagrama de 6 nós no desktop: título de 3 palavras ("Cultura e avaliação") e sub de 4 palavras quebram em três linhas; use 1 palavra no título e "aulas 4, 7" no sub (19/10/2026, G1 gestao-ia-pessoas-v72).
+
 - Curso técnico com ensaio: escreva a pasta do ensaio no bloco como `E=${TMPDIR:-/tmp}/ensaio-<curso>/<aula>` e capture rodando o MESMO texto com `TMPDIR=<scratchpad>` (o aluno usa /tmp, a captura não suja /tmp e o bloco testado é idêntico ao copiável; compare `conteudo` × arquivo). Saída real de `claude -p` capturada na máquina do Nei traz linhas do CLAUDE.md global dele (ex.: "Terminei: …"): corte declarado na aba e "pronto quando" estrutural (`grep -c "^CONFIANÇA"`, `wc -l`), nunca o texto do modelo (19/10/2026, loop-r-eng-multiagente-v72).
 
 - Bloco de código que é modelo em prosa com muitos placeholders `<…>` (relatório, diagnóstico) pode voltar do `traduzir.py` meio traduzido no ES (só o glossário aplicado, frases em PT) sem o script acusar; e linha CSV com `[https://...]` como placeholder é recusada 3× ("URLs diferentes"). Leia os blocos-modelo traduzidos antes do portão e use placeholder sem URL ("[endereço do site]") (19/10/2026, formacao-inemaseo-profissional-v72).
