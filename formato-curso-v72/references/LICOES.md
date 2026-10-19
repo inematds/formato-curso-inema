@@ -1,5 +1,6 @@
 # Lições do formato v7.x (reprovações reais — vão para o CLAUDE.md de todo curso novo)
 
+- Diagrama com 8 nós (escada ou fluxo) no desktop dá uns 85 px por coluna: `sub` com mais de duas palavras quebra palavra por palavra e o diagrama fica ilegível. Use subs de 1–2 palavras curtas e ponha a explicação no `detalhe`; e não escreva "de cima/de baixo" no `sub` da seção, porque no desktop os nós ficam lado a lado (G0 gestao-ia-base-v72, 19/10/2026).
 - Repo do curso tem de nascer na branch `main` (o `novo-curso.sh` 7.6.8 já faz `git init -b main`): subindo como `master`, o Pages da raiz responde 422 "The main branch must exist" (19/10/2026, curso gestao-ia-processos-v72).
 - Depois do `traduzir.py`, procure no cache `i18n/<lang>.json` entradas com tradução igual ao original e palavra PT ("não", "você", "é"): frase cheia de citações entre aspas ("Do zero" vira "desde cero") voltou sem tradução no ES e o script não acusou. Corrija no JSON do idioma e no cache (19/10/2026, curso formacao-inemaseo-medicao-v72).
 
