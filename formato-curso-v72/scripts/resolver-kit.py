@@ -66,12 +66,17 @@ def main():
     curso = Path(sys.argv[1]); k = curso / "kit"; aulas = curso / "conteudo/pt/aulas"
     if "--conferir" in sys.argv:
         return conferir(aulas, k)
+    # Resolve tudo na memória antes de gravar: um kit/saidas/X.txt faltando na aula 5 não pode
+    # deixar as aulas 1–4 já trocadas e as outras com marcador (estado misto, difícil de refazer).
+    prontos = []
     for p in sorted(aulas.glob("*.json")):
         texto = p.read_text(encoding="utf-8")
         n = texto.count("@@") // 2
         if n:
-            p.write_text(json.dumps(troca(json.loads(texto), k), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-            print(f"{p.name}: {n} marcador(es)")
+            prontos.append((p, n, json.dumps(troca(json.loads(texto), k), ensure_ascii=False, indent=2) + "\n"))
+    for p, n, novo in prontos:
+        p.write_text(novo, encoding="utf-8")
+        print(f"{p.name}: {n} marcador(es)")
     return conferir(aulas, k)
 
 

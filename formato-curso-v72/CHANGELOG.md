@@ -88,3 +88,6 @@
 
 ## 7.10.12 — 19/10/2026
 - Vídeo vertical: `videos.<chave>.formato: "9:16"` põe a classe `vertical` no player (`sec_video`) e o `v71.css` desenha o vídeo em 9:16, até 360 px de largura e centrado, em vez de um short espremido no meio de uma caixa 16:9 (no celular de 390 px o short ficava com ~114 px de largura). Sem o campo, nada muda. Piloto: `formacao-webmcp-base-v72` (short WebMCP de 30 s, aula 1). `VERSAO` 7.10.12; ESQUEMA.md documenta o campo.
+
+## 7.10.13 — 19/10/2026
+- `scripts/resolver-kit.py`: resolve os marcadores de todas as aulas na memória e só depois grava. Antes, um `kit/saidas/<nome>.txt` faltando na aula 2 parava o script com as aulas anteriores já trocadas no disco e as seguintes ainda com `@@…@@` (estado misto: para refazer era preciso restaurar só parte dos JSON). Agora a falta aborta sem gravar nada (saída 1). Achado no `formacao-webmcp-mcp-v72` (Formação WebMCP, curso 1: a captura do `git clone` só existe depois de publicar). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
