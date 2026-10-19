@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Traduz um curso v7.2 (conteudo/pt → conteudo/en e conteudo/es) pela ASSINATURA: Sonnet 5.5 (`claude -p`, padrão
-desde 19/10/2026) ou Codex (`--motor codex`). Nunca API.
+"""Traduz um curso v7.2 (conteudo/pt → conteudo/en e conteudo/es) pela ASSINATURA, pelo tradutor central do INEMA
+(`inema-traduz`; motor/modelo em INEMA_TRADUCAO_MOTOR/MODELO, ambiente → ~/.config/inema/modelos.env; hoje Sonnet 5.5).
+`--motor`/`--modelo` só sobrescrevem quando passados. Nunca API.
 
     python3 traduzir.py <pasta-do-curso> [en es] [--motor claude|codex] [--modelo ...] [--publico "..."]
 
@@ -8,7 +9,7 @@ Só os TEXTOS do JSON vão para o modelo: chaves, slugs, ícones, URLs, ids e n�
 Cada texto é validado (mesmas tags HTML, mesmos links, linhas de comando idênticas, nada vazio);
 o que falhar volta até 3 vezes; depois o script para e diz qual. Cache em <curso>/i18n/<lang>.json
 (texto PT → tradução): texto já traduzido nunca é reenviado. Glossário opcional: <curso>/i18n/glossario.json
-{"en": {"pt": "en"}, "es": {...}}. Nunca usa API: só `codex exec`.
+{"en": {"pt": "en"}, "es": {...}}. Nunca usa API: só os CLIs da assinatura (`claude -p` / `codex exec`).
 """
 import argparse, json, os, pathlib, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -46,30 +47,58 @@ Return ONLY a JSON object with the same keys and the translated strings as value
 
 
 PUBLICO_PADRAO = "adults learning to work with AI agents (terminal, Git, Telegram bots, queues, social media)"
-MODELO_PADRAO = {"claude": "claude-sonnet-5-5", "codex": "gpt-6-luna"}
+_TRADUTOR = os.path.expanduser("~/projetos/wifi/scripts/inema-traduz")
 
 
-def via_claude(pedido, modelo):
-    """Claude Code da assinatura em modo texto, sem ferramentas. Recusa rodar com ANTHROPIC_API_KEY no ambiente."""
-    env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "CLAUDECODE")}
+def padrao_traducao():
+    """(motor, modelo) de INEMA_TRADUCAO_MOTOR/MODELO: ambiente → ~/.config/inema/modelos.env → claude/Sonnet 5.5."""
+    arq = {}
+    f = pathlib.Path.home() / ".config/inema/modelos.env"
+    if f.exists():
+        for linha in f.read_text(encoding="utf-8").splitlines():
+            m = re.match(r"\s*(INEMA_TRADUCAO_\w+)\s*=\s*([^#\s]*)", linha)
+            if m:
+                arq[m.group(1)] = m.group(2).strip("'\"")
+    motor = os.environ.get("INEMA_TRADUCAO_MOTOR") or arq.get("INEMA_TRADUCAO_MOTOR") or "claude"
+    modelo = os.environ.get("INEMA_TRADUCAO_MODELO") or arq.get("INEMA_TRADUCAO_MODELO") or ""
+    if motor == "claude" and not modelo.startswith("claude-"):
+        modelo = "claude-sonnet-5-5"
+    elif motor == "codex" and (not modelo or modelo.startswith("claude-")):
+        modelo = "gpt-6-luna"
+    return motor, modelo
+
+
+def chamar_tradutor(pedido, motor=None, modelo=None, timeout=900):
+    """Tradução pelo tradutor central do INEMA (INEMA_TRADUCAO_* em ~/.config/inema/modelos.env). Assinatura, nunca API.
+    motor/modelo só quando o usuário forçou (--motor/--modelo); senão vale a variável central."""
+    env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "CLAUDECODE")}
     with tempfile.TemporaryDirectory() as d:
-        r = subprocess.run(["claude", "-p", "--model", modelo, "--output-format", "text", "--tools", ""],
-                           input=pedido, capture_output=True, text=True, timeout=900, cwd=d, env=env)
-    if r.returncode:
-        raise RuntimeError(f"claude -p rc={r.returncode}: {(r.stderr or r.stdout)[-300:]}")
-    txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", r.stdout.strip())
-    return json.loads(txt[txt.index("{"):txt.rindex("}") + 1])
+        if os.path.exists(_TRADUTOR):
+            cmd = [_TRADUTOR] + (["--motor", motor] if motor else []) + (["--modelo", modelo] if modelo else [])
+            r = subprocess.run(cmd, input=pedido, capture_output=True, text=True, timeout=timeout, cwd=d, env=env)
+            txt = r.stdout
+        else:  # fora da máquina do Nei: CLI da assinatura com o motor/modelo da variável (padrão Sonnet 5.5)
+            m_pad, mod_pad = padrao_traducao()
+            motor = motor or m_pad
+            modelo = modelo or (mod_pad if motor == m_pad else {"claude": "claude-sonnet-5-5", "codex": "gpt-6-luna"}[motor])
+            if motor == "claude":
+                r = subprocess.run(["claude", "-p", "--model", modelo, "--output-format", "text", "--tools", ""],
+                                   input=pedido, capture_output=True, text=True, timeout=timeout, cwd=d, env=env)
+                txt = r.stdout
+            else:
+                out = os.path.join(d, "out.txt")
+                r = subprocess.run(["codex", "exec", "-m", modelo, "--skip-git-repo-check", "--ephemeral", "--sandbox",
+                                    "read-only", "-C", d, "-o", out, "-"], input=pedido, capture_output=True, text=True,
+                                   timeout=timeout, env=env)
+                txt = open(out, encoding="utf-8").read() if os.path.exists(out) else ""
+    if r.returncode != 0 or not txt.strip():
+        raise RuntimeError(f"tradutor falhou rc={r.returncode}: {(r.stderr or r.stdout)[-300:]}")
+    return txt
 
 
-def via_codex(pedido, modelo):
-    with tempfile.TemporaryDirectory() as d:
-        out = os.path.join(d, "out.txt")
-        r = subprocess.run(["codex", "exec", "-m", modelo, "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
-                            "-C", d, "-o", out, "-"], input=pedido, capture_output=True, text=True, timeout=900)
-        if r.returncode or not os.path.exists(out):
-            raise RuntimeError(f"codex exec rc={r.returncode}: {r.stderr[-300:]}")
-        txt = open(out, encoding="utf-8").read().strip()
-    txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", txt)
+def via_tradutor(pedido, motor=None, modelo=None):
+    """Chama o tradutor central e devolve o JSON da resposta."""
+    txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", chamar_tradutor(pedido, motor, modelo).strip())
     return json.loads(txt[txt.index("{"):txt.rindex("}") + 1])
 
 
@@ -116,17 +145,16 @@ def problema(pt, tr, codigo):
     return None
 
 
-def traduz_lote(itens, lang, modelo, glos, motor="claude", publico=PUBLICO_PADRAO):
+def traduz_lote(itens, lang, modelo, glos, motor=None, publico=PUBLICO_PADRAO):
     """itens: {chave: texto_pt}. Devolve {chave: tradução válida}; tenta de novo só os inválidos."""
     sistema = SISTEMA.format(nome=NOMES[lang], tu="you" if lang == "en" else "tú",
                              glossario=json.dumps(glos, ensure_ascii=False), publico=publico)
-    chama = via_claude if motor == "claude" else via_codex
     ok, pend = {}, dict(itens)
     for tentativa in range(3):
         if not pend:
             break
         try:
-            r = chama(sistema + "\n\nINPUT JSON:\n" + json.dumps(pend, ensure_ascii=False), modelo)
+            r = via_tradutor(sistema + "\n\nINPUT JSON:\n" + json.dumps(pend, ensure_ascii=False), motor, modelo)
         except Exception as e:
             print(f"  [{lang}] lote falhou ({e}); nova tentativa", file=sys.stderr)
             continue
@@ -142,11 +170,14 @@ def traduz_lote(itens, lang, modelo, glos, motor="claude", publico=PUBLICO_PADRA
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("pasta"); ap.add_argument("langs", nargs="*", default=["en", "es"])
-    ap.add_argument("--motor", choices=["claude", "codex"], default="claude")
-    ap.add_argument("--modelo"); ap.add_argument("--lote", type=int, default=45)
+    ap.add_argument("--motor", choices=["claude", "codex"], help="força o motor (padrão: INEMA_TRADUCAO_MOTOR)")
+    ap.add_argument("--modelo", help="força o modelo (padrão: INEMA_TRADUCAO_MODELO)")
+    ap.add_argument("--lote", type=int, default=45)
     ap.add_argument("--publico", default=PUBLICO_PADRAO, help="quem lê o curso (vai no pedido de tradução, em inglês)")
     a = ap.parse_args()
-    a.modelo = a.modelo or MODELO_PADRAO[a.motor]
+    m_pad, mod_pad = padrao_traducao()
+    print(f"tradutor: {a.motor or m_pad} / {a.modelo or (mod_pad if (a.motor or m_pad) == m_pad else 'padrão do motor')}"
+          + ("" if (a.motor or a.modelo) else " (variável central INEMA_TRADUCAO_*)"))
     raiz = pathlib.Path(a.pasta).resolve()
     pt = raiz / "conteudo" / "pt"
     arquivos = [pt / "curso.json", *sorted((pt / "aulas").glob("*.json"))]

@@ -1,5 +1,11 @@
 # Changelog — formato-curso-v6
 
+## 6.5.6 — 2026-10-19
+
+- Tradutor: usa o **tradutor central** (`~/projetos/wifi/scripts/inema-traduz`); o modelo vem de `INEMA_TRADUCAO_MOTOR`/`INEMA_TRADUCAO_MODELO`
+  (`~/.config/inema/modelos.env`, hoje Sonnet 5.5 pela assinatura) em vez do `codex exec -m gpt-6-luna` fixo. `--modelo <id>` sobrescreve.
+  `usage.jsonl` marca `tradutor-central`; reserva Groq igual (desligada por padrão).
+
 ## 6.5.5 — 2026-10-06
 
 - Auditor: na edição EN de curso **iniciante** (sem `perfil: tecnico`), upload/download/login/input/output/backup/setup

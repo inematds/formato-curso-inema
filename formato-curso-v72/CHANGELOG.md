@@ -20,3 +20,6 @@
 - `traduzir.py`: tradução pelo **Sonnet 5.5 da assinatura** (`claude -p --model claude-sonnet-5-5`, sem ferramentas) como padrão; `--motor codex` mantém o caminho antigo. Remove `ANTHROPIC_API_KEY` do ambiente do subprocesso (nunca API).
 - `traduzir.py --publico "..."`: o público do pedido de tradução deixa de ser fixo no do-chat-ao-agente.
 - `sec_video`: pôster também usa a versão por idioma quando existir (`seq1-oswork-en.jpg`).
+
+## 7.4.2 — 19/10/2026
+- `traduzir.py`: usa o **tradutor central** (`~/projetos/wifi/scripts/inema-traduz`); motor e modelo vêm de `INEMA_TRADUCAO_MOTOR`/`INEMA_TRADUCAO_MODELO` (ambiente → `~/.config/inema/modelos.env`, hoje Sonnet 5.5). `--motor`/`--modelo` só sobrescrevem quando passados. Fora da máquina do Nei, cai no `claude -p`/`codex exec` da assinatura com o mesmo padrão.

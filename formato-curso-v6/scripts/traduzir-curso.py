@@ -6,9 +6,10 @@ Uso (depois do montar-curso.py):
 
 Padrão INEMA trilíngue (RELATORIO-CURSOS-TRILINGUES.md): PT na raiz, <lang>/ ao lado; só TEXTO vai para a API
 (blocos com as tags inline preservadas, atributos, cartões e o bloco L do motor); CSS/JS/imagens são reaproveitados.
-Motor padrão (6.4): Codex pela ASSINATURA (`codex exec`, sessão do `codex login`), modelo gpt-6-luna — sem chave de API.
+Motor padrão (6.5.6): tradutor central do INEMA (`inema-traduz`, INEMA_TRADUCAO_* em ~/.config/inema/modelos.env,
+hoje Sonnet 5.5) pela ASSINATURA — sem chave de API. `--modelo <id>` sobrescreve o modelo da variável.
 Todo GPT só pela assinatura. Reserva Groq (modelo que não é GPT, chave GROQ_API_KEY) DESLIGADA: só com `--reserva-groq`
-ou RESERVA_GROQ=1, por pedido explícito do usuário; entra só no lote em que o Codex falhou 3 vezes. Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
+ou RESERVA_GROQ=1, por pedido explícito do usuário; entra só no lote em que o tradutor central falhou 3 vezes. Cache em <curso>/i18n/<lang>.json: unidade já traduzida nunca é reenviada. Unidade inválida
 (tags, {n}, espaços de borda, vazio) volta sozinha até 3 vezes; depois o build para e diz qual.
 Glossário opcional do curso: <curso>/i18n/glossario.json {"en": {"pt": "en"}, "es": {...}}.
 Custo e tokens de cada chamada: <curso>/i18n/usage.jsonl.
@@ -20,8 +21,12 @@ from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup, NavigableString, Comment
 
 GROQ_MODELO = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")   # reserva (não é GPT)
-CODEX_MODELO = "gpt-6-luna"       # motor codex (assinatura); troque com --modelo
-PARALELO = 4                      # lotes simultâneos no motor codex
+PARALELO = 4                      # lotes simultâneos no tradutor central
+try:   # modelo da variável central, só para exibir e registrar no usage.jsonl
+    MODELO_VAR = subprocess.run([os.path.expanduser("~/projetos/wifi/scripts/inema-traduz"), "--mostrar"], capture_output=True,
+                                text=True, timeout=10).stdout.split("\t")[1] or "INEMA_TRADUCAO_MODELO"
+except (OSError, IndexError, subprocess.TimeoutExpired):
+    MODELO_VAR = os.environ.get("INEMA_TRADUCAO_MODELO", "claude-sonnet-5-5")
 URL = "https://api.groq.com/openai/v1/chat/completions"   # só a reserva Groq
 NOMES = {"en": "English (United States)", "es": "Spanish (Latin America)"}
 ROTULO = {"pt": "Português", "en": "English", "es": "Español"}
@@ -71,16 +76,27 @@ def chave():
                 if m: return m.group(1).strip().strip("'\"")
     sys.exit("GROQ_API_KEY não encontrada nos dois .env conhecidos (pedida a reserva Groq).")
 
-def via_codex(sistema, lote, modelo):
-    """Um lote pelo `codex exec` da assinatura: só leitura, sem sessão salva, resposta final num arquivo."""
+_TRADUTOR = os.path.expanduser("~/projetos/wifi/scripts/inema-traduz")
+
+def chamar_tradutor(pedido, modelo=None, timeout=900):
+    """Tradução pelo tradutor central do INEMA (INEMA_TRADUCAO_* em ~/.config/inema/modelos.env). Assinatura, nunca API."""
+    if os.path.exists(_TRADUTOR):
+        cmd = [_TRADUTOR] + (["--modelo", modelo] if modelo else [])
+    else:  # fora da máquina do Nei: Claude Code da assinatura com o modelo da variável (padrão Sonnet 5.5)
+        cmd = ["claude", "-p", "--model", modelo or os.environ.get("INEMA_TRADUCAO_MODELO", "claude-sonnet-5-5"),
+               "--output-format", "text", "--tools", ""]
+    env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "CLAUDECODE")}
+    with tempfile.TemporaryDirectory() as d:
+        r = subprocess.run(cmd, input=pedido, capture_output=True, text=True, timeout=timeout, env=env, cwd=d)
+    if r.returncode != 0 or not r.stdout.strip():
+        raise RuntimeError(f"tradutor falhou rc={r.returncode}: {(r.stderr or r.stdout)[-300:]}")
+    return r.stdout
+
+def via_tradutor(sistema, lote, modelo=None):
+    """Um lote pelo tradutor central (assinatura): pedido pela entrada, JSON na saída."""
     pedido = (sistema + "\n\nReturn ONLY the JSON object (no code fences, no comments). INPUT JSON:\n"
               + json.dumps(lote, ensure_ascii=False))
-    with tempfile.TemporaryDirectory() as d:
-        out = os.path.join(d, "out.txt")
-        r = subprocess.run(["codex", "exec", "-m", modelo, "--skip-git-repo-check", "--ephemeral", "--sandbox", "read-only",
-                            "-C", d, "-o", out, "-"], input=pedido, capture_output=True, text=True, timeout=900)
-        if r.returncode or not os.path.exists(out): raise RuntimeError(f"codex exec rc={r.returncode}: {r.stderr[-300:]}")
-        txt = open(out, encoding="utf-8").read().strip()
+    txt = chamar_tradutor(pedido, modelo).strip()
     txt = re.sub(r"^```(?:json)?\s*|\s*```$", "", txt)
     return json.loads(txt[txt.index("{"):txt.rindex("}") + 1])
 
@@ -191,7 +207,7 @@ def via_groq(sistema, lote, api):
     with urllib.request.urlopen(req, timeout=240) as r: res = json.loads(r.read())
     return json.loads(res["choices"][0]["message"]["content"]), res.get("usage", {})
 
-def traduz(base, lang, api, fonte, modelo=CODEX_MODELO):
+def traduz(base, lang, api, fonte, modelo=None):
     os.makedirs(os.path.join(base, "i18n"), exist_ok=True)
     dest = os.path.join(base, "i18n", f"{lang}.json")
     cache = json.load(open(dest, encoding="utf-8")) if os.path.exists(dest) else {}
@@ -228,13 +244,13 @@ def traduz(base, lang, api, fonte, modelo=CODEX_MODELO):
             i, lote = par
             for tent in range(3):
                 t0 = time.time()
-                try: return i, lote, via_codex(sistema, lote, modelo), {"motor": "codex-assinatura", "modelo": modelo, "seg": round(time.time() - t0)}
+                try: return i, lote, via_tradutor(sistema, lote, modelo), {"motor": "tradutor-central", "modelo": modelo or MODELO_VAR, "seg": round(time.time() - t0)}
                 except (RuntimeError, subprocess.TimeoutExpired, ValueError, json.JSONDecodeError) as e:
                     erro = e; time.sleep(5 * (tent + 1))
             if api:
                 try:
                     saida, u = via_groq(sistema, lote, api)
-                    print(f"  {lang} lote {i}: Codex falhou 3x; usada a reserva Groq ({GROQ_MODELO})", file=sys.stderr)
+                    print(f"  {lang} lote {i}: tradutor central falhou 3x; usada a reserva Groq ({GROQ_MODELO})", file=sys.stderr)
                     return i, lote, saida, {"motor": "groq-reserva", "modelo": GROQ_MODELO, "in": u.get("prompt_tokens"), "out": u.get("completion_tokens")}
                 except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as e2: erro = e2
             print(f"  {lang} lote {i}: falhou ({str(erro)[:160]}); fica para a próxima rodada", file=sys.stderr)
@@ -328,13 +344,13 @@ def main():
         if nome in argv:
             i = argv.index(nome); v = argv[i + 1]; del argv[i:i + 2]; return v
         return padrao
-    modelo = opt("--modelo", CODEX_MODELO)
+    modelo = opt("--modelo", None)
     args = [a for a in argv if not a.startswith("--")]
     base = os.path.abspath(args[0]); langs = args[1:] or ["en", "es"]
     fonte = unidades(base)
     so_montar = "--so-montar" in sys.argv
     reserva = "--reserva-groq" in sys.argv or os.environ.get("RESERVA_GROQ") == "1"
-    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres) · Codex pela assinatura ({modelo})"
+    print(f"{len(fonte)} unidades de texto ({sum(len(u) for u in fonte)} caracteres) · tradutor central pela assinatura ({modelo or MODELO_VAR})"
           + (f" · reserva Groq LIGADA ({GROQ_MODELO})" if reserva else " · reserva Groq desligada"))
     api = chave() if (reserva and not so_montar) else None
     for lang in langs:
@@ -343,7 +359,7 @@ def main():
         monta(base, lang, tr, langs); print(f"{lang}/: curso.html, landing.html, index.html, assets/curso.js")
     pt_alternates(base, langs)
     us = [json.loads(l) for l in open(os.path.join(base, "i18n", "usage.jsonl"))] if os.path.exists(os.path.join(base, "i18n", "usage.jsonl")) else []
-    print(f"chamadas pela assinatura do Codex: {sum(1 for u in us if u.get('motor') == 'codex-assinatura')}; "
+    print(f"chamadas pela assinatura (tradutor central/Codex): {sum(1 for u in us if u.get('motor') in ('tradutor-central', 'codex-assinatura'))}; "
           f"reserva Groq usada: {sum(1 for u in us if u.get('motor') == 'groq-reserva')} lote(s)")
 
 if __name__ == "__main__":
