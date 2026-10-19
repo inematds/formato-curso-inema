@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.9.12"     # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.10.12"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -231,7 +231,9 @@ def sec_video(s, ui, curso, prefixo):
     loc = v.get("idiomas", {}).get(LANG, {})
     lg = LANG if loc.get("vtt") else "pt"
     rot_leg = {"pt": "Português", "en": "English", "es": "Español"}.get(lg, lg)
-    return (f'<div class="video"><video controls preload="metadata" playsinline poster="{ativo(prefixo)}{img_idioma(v["poster"])}">'
+    # 7.10.12: vídeo vertical (short/reel) com "formato": "9:16" — player estreito e centrado, não pillarbox 16:9
+    vert = " vertical" if v.get("formato") == "9:16" else ""
+    return (f'<div class="video{vert}"><video controls preload="metadata" playsinline poster="{ativo(prefixo)}{img_idioma(v["poster"])}">'
             f'<source src="{loc.get("mp4", v["mp4"])}" type="video/mp4"/>'
             f'<track kind="subtitles" srclang="{lg}" label="{rot_leg}" src="{ativo(prefixo)}{loc.get("vtt", v["vtt"])}" default/></video>'
             f'<div class="video-leg"><span><b>{v["titulo"]}</b> · {loc.get("duracao", v["duracao"])}</span><a href="{loc.get("pagina", v["pagina"])}" target="_blank" rel="noopener">{ui["video_pagina"]} →</a></div></div>')

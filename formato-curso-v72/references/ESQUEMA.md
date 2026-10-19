@@ -13,7 +13,7 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 | `volta` | `{t, href}` — link "voltar" no alto da barra lateral (área do eventos, curso-mãe…) |
 | `lado_card` | `{rot, t, texto, link, href}` — cartão no pé da barra lateral |
 | `rodape` | HTML do rodapé (manter "INEMA.CLUB · conteúdo aberto e gratuito · formato INEMA Learning v7.2") |
-| `videos` | `{chave: {titulo, duracao, mp4, poster, vtt, pagina}}` — `mp4` é URL publicada (release do GitHub); `poster` e `vtt` são caminhos locais em `assets/`; opcional `idiomas {en: {mp4, vtt, duracao, pagina}, es: {…}}` (7.6.7) troca o vídeo e a legenda em `en/`/`es/` |
+| `videos` | `{chave: {titulo, duracao, mp4, poster, vtt, pagina}}` — `mp4` é URL publicada (release do GitHub); `poster` e `vtt` são caminhos locais em `assets/`; opcional `idiomas {en: {mp4, vtt, duracao, pagina}, es: {…}}` (7.6.7) troca o vídeo e a legenda em `en/`/`es/`; opcional `formato: "9:16"` (7.10.12) para short/reel vertical: player estreito e centrado em vez de faixas pretas no 16:9 |
 | `inicio` | página inicial: `kicker`, `titulo`, `lead`, `cta`, `cta2 {t, href}`, `capa_alt`, `numeros [{v, t}]`, `aulas_titulo`, `aulas_sub`, `blocos [{t, itens[]}]` (ex.: "Para quem é" / "O que você sai fazendo"); opcional `cursos {titulo, sub, abrir, itens [{rot, t, l, href, href_idioma, img}]}` — cartões para os cursos completos de uma formação, logo depois dos números (7.5.4; `href_idioma: true` leva `en/`/`es/` ao curso irmão traduzido; `img` 16:9, aceita `-en`/`-es`) |
 | `ui` | textos de interface — copiar do modelo e não mexer (só traduzir em EN/ES) |
 
