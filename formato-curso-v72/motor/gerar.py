@@ -226,7 +226,7 @@ def sec_pratica(s, ui, slug):
 
 def sec_video(s, ui, curso, prefixo):
     v = curso["videos"][s["chave"]]
-    return (f'<div class="video"><video controls preload="metadata" playsinline poster="{ativo(prefixo)}{v["poster"]}">'
+    return (f'<div class="video"><video controls preload="metadata" playsinline poster="{ativo(prefixo)}{img_idioma(v["poster"])}">'
             f'<source src="{v["mp4"]}" type="video/mp4"/>'
             f'<track kind="subtitles" srclang="pt" label="Português" src="{ativo(prefixo)}{v["vtt"]}" default/></video>'
             f'<div class="video-leg"><span><b>{v["titulo"]}</b> · {v["duracao"]}</span><a href="{v["pagina"]}" target="_blank" rel="noopener">{ui["video_pagina"]} →</a></div></div>')

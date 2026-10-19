@@ -19,3 +19,4 @@
 ## 7.4.1 — 19/10/2026
 - `traduzir.py`: tradução pelo **Sonnet 5.5 da assinatura** (`claude -p --model claude-sonnet-5-5`, sem ferramentas) como padrão; `--motor codex` mantém o caminho antigo. Remove `ANTHROPIC_API_KEY` do ambiente do subprocesso (nunca API).
 - `traduzir.py --publico "..."`: o público do pedido de tradução deixa de ser fixo no do-chat-ao-agente.
+- `sec_video`: pôster também usa a versão por idioma quando existir (`seq1-oswork-en.jpg`).
