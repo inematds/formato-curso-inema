@@ -4,6 +4,7 @@ Uma linha por falha. Mais recente no topo. Regra em `~/.claude/CLAUDE.md`.
 
 | data | o que quebrou | menor correção | prompt/infra |
 |---|---|---|---|
+| 2026-10-19 | validar.py acusava "sobra TODO" em link para METODO.md (3 aulas do piloto inemaSEO 1) | TODO só como palavra inteira (7.5.6) | prompt |
 | 2026-10-19 | traduzir.py recusou 3× a tradução ES de um prompt: linha "del problema…" lida como comando `del` | `del/set/type/copy/export/dir` só contam como comando com caminho/opção/variável depois (7.5.2) | infra |
 | 2026-09-24 | v6 tradutor: o modelo traduziu o valor de `data-gl` e quebrou o link "ver no glossário" em EN | `fixa_ids()` restaura as âncoras do PT na montagem | prompt |
 | 2026-09-24 | v6 auditor técnico reprovou EN/ES por "input/output" (traduções revisadas do v2) e "LLM" singular | plural tolerado + lista de palavras comuns só na edição EN | prompt |
