@@ -127,3 +127,6 @@
 
 ## 7.13.18 — 19/10/2026
 - `scripts/traduzir.py` (`localiza`, 7.8.11): só página de curso troca de idioma — a raiz (`…-v72/`), `aulas/` ou âncora. Arquivo publicado junto com o curso (`…-v72/kit/site/`, `exemplos/`) não tem `en/`/`es/` e virava 404: o bloco que verifica a página do kit no Pages saía `…-v72/en/kit/site/` no EN. Achado no `formacao-cinema-ia-sites-v72`. Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.13.19 — 19/10/2026
+- `references/LICOES.md`: lição do formacao-fth-locomocao-v72 — blocos `Arquivo`/`Trecho` e `<pre>` longos podem voltar alterados do `traduzir.py` em EN/ES sem o `resolver-kit --conferir` acusar (só confere o PT); comparar e restaurar. Motor (`gerar.py`, `validar.py`, scripts) sem mudança.
