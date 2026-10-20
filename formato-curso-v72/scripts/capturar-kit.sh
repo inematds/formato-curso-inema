@@ -9,15 +9,18 @@
 # caminho por /tmp e o $HOME por ~ na saída, para a aba mostrar o que o aluno vê sem sujar o /tmp da máquina.
 # Teto por bloco: timeout ${CAPTURA_TIMEOUT:-600} s e MemoryMax=${CAPTURA_MEM:-8G} (systemd-run --user --scope),
 # para render de vídeo numa máquina carregada. Criado no piloto formacao-cinema-ia-motion-v72 (19/10/2026).
+# 7.13.17: o mktemp padrão fica em /tmp (curto: TMPDIR no scratchpad passa do limite do socket do Chromium) e a
+# porta de servidor local que o sistema escolheu (127.0.0.1:41234) vira 127.0.0.1:<porta> na saída, para a
+# captura não mudar a cada rodada (kit que serve a página na porta 0, como o formacao-cinema-ia-sites-v72).
 set -uo pipefail
 C=$(cd "${1:?uso: capturar-kit.sh <curso> [bloco…]}" && pwd); shift
 K="$C/kit"; [ -d "$K/blocos" ] || { echo "sem $K/blocos"; exit 2; }
-T=${CAPTURA_TMP:-$(mktemp -d)}
+T=${CAPTURA_TMP:-$(mktemp -d /tmp/cap.XXXX)}
 mkdir -p "$K/saidas" "$T"
 alvos=("$@"); [ ${#alvos[@]} -eq 0 ] && alvos=($(cd "$K/blocos" && ls *.sh | sed 's/\.sh$//'))
 teto=(); command -v systemd-run >/dev/null && teto=(systemd-run --user --scope -q -p "MemoryMax=${CAPTURA_MEM:-8G}")
 for b in "${alvos[@]}"; do
   ( cd /tmp && TMPDIR="$T" timeout "${CAPTURA_TIMEOUT:-600}" "${teto[@]}" bash "$K/blocos/$b.sh" ) 2>&1 \
-    | sed "s#$T#/tmp#g; s#$HOME#~#g" > "$K/saidas/$b.txt"
+    | sed "s#$T#/tmp#g; s#$HOME#~#g; s#127\.0\.0\.1:[0-9]\{2,5\}#127.0.0.1:<porta>#g" > "$K/saidas/$b.txt"
   echo "$b: $(wc -l < "$K/saidas/$b.txt") linhas"
 done

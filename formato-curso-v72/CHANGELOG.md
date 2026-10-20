@@ -121,3 +121,9 @@
 
 ## 7.13.16 — 19/10/2026
 - Conferidor: grupo da regra `termos` aceita `campo` — a busca fica só na linha `Campo: …` (ex.: `{"rot": "o aviso de vídeo feito com IA", "campo": "Rótulo", "termos": [...]}`). Antes, o aviso de IA numa fala ("isso não foi feito com IA") fazia passar um anúncio com `Rótulo: nenhum, é cliente real`. Mesma mudança em `conferir.py` e `v72-conferidor.js`; o `campo` passa pelo tradutor (é o rótulo do campo, traduzido como os `campos`). Achado pelo revisor independente do `formacao-cinema-ia-producao-v72`. `VERSAO` 7.13.16.
+
+## 7.13.17 — 19/10/2026
+- `scripts/capturar-kit.sh`: o `mktemp` padrão vai para `/tmp/cap.XXXX` (curto; TMPDIR herdado do scratchpad derruba o Chromium com "socket path too long") e a porta que o sistema escolheu para o servidor local do kit (`127.0.0.1:41234`) sai como `127.0.0.1:<porta>` na captura, para a aba "Saída capturada" não mudar a cada rodada. Kit cujo servidor escuta na porta 0 e escreve a URL num arquivo (o bloco espera num laço `until curl …`), nunca porta fixa. Piloto `formacao-cinema-ia-sites-v72` (Formação Cinema com IA, curso 5). Motor (`gerar.py`, `validar.py`, assets) sem mudança.
+
+## 7.13.18 — 19/10/2026
+- `scripts/traduzir.py` (`localiza`, 7.8.11): só página de curso troca de idioma — a raiz (`…-v72/`), `aulas/` ou âncora. Arquivo publicado junto com o curso (`…-v72/kit/site/`, `exemplos/`) não tem `en/`/`es/` e virava 404: o bloco que verifica a página do kit no Pages saía `…-v72/en/kit/site/` no EN. Achado no `formacao-cinema-ia-sites-v72`. Motor (`gerar.py`, `validar.py`, assets) sem mudança.

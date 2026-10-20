@@ -81,7 +81,9 @@ Return ONLY a JSON object with the same keys and the translated strings as value
 # 7.8.11: link para outro curso v7.x (https://inematds.github.io/<repo>-v7N/...) leva à versão do mesmo idioma.
 # O href fica igual na tradução (validação de links); a troca é feita ao gravar conteudo/<lang>/.
 # assets/ (capa reaproveitada do irmão) e caminhos que já têm idioma não mudam.
-IRMAO = re.compile(r"(https://inematds\.github\.io/[\w.-]+-v7\d+/)(?!(?:en|es|pt)/|assets/)")
+# 7.13.18: só página do curso (raiz, aulas/ ou âncora) troca de idioma; arquivo publicado junto (kit/site/, exemplos/)
+# não tem en/ es/ e virava 404 (achado no formacao-cinema-ia-sites-v72: o bloco que verifica kit/site/ no Pages).
+IRMAO = re.compile(r"(https://inematds\.github\.io/[\w.-]+-v7\d+/)(?=aulas/|[#\"'\s<)\],;]|$)")
 
 
 def localiza(no, lang):
