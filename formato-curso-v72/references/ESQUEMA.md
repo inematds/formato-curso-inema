@@ -10,8 +10,8 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 | `lang` | `pt-BR` |
 | `url` | `https://inematds.github.io/<id>/` (com barra no fim) |
 | `nome`, `sub`, `icone` | nome no topo e na barra lateral; `icone` = chave de `ICONES` em `gerar.py` |
-| `volta` | `{t, href}` — link "voltar" no alto da barra lateral (área do eventos, curso-mãe…) |
-| `lado_card` | `{rot, t, texto, link, href}` — cartão no pé da barra lateral |
+| `volta` | `{t, href}` — link "voltar" no alto da barra lateral (área do eventos, curso-mãe…); opcional `href_en`/`href_es` (7.14.19) = destino em `en/`/`es/` quando o link não é de curso v7.x (o `traduzir.py` já localiza esses) |
+| `lado_card` | `{rot, t, texto, link, href}` — cartão no pé da barra lateral; opcional `href_en`/`href_es` (7.14.19) |
 | `rodape` | HTML do rodapé (manter "INEMA.CLUB · conteúdo aberto e gratuito · formato INEMA Learning v7.2") |
 | `videos` | `{chave: {titulo, duracao, mp4, poster, vtt, pagina}}` — `mp4` é URL publicada (release do GitHub); `poster` e `vtt` são caminhos locais em `assets/`; opcional `idiomas {en: {mp4, vtt, duracao, pagina}, es: {…}}` (7.6.7) troca o vídeo e a legenda em `en/`/`es/`; opcional `formato: "9:16"` (7.10.12) para short/reel vertical: player estreito e centrado em vez de faixas pretas no 16:9 |
 | `inicio` | página inicial: `kicker`, `titulo`, `lead`, `cta`, `cta2 {t, href}`, `capa_alt`, `numeros [{v, t}]`, `aulas_titulo`, `aulas_sub`, `blocos [{t, itens[]}]` (ex.: "Para quem é" / "O que você sai fazendo"); opcional `cursos {titulo, sub, abrir, itens [{rot, t, l, href, href_idioma, img}]}` — cartões para os cursos completos de uma formação, logo depois dos números (7.5.4; `href_idioma: true` leva `en/`/`es/` ao curso irmão traduzido; `img` 16:9, aceita `-en`/`-es`) |
@@ -58,10 +58,14 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 
 **`texto`** — `paragrafos[]` (use pouco; prefira visual).
 
-**`mapa`** e **`gerador`** — aula de plano/fechamento: `mapa.degraus [{aula, titulo, sub, quando, icone, passo, saida}]` lê a prática das aulas citadas; `gerador` monta plano datado (.md + .ics). Ver `examples/aula-mapa-gerador.json`.
+**`mapa`** e **`gerador`** — aula de plano/fechamento: `mapa.degraus [{aula, titulo, sub, quando, icone, passo, saida}]` lê a prática das aulas citadas; `gerador` monta plano datado (.md + .ics); em `txt`, `exs` (plural) e `ex1` (singular, 7.14.19); a data sai mm/dd na página `en` e dd/mm nas outras. Ver `examples/aula-mapa-gerador.json`.
 
 **`links`** — `links [{t, href, icone?}]`; sai como "Para ir além" no fim, sem número.
 
 ## Precisa de uma simulação nova?
 
-Existem `simfila` e `simconversa`. Se a aula pede outra interação (ex.: montar um roteiro, conferir um portão), acrescente um tipo novo no `gerar.py` do curso (`sec_<tipo>`) + o comportamento em JS num arquivo próprio (`assets/<curso>.js`), sem editar `v71.js`/`v72.js`. Se ficar bom, traga para o motor da skill e registre no CHANGELOG.
+**`simterm`** (7.14.19) — terminal simulado com missões: `missoes [{pede, aceita[], mostra, vai?, dica}]`, `inicio` (pasta inicial), `sistema` (`windows`/`linux`), `sufixo`, `erro`, `fim`, `janela`, `legenda`; textos `st_*` no `ui`. Comandos e saídas (`aceita`, `mostra`, `vai`, `inicio`, `sistema`, `sufixo`) vêm sempre do PT. Ver `do-chat-ao-agente-terminal-v72`.
+
+**`simportao`** (7.14.19) — fluxo de várias fases que para no portão humano (fase 2): `fases[]`, `rot {rodar, aprovar, reprovar, sempor, zerar}`, `rascunho`, `corrigido`, `msg {inicio, portao, reprovado, aprovado_bom, aprovado_ruim, sem_portao}`, `arquivo` (rótulo do texto gerado), `legenda`. Ver `do-chat-ao-agente-filas-v72`, aula 6.
+
+Existem `simfila`, `simconversa`, `simterm`, `simportao` e `conferidor`. Se a aula pede outra interação (ex.: montar um roteiro, conferir um portão), acrescente um tipo novo no `gerar.py` do curso (`sec_<tipo>`) + o comportamento em JS num arquivo próprio (`assets/<curso>.js`), sem editar `v71.js`/`v72.js`. Se ficar bom, traga para o motor da skill e registre no CHANGELOG.

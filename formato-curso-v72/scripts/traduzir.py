@@ -17,7 +17,9 @@ from concurrent.futures import ThreadPoolExecutor
 PULA = {"slug", "id", "tipo", "icone", "href", "url", "mp4", "poster", "vtt", "estilo", "selo", "lang",
         "foco", "dias", "certa", "falha", "num", "minutos", "horas_padrao", "data-ex",
         "vai", "nota",  # 7.5.1: simconversa ("vai" = id da próxima fala; "fim" é booleano)
-        "termos", "video_ok", "video_erro"}  # 7.11.15: termos do conferidor não se traduzem; a família já traz PT, EN e ES ("close / close-up / primer plano")
+        "termos", "video_ok", "video_erro",
+        "aceita", "mostra", "sufixo", "sistema", "arquivo",  # 7.14.19: simterm usa comandos/saídas do PT; simportao: nome do arquivo
+        "href_en", "href_es"}  # 7.14.19: link por idioma em volta/lado_card  # 7.11.15: termos do conferidor não se traduzem; a família já traz PT, EN e ES ("close / close-up / primer plano")
 SE_SLUG = {"aula", "ref", "chave", "inicio"}  # pulados só quando o valor é slug ("filas", "fim_ruim"); "Aula" no ui traduz
 UI_PADRAO = {"aula": "Aula", "comecar": "Começar a aula", "nesta_vai": "Nesta aula você vai",
              "trocar_tema": "Trocar tema claro/escuro",

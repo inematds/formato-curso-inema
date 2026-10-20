@@ -306,7 +306,9 @@
     var ini = g.querySelector(".ger-ini"), hs = g.querySelector(".ger-h");
     var hoje = new Date(); ini.value = ler("plano-ini", hoje.toISOString().slice(0, 10)); hs.value = ler("plano-h", hs.value);
     var ultimo = null;
-    function fmt(d) { return ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2); }
+    /* 7.14.19: data no padrão do idioma da página (en: mm/dd; pt/es: dd/mm) */
+    var EN = /^en/i.test(document.documentElement.lang || "");
+    function fmt(d) { var dd = ("0" + d.getDate()).slice(-2), mm = ("0" + (d.getMonth() + 1)).slice(-2); return EN ? mm + "/" + dd : dd + "/" + mm; }
     function ymd(d) { return d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2); }
     function soma(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
     function gera() {
@@ -332,7 +334,7 @@
       md.push(T.travou, "- ");
       g.querySelector(".ger-md").textContent = md.join("\n");
       g.querySelector(".ger-resumo").innerHTML = "<div><small>" + T.inicio + "</small><b>" + fmt(inicio) + "</b></div><div><small>" + T.ritmo + "</small><b>" + h + " " + T.h + "</b></div><div><small>" + T.termino + "</small><b>" + fmt(termino) + "</b></div><div><small>" + T.semanas + "</small><b>" + nsem + "</b></div>";
-      g.querySelector(".ger-semanas").innerHTML = semanas.map(function (s, i) { return "<li><b>" + s.t + "</b><span>" + s.n + " " + T.exs + " · " + T.ate + " " + fmt(s.fim) + "</span></li>"; }).join("");
+      g.querySelector(".ger-semanas").innerHTML = semanas.map(function (s, i) { return "<li><b>" + s.t + "</b><span>" + s.n + " " + (s.n === 1 && T.ex1 ? T.ex1 : T.exs) + " · " + T.ate + " " + fmt(s.fim) + "</span></li>"; }).join("");
       ultimo = { md: md.join("\n"), cal: cal };
       g.querySelector(".ger-res").hidden = false;
       gravar("plano-ini", ini.value); gravar("plano-h", hs.value);

@@ -1,0 +1,17 @@
+/* 7.14.19: portão humano simulado (tipo simportao, sec_simportao em gerar.py) — veio do curso do-chat-ao-agente-filas-v72. Usa os tokens de v71/v72. */
+.simportao .sp-fases{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.simportao .sp-fase{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:12px;font:700 14.5px var(--sora);color:var(--txt2);min-width:0}
+.simportao .sp-fase span{overflow-wrap:anywhere}
+.simportao .sp-fase.rodando{border-color:var(--amb);box-shadow:0 0 0 3px var(--amb-a);color:var(--amb-t)}
+.simportao .sp-fase.feita{border-color:rgba(74,222,128,.45);color:var(--ok)}
+.simportao .sp-fase.parada{border-style:dashed;border-color:var(--amb);color:var(--amb-t)}
+.simportao .sp-fase.erro{border-color:rgba(248,113,113,.6);color:var(--bad)}
+.simportao .sp-texto{margin-top:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);padding:12px 14px}
+.simportao .sp-rot{display:flex;gap:8px;align-items:center;font:12.5px var(--mono);color:var(--mut)}
+.simportao .sp-corpo{margin:8px 0 0;font-size:15.5px}
+.simportao .sp-texto.ruim{border-color:rgba(248,113,113,.55)}
+.simportao .sp-texto.bom{border-color:rgba(74,222,128,.45)}
+.simportao .sim-acoes{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 10px}
+.simportao .sim-acoes .btn[disabled]{opacity:.45;cursor:not-allowed}
+.simportao .sim-log{border:1px solid var(--line);border-radius:10px;background:#0f0f15;padding:10px 14px;font:13.5px/1.5 var(--mono);color:var(--amb2)}
+@media (max-width:700px){.simportao .sp-fases{grid-template-columns:repeat(2,minmax(0,1fr))}}

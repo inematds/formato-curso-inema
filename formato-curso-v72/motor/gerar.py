@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.13.16"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.14.19"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -23,6 +23,11 @@ HREFLANG = {"pt": "pt-BR", "en": "en", "es": "es"}
 def ativo(prefixo):
     """Caminho até a RAIZ do repo (assets/), a partir da página: em en/ e es/ sobe um nível a mais."""
     return prefixo + ("" if LANG == "pt" else "../")
+
+
+def href_lang(o):
+    """7.14.19: link com versão por idioma — {"href": PT, "href_en": …, "href_es": …}; sem a chave do idioma, o href PT."""
+    return o.get(f"href_{LANG}") or o["href"]
 
 
 def img_idioma(rel):
@@ -248,6 +253,64 @@ def sec_simfila(s, ui):
              f'<button type="button" class="btn neutro" data-acao="zerar">{r["zerar"]}</button>')
     return (f'<div class="painel simfila" data-tarefas="{attr(json.dumps(s["tarefas"], ensure_ascii=False))}" data-falha="{s["falha"]}" '
             f'data-msg="{attr(json.dumps(s["msg"], ensure_ascii=False))}"><div class="sim-cols">{cols}</div>'
+            f'<div class="sim-acoes">{acoes}</div><div class="sim-log" aria-live="polite"></div>'
+            f'<p class="dg-legenda">{s["legenda"]}</p></div>')
+
+
+ST_UI = {  # 7.14.19: textos do simterm; ficam em curso.json → ui e podem ser trocados/traduzidos lá
+    "st_missoes": "Missões", "st_digite": "Digite o comando e tecle Enter", "st_dica": "Mostrar o comando",
+    "st_zerar": "Recomeçar", "st_missao": "Missão {n} de {t}:", "st_cumpridas": "Missões cumpridas.", "st_pronto": "Pronto.",
+    "st_onde": "Isso mostrou onde você está. Agora faça o que a missão {n} pede.",
+    "st_errado": "Esse não é o comando da missão {n}. Releia o pedido ou toque em <b>{dica}</b>."}
+PT_AULAS = {}  # slug → aula PT: no simterm, comandos e saídas vêm SEMPRE do PT (o aluno digita o mesmo comando em qualquer idioma)
+
+
+def sec_simterm(s, ui, pt):
+    """7.14.19 (vindo do curso do-chat-ao-agente-terminal-v72): terminal simulado. O aluno digita o comando de cada
+    missão e vê a resposta, sem risco. Comportamento em assets/v72-simterm.js. Texto visível vem do JSON/ui (traduzível);
+    `pt` é a mesma seção no PT: dela saem inicio, sufixo, sistema e, por missão, aceita, vai e mostra."""
+    u = {k: ui.get(k, v) for k, v in ST_UI.items()}
+    dados = {k: s.get(k) for k in ("erro", "fim")}
+    dados.update({k: pt.get(k) for k in ("inicio", "sistema")})
+    dados["sufixo"] = pt.get("sufixo", ">")
+    missoes = []
+    for m, mp in zip(s["missoes"], pt["missoes"]):
+        m = dict(m)
+        for k in ("aceita", "vai", "mostra"):
+            if k in mp: m[k] = mp[k]
+            else: m.pop(k, None)
+        missoes.append(m)
+    dados["missoes"] = missoes
+    dados["txt"] = {k: u[k] for k in ("st_missao", "st_cumpridas", "st_pronto", "st_onde", "st_errado", "st_dica")}
+    lis = "".join(f'<li data-i="{i}"><span class="st-n">{i + 1}</span><span>{m["pede"]}</span></li>' for i, m in enumerate(missoes))
+    return (f'<div class="painel simterm" data-term="{attr(json.dumps(dados, ensure_ascii=False))}">'
+            f'<div class="st-grade"><div class="st-missoes"><p class="st-tit">{ic("alvo")}{u["st_missoes"]}</p><ol>{lis}</ol>'
+            f'</div>'
+            f'<div class="st-janela"><div class="st-barra"><i></i><i></i><i></i><span>{s.get("janela", "Terminal")}</span></div>'
+            f'<pre class="st-tela" aria-live="polite"></pre><p class="st-agora"></p>'
+            f'<form class="st-linha"><label class="st-prompt"></label><input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" '
+            f'aria-label="{attr(u["st_digite"])}" placeholder="{attr(u["st_digite"])}"/></form></div></div>'
+            f'<div class="st-fb" aria-live="polite"></div>'
+            f'<div class="sim-acoes"><button type="button" class="btn neutro st-dica">{ic("lupa")}{u["st_dica"]}</button>'
+            f'<button type="button" class="btn neutro st-zerar">{u["st_zerar"]}</button></div>'
+            f'<p class="dg-legenda">{s["legenda"]}</p></div>')
+
+
+def sec_simportao(s, ui):
+    """7.14.19 (vindo do curso do-chat-ao-agente-filas-v72): fluxo de várias fases que para no portão humano
+    (aprovar, reprovar com correção ou rodar sem portão). Comportamento em assets/v72-simportao.js. O portão é a fase 2
+    (índice 1). Texto visível vem do JSON: fases, rot, rascunho, corrigido, msg; `arquivo` = rótulo do texto gerado."""
+    r = s["rot"]
+    fases = "".join(f'<li class="sp-fase" data-i="{i}">{ic("portao" if i == 1 else "alvo")}<span>{f}</span></li>'
+                    for i, f in enumerate(s["fases"]))
+    acoes = (f'<button type="button" class="btn cheio" data-acao="rodar">{ic("play")}{r["rodar"]}</button>'
+             f'<button type="button" class="btn neutro" data-acao="aprovar" disabled>{ic("check")}{r["aprovar"]}</button>'
+             f'<button type="button" class="btn neutro" data-acao="reprovar" disabled>{ic("caneta")}{r["reprovar"]}</button>'
+             f'<button type="button" class="btn neutro" data-acao="sempor">{r["sempor"]}</button>'
+             f'<button type="button" class="btn neutro" data-acao="zerar">{r["zerar"]}</button>')
+    dados = attr(json.dumps({"rascunho": s["rascunho"], "corrigido": s["corrigido"], "msg": s["msg"]}, ensure_ascii=False))
+    return (f'<div class="painel simportao" data-sim="{dados}"><ol class="sp-fases">{fases}</ol>'
+            f'<div class="sp-texto" hidden><span class="sp-rot">{ic("arquivo")}{s.get("arquivo", "rascunho.md")}</span><p class="sp-corpo"></p></div>'
             f'<div class="sim-acoes">{acoes}</div><div class="sim-log" aria-live="polite"></div>'
             f'<p class="dg-legenda">{s["legenda"]}</p></div>')
 
@@ -505,14 +568,14 @@ def lado(curso, aulas, ui, prefixo, atual):
         itens.append(f'<li><a href="{prefixo}aulas/{a["slug"]}/index.html" data-slug="{a["slug"]}" class="{cls.strip()}"{cur}><span class="st" aria-hidden="true"></span>'
                      f'<span>{a["num"]}. {a["titulo_curto"]}<small>{a["minutos"]} min</small></span></a></li>')
     card = curso["lado_card"]
-    return (f'<aside class="lado" id="lado" aria-label="{attr(ui["aulas"])}"><a class="voltar" href="{curso["volta"]["href"]}">{ic("voltar")}{curso["volta"]["t"]}</a>'
+    return (f'<aside class="lado" id="lado" aria-label="{attr(ui["aulas"])}"><a class="voltar" href="{href_lang(curso["volta"])}">{ic("voltar")}{curso["volta"]["t"]}</a>'
             f'<p class="curso-nome">{curso["nome"]}</p><p class="curso-sub">{curso["sub"]}</p>'
             f'<div class="ind"><span class="ind-rot">{ui["ind_estudo"]}</span><span class="prog-txt"><span data-pct>0</span>%</span></div>'
             f'<div class="prog" aria-hidden="true"><i></i></div>'
             f'<div class="ind"><span class="ind-rot">{ui["ind_pratica"]}</span><span class="prog-txt"><span data-prat>0</span>/{total_ex(aulas)}</span></div>'
             f'<div class="prog pratica" aria-hidden="true"><i></i></div><p class="ind-nota">{ui["ind_nota"]}</p>'
             f'<ol class="lista-aulas">{"".join(itens)}</ol>{estudo(aulas, ui)}'
-            f'<div class="lado-card">{card["rot"]}<b>{card["t"]}</b>{card["texto"]}<br/><a href="{card["href"]}" target="_blank" rel="noopener">{card["link"]} →</a></div></aside>')
+            f'<div class="lado-card">{card["rot"]}<b>{card["t"]}</b>{card["texto"]}<br/><a href="{href_lang(card)}" target="_blank" rel="noopener">{card["link"]} →</a></div></aside>')
 
 
 def rodape(curso):
@@ -530,6 +593,8 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         k += 1
         refs.setdefault(x["tipo"], (f"s{k}", re.sub("<[^>]+>", "", x["titulo"])))
     num = 0
+    pt_terms = [x for x in PT_AULAS.get(a["slug"], a)["secoes"] if x["tipo"] == "simterm"]  # 7.14.19
+    n_term = 0
     for s in a["secoes"]:
         t = s["tipo"]
         if t == "links":
@@ -544,6 +609,8 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         elif t == "video": corpo = sec_video(s, ui, curso, prefixo)
         elif t == "simfila": corpo = sec_simfila(s, ui)
         elif t == "simconversa": corpo = sec_simconversa(s, ui, f'{a["slug"]}-s{num}')
+        elif t == "simterm": corpo = sec_simterm(s, ui, pt_terms[n_term]); n_term += 1
+        elif t == "simportao": corpo = sec_simportao(s, ui)
         elif t == "conferidor": corpo = sec_conferidor(s, ui, f'{a["slug"]}-s{num}', prefixo)
         elif t == "quiz": corpo = sec_quiz(s, ui, refs)
         elif t == "gerador": corpo = sec_gerador(s, ui, aulas)
@@ -572,9 +639,10 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
     titulo = f'{a["titulo"]} · {curso["nome"]} · INEMA'
     # 7.5.1: arquivos de tipos opcionais entram só na aula que usa o tipo (curso antigo não precisa deles)
     tipos = {x["tipo"] for x in a["secoes"]}
-    css_extra = (["v72-conversa.css"] if "simconversa" in tipos else []) + (["v72-conferidor.css"] if "conferidor" in tipos else [])
-    js_extra = "".join(f'<script src="{ativo(prefixo)}assets/{j}"></script>' for j in
-                       (["v72-conversa.js"] if "simconversa" in tipos else []) + (["v72-conferidor.js"] if "conferidor" in tipos else []))
+    extra = [n for t, n in (("simconversa", "v72-conversa"), ("conferidor", "v72-conferidor"),
+                            ("simterm", "v72-simterm"), ("simportao", "v72-simportao")) if t in tipos]
+    css_extra = [f"{n}.css" for n in extra]
+    js_extra = "".join(f'<script src="{ativo(prefixo)}assets/{n}.js"></script>' for n in extra)
     return (cabeca(titulo, a["lead"], prefixo, lang, canon, id_curso(curso), f'aulas/{a["slug"]}/', css_extra)
             + f'<body data-curso="{id_curso(curso)}" data-aula="{a["slug"]}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">'
             + topo(curso, aulas, ui, prefixo, a["slug"])
@@ -642,7 +710,9 @@ def main():
     curso = json.loads((base / "curso.json").read_text())
     ui = curso["ui"]
     aulas = [json.loads(f.read_text()) for f in sorted((base / "aulas").glob("*.json"))]
-    saida = RAIZ if args.lang == "pt" else RAIZ / args.lang
+    for f in sorted((RAIZ / "conteudo" / "pt" / "aulas").glob("*.json")):  # 7.14.19: simterm usa comandos do PT
+        x = json.loads(f.read_text()); PT_AULAS[x["slug"]] = x
+    saida =RAIZ if args.lang == "pt" else RAIZ / args.lang
     erros = 0
     for i, a in enumerate(aulas):
         d = saida / "aulas" / a["slug"]

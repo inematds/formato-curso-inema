@@ -130,3 +130,10 @@
 
 ## 7.13.19 — 19/10/2026
 - `references/LICOES.md`: lição do formacao-fth-locomocao-v72 — blocos `Arquivo`/`Trecho` e `<pre>` longos podem voltar alterados do `traduzir.py` em EN/ES sem o `resolver-kit --conferir` acusar (só confere o PT); comparar e restaurar. Motor (`gerar.py`, `validar.py`, scripts) sem mudança.
+
+## 7.14.19 — 20/10/2026
+- Tipos novos no motor, vindos da formação "Do chat ao agente": **`simterm`** (terminal simulado com missões; `sec_simterm` + `assets/v72-simterm.js|css`; textos `st_*` no `ui`, padrões em `ST_UI`; comandos e saídas lidos sempre do PT via `PT_AULAS`) e **`simportao`** (fluxo que para no portão humano; `sec_simportao` + `assets/v72-simportao.js|css`; campo `arquivo` substitui o rótulo fixo `textos/A#9/jovens.md`). Os dois só entram nas aulas que usam o tipo, como `v72-conversa`. Antes viviam no `gerar.py` de cada curso (`terminal.js`, `filas.js`).
+- `gerar.py`: `href_lang()` — `volta` e `lado_card` aceitam `href_en`/`href_es`. O `traduzir.py` só localiza link de curso v7.x; a volta para `eventos.inema.pro/<area>/` e o cartão para `exercicios/<n>.md` no GitHub continuavam em PT nas versões EN/ES.
+- `v71.js` (gerador de plano): data mm/dd quando `<html lang="en">` (dd/mm nas outras); `txt.ex1` = singular ("1 exercise" em vez de "1 exercises").
+- `traduzir.py`: `PULA` ganha `aceita`, `mostra`, `sufixo`, `sistema`, `arquivo`, `href_en`, `href_es`.
+- Regressão: os 5 cursos `do-chat-ao-agente*-v72` passaram para este motor; o HTML PT só muda no meta generator, nos arquivos do simterm/simportao e nas abas da rolagem (7.5.5). Achados das pendências de 19/10 da formação.
