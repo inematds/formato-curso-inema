@@ -77,3 +77,4 @@
 - Menu do topo de curso segue o padrão v2 (curso | INEMA.CLUB - PRO à esquerda; seções e Aa à direita); não inventar outro topo (18/10/2026).
 - Simulação com falha proposital: amarrar a falha à primeira execução da tarefa, não à primeira rodada — senão interromper e retomar esconde a falha (18/10/2026).
 - Validar por HTTP local, nunca `file://` (o progresso e os caminhos relativos se comportam diferente) (18/10/2026).
+- Depois do `traduzir.py`, procurar texto de EN/ES idêntico ao PT com palavras portuguesas: prompt ou arquivo em prosa dentro de bloco de código (`AGENTS.md`, "Leia o arquivo…") às vezes volta igual e o validador aceita. Retraduzir só esses (pedido de prosa, mantendo nomes de arquivo e gatilhos) e gravar no cache `i18n/<lang>.json`. Comando com `echo "…"` em PT pode ficar (do-chat-ao-agente, 20/10/2026).
