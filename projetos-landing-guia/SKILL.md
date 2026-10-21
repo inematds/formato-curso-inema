@@ -82,6 +82,7 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
 7. **Traduza** o guia para `guia/en/` e `guia/es/` (veja "Tres idiomas" acima) — obrigatorio.
 8. **Referencie o guia no README** (veja "Referencia no README" abaixo), nos 3 READMEs — obrigatorio.
+8b. **Revisor independente antes de publicar (21/10/2026; regra em `~/.claude/runbooks/revisor-independente.md`).** Um `Agent` `general-purpose` NOVO (nunca `fork`, nunca quem escreveu) recebe só o modelo do runbook: persona (alguém que nunca viu o projeto e quer usá-lo hoje), a especificação (o que o projeto faz, 1–3 linhas do README), o caminho `guia/index.html` + captura em 390 px, e esta lista fixa: (1) em 10 s dá para dizer o que o projeto faz?; (2) o passo a passo roda do zero com os comandos da página (pré-requisito faltando, comando que não existe no repo)?; (3) recurso descrito que não está no repo; (4) termo sem explicação; (5) link quebrado ou placeholder `{{…}}`. Sem notas do autor no pedido. Defeito → corrige e um revisor novo revisa. Registre: `python3 ~/projetos/wifi/scripts/revisor-nota.py registra --fluxo guia --item <repo> --quem revisor --veredito … --nota …` (e `--quem dono` quando o Nei julgar).
 9. **Publique no GitHub Pages** (veja "Publicar" abaixo).
 10. **Verifique** que as 3 URLs (`/guia/`, `/guia/en/`, `/guia/es/`) respondem 200 e que o nav tem o link INEMA.CLUB.
 
