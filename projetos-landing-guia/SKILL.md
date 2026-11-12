@@ -29,6 +29,21 @@ texto numa secao `## O que é` logo depois do banner e do seletor de idioma.
   ("## What it is"/"## Qué es").
 - Guia antigo sem o bloco: ao mexer nele por qualquer motivo, acrescente o resumo.
 
+## Entendimento em cima, parte tecnica embaixo e isolada — SEMPRE (Nei, 12/11/2026)
+
+O leigo tem que entender o assunto antes de ver qualquer comando. Ordem da pagina:
+
+1. **hero** + **Em resumo** (`#resumo`) — o resumo explica o ASSUNTO em linguagem simples; nada de "instale Python" aqui.
+2. **Entendimento** (o que o assunto e, por que importa): video, relatorios/fontes, graficos explicados, comparacoes, analise, **plano de acao** — o que existir no projeto.
+3. **Divisor `#tecnico`** (`<div id="tecnico" class="techhead">`, fundo `--bg2`, borda ambar em cima): chip "Parte tecnica", titulo "O kit: para quem quer ...", e a frase "Voce nao precisa desta parte para entender o que esta acima".
+4. **Zona tecnica** (`<div class="techzone">`, fundo `--bg2`): O que e (o kit), Como funciona, Pre-requisitos, Guia de uso, Numeros/Exemplos, Roadmap.
+
+- **Nav**: so as secoes de entendimento + um unico link "Kit (tecnico)" → `#tecnico`.
+- **CTA principal da hero** aponta para o entendimento (ex.: "Entender em 5 minutos" → `#video`), nunca para `#guia`.
+- **Sem codigo na parte de entendimento**: em vez de `<code>script.py</code>`, um link "como usar ↓" para `#guia`.
+- Projeto que e so ferramenta (sem assunto a explicar): o entendimento vira 1-2 secoes curtas (o problema, o que muda) antes do divisor.
+- Referencia: `inematds/relogio-2027` (guia/index.html, 12/11/2026). Guia antigo: so reordena quando o Nei pedir.
+
 ## Tres idiomas — SEMPRE (padrao desde 2026-09-25)
 
 Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere o usuario pedir.
@@ -130,7 +145,7 @@ Estes elementos sao a identidade do padrao — mantenha sempre:
 
 ## Estrutura (secoes do template)
 
-Preencha cada uma; escale o conteudo ao projeto.
+Preencha cada uma; escale o conteudo ao projeto. **A tabela abaixo segue a ordem do template antigo; na pagina, as secoes "O que e" ate "Roadmap" vao para a zona tecnica, depois do divisor `#tecnico` (ver regra "Entendimento em cima").**
 
 | Secao | O que vai |
 |-------|-----------|
