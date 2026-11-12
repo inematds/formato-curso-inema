@@ -38,6 +38,7 @@ O leigo tem que entender o assunto antes de ver qualquer comando. Ordem da pagin
 3. **Divisor `#tecnico`** (`<div id="tecnico" class="techhead">`, fundo `--bg2`, borda ambar em cima): chip "Parte tecnica", titulo "O kit: para quem quer ...", e a frase "Voce nao precisa desta parte para entender o que esta acima".
 4. **Zona tecnica** (`<div class="techzone">`, fundo `--bg2`): O que e (o kit), Como funciona, Pre-requisitos, Guia de uso, Numeros/Exemplos, Roadmap.
 
+- **Dois banners no topo**: o `banner.jpg` (live) na hero e o `banner-grade.jpg` logo abaixo do paragrafo do `#resumo`, explicando o projeto. Nenhum banner fica so na zona tecnica.
 - **Nav**: so as secoes de entendimento + um unico link "Kit (tecnico)" → `#tecnico`.
 - **CTA principal da hero** aponta para o entendimento (ex.: "Entender em 5 minutos" → `#video`), nunca para `#guia`.
 - **Sem codigo na parte de entendimento**: em vez de `<code>script.py</code>`, um link "como usar ↓" para `#guia`.
@@ -92,7 +93,7 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 1. **Reuna o conteudo do projeto.** Antes de escrever, junte: nome + emoji do projeto, uma frase-pitch, o **texto breve "o que e"** (3-5 frases simples — ver regra acima), o que e (3 pontos fortes), como funciona (as etapas do fluxo/pipeline), pre-requisitos (servicos/comandos pra rodar), o passo a passo de uso (com comandos reais), 1-2 exemplos, o roadmap/fases, e a URL do repo GitHub. Leia o README/docs do projeto se existirem — nao invente recursos; descreva o que existe.
 2. **Copie o template.** Use `assets/template.html` como base — ele ja traz todo o CSS, o nav INEMA, o theme toggle e a estrutura de secoes. **Nao reescreva o CSS.** Edite so o conteudo e os `{{PLACEHOLDERS}}`.
 3. **Preencha as secoes** (veja "Estrutura" abaixo). Remova secoes que nao se aplicam; nunca remova o nav nem o footer.
-4. **Banners (padrao desde 2026-10-01: DOIS estilos em todo guia).** Gere com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo): `--estilo live` → `banner.jpg`, que vai no `<figure>` da hero E no topo do README; e `--estilo grade --saida banner-grade` → `banner-grade.jpg`, que vai no `<figure>` do inicio da secao "O que e" (ja no template). Se o usuario pedir mais, acrescente `--estilo opus --saida banner-opus` em outra secao. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
+4. **Banners (padrao desde 2026-10-01: DOIS estilos em todo guia).** Gere com `assets/gerar-banner.sh` (ver secao "Banner hero" abaixo): `--estilo live` → `banner.jpg`, que vai no `<figure>` da hero E no topo do README; e `--estilo grade --saida banner-grade` → `banner-grade.jpg`, que vai logo abaixo do paragrafo do `#resumo` ("Em resumo"), no TOPO da pagina, explicando o que e o projeto (Nei, 12/11/2026; antes ficava no inicio de "O que e", que agora esta na zona tecnica). Os 6 cartoes do grade mostram o que a pagina entrega (para leigo), nao so os scripts. Se o usuario pedir mais, acrescente `--estilo opus --saida banner-opus` em outra secao. Se falhar, o `<figure>` usa `assets/hero.png` (a imagem crua da capa — tambem gerada pelo Codex desde 2026-09-21).
 5. **Imagens (opcional).** Se houver imagens de exemplo, gere versoes leves (`ffmpeg -i fonte.png -vf scale=760:-1 -q:v 4 guia/assets/x.jpg`) numa pasta `guia/assets/` ao lado do `guia/index.html` (referencie-as no HTML como `assets/x.jpg`, relativo ao guia). Se nao houver, troque o `<figure>` do hero por nada ou por um bloco de codigo.
 6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
 7. **Traduza** o guia para `guia/en/` e `guia/es/` (veja "Tres idiomas" acima) — obrigatorio.
@@ -275,7 +276,7 @@ cinematografica escura/dourada a direita (`--sides`), `INEMA.CLUB · inematds.gi
 discreto no canto. **Segundo banner obrigatorio:** `--estilo grade --saida banner-grade` —
 layout classico (titulo no topo centralizado, fileira de 6 cartoes com objetos 3D dourados,
 faixa `INEMA.CLUB · ...` embaixo) com a tipografia e a imagem do live (dourado fotografico,
-sem neon azul); vai no inicio da secao "O que e". Terceiro, opcional: `--estilo opus` (como o banner do claude-opus55: titulo
+sem neon azul); vai logo abaixo do `#resumo`, no topo (12/11/2026). Terceiro, opcional: `--estilo opus` (como o banner do claude-opus55: titulo
 dourado metalico limpo + tiles com icones). **Nunca** fonte "de jogo" (condensada, inflada,
 cartunesca, dourado+ciano no titulo) — padrao antigo, reprovado pelo usuario. Exemplo do
 padrao novo: `inematds/dot`. E gerado pelo **Codex CLI** (`codex exec` +
@@ -305,7 +306,7 @@ bash ~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh \
   (2-3 palavras) com uma palavra forte de destaque.
 
 - Saida: `<repo>/guia/assets/<saida>.jpg` (1400px, JPG leve; default `banner`). O template ja
-  aponta `assets/banner.jpg` na hero e `assets/banner-grade.jpg` no inicio de "O que e"
+  aponta `assets/banner.jpg` na hero; mova o `banner-grade.jpg` (o template ainda o tem no inicio de "O que e") para logo abaixo do `#resumo`
   (EN/ES usam `../assets/`). Rode o script duas vezes com os mesmos textos:
   ```bash
   G=~/.claude/skills/projetos-landing-guia/assets/gerar-banner.sh
