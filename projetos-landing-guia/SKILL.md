@@ -13,6 +13,20 @@ Gera uma **pagina unica** (`guia/index.html` self-contained, sem build) que serv
 
 O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e quer **uma pagina que explica o que e + ensina a usar**, rapida de publicar. Voce nao reinventa o design — parte do template provado e so troca o conteudo.
 
+## Chamada da hero: dor/desejo + nome do metodo (D20, Nei 12/11/2026)
+
+"Nao adianta estar claro e correto se nao chama atencao, nao mexe na dor ou desejo." Regra unica:
+`~/projetos/inema-design/regras/chamada.md`. Na pratica, antes de escrever a pagina:
+
+- Escreva o **nucleo** em uma frase: o que a pessoa ganha ou deixa de perder, em "voce". O `h1` sai dele
+  e leva o **nome do metodo/kit** quando houver ("Seu agente diz que fez. **Prompt com prova** faz ele mostrar.").
+- O `lead` diz a dor ou o desejo e por que importa (o que custa hoje), nao o inventario.
+- **Contagem de pecas nunca vai no h1 nem no lead** ("8 tecnicas e 9 solucoes"): isso e o meio da pagina.
+- O `#resumo` comeca pela dor/desejo, nao por "Este kit ensina…"; depois o que e, para quem, o que precisa.
+- Rotulo de engenharia (nome de tecnica) aparece com a frase comum ao lado.
+- O mesmo nucleo vira o titulo do card no portal, do topico no Telegram e do video.
+- Revisor: a lista fixa leva o teste da chamada (runbook `revisor-independente.md`).
+
 ## Texto breve "o que e" — SEMPRE (regra global desde 2026-10-05)
 
 Todo guia tem, **logo abaixo da hero**, a secao `#resumo` ("Em resumo") com um **paragrafo curto que
