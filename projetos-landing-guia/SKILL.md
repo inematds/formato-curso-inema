@@ -48,10 +48,11 @@ texto numa secao `## O que é` logo depois do banner e do seletor de idioma.
 O leigo tem que entender o assunto antes de ver qualquer comando. Ordem da pagina:
 
 1. **hero** + **Em resumo** (`#resumo`) — o resumo explica o ASSUNTO em linguagem simples; nada de "instale Python" aqui.
-2. **Entendimento** (o que o assunto e, por que importa): video, relatorios/fontes, graficos explicados, comparacoes, analise, **plano de acao** — o que existir no projeto.
+2. **Entendimento** (o que o assunto e, por que importa): **video (obrigatorio, ver abaixo)**, relatorios/fontes, graficos explicados, comparacoes, analise, **plano de acao** — o que existir no projeto.
 3. **Divisor `#tecnico`** (`<div id="tecnico" class="techhead">`, fundo `--bg2`, borda ambar em cima): chip "Parte tecnica", titulo "O kit: para quem quer ...", e a frase "Voce nao precisa desta parte para entender o que esta acima".
 4. **Zona tecnica** (`<div class="techzone">`, fundo `--bg2`): O que e (o kit), Como funciona, Pre-requisitos, Guia de uso, Numeros/Exemplos, Roadmap.
 
+- **Vídeo explicativo SEMPRE (Nei, 13/11/2026, D21)**: todo guia tem a seção `#video` logo depois do `#resumo`, com o explicavideo do projeto (explicavideos v2 + avatar do Nei pelo estúdio HeyGen; nunca a skill video-explicativo sem avatar) em embed 16:9 do YouTube, nos 3 idiomas (chip "Vídeo"/"Video", título "Entenda em N minutos"). Enquanto o vídeo não sai, deixar a marca `<!-- VIDEO: entra o explicavideo do projeto quando publicado -->` no lugar, e a fase 2 do vídeo (vigia `continua`) troca a marca pelo embed nos 3 idiomas + linha "🎬 Vídeo:" no README. Guia sem vídeo publicado = tarefa aberta, não "pronto". Guia antigo sem vídeo: fazer o vídeo quando o Nei mexer no projeto.
 - **Dois banners no topo**: o `banner.jpg` (live) na hero e o `banner-grade.jpg` logo abaixo do paragrafo do `#resumo`, explicando o projeto. Nenhum banner fica so na zona tecnica.
 - **Nav**: so as secoes de entendimento + um unico link "Kit (tecnico)" → `#tecnico`.
 - **CTA principal da hero** aponta para o entendimento (ex.: "Entender em 5 minutos" → `#video`), nunca para `#guia`.
