@@ -5,3 +5,23 @@ Thumbs.db
 
 # nada de build aqui (projeto self-contained)
 .superpowers/
+
+# fora do repo (público): material de curso e planos com dados pessoais, caches e dependências
+curso-*/
+cursos-yt-aipb/
+PLANO-*.md
+resumo-*.md
+.build-gpt56/
+.cache-pw/
+.capa-deps/
+.gitkit/
+.ml-tmp/
+.pwtmp/
+.syslibs/
+tmp/
+node_modules/
+capa-inema/fetch-debs.js
+capa-inema/package.json
+capa-inema/package-lock.json
+__pycache__/
+*.pyc
