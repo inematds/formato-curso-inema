@@ -436,7 +436,7 @@ h1{margin:0;font:800 clamp(30px,4vw,46px)/1.12 var(--sora);letter-spacing:-.02em
 
 /* botões de etapa no painel */
 .sc-nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px}
-.sc-ir{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line2);background:var(--card);color:var(--mut);border-radius:99px;padding:5px 12px 5px 5px;font:600 13px var(--inter);cursor:pointer;max-width:220px}
+.sc-ir{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line2);background:var(--card);color:var(--mut);border-radius:99px;padding:5px 12px 5px 5px;font:600 13px var(--inter);cursor:pointer;max-width:320px}
 .sc-ir b{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--sf2);color:var(--txt);font:700 12px var(--sora)}
 .sc-ir span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sc-ir:hover{border-color:var(--amb-b);color:var(--txt)}

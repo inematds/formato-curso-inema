@@ -34,6 +34,7 @@
   #v-trilha .au .prog{position:static;margin-top:10px;height:5px;border-radius:99px;background:var(--line);overflow:hidden;max-width:220px;width:auto}
   #v-trilha .au .prog i{display:block;height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .5s}
   #v-trilha footer{max-width:1080px;margin:0 auto;padding:6vh clamp(24px,5vw,60px) 12vh;color:var(--faint);text-align:center;font-family:var(--serif);font-style:italic;border-top:1px solid var(--line)}
+  @media(max-width:720px){#v-trilha .au{grid-template-columns:44px 1fr}#v-trilha .au .meta{grid-column:2;text-align:left}} /* cards da trilha no celular (corrigido 2026-09-07) */
 </style>
 </head>
 <body>
@@ -110,9 +111,10 @@
       <h3 class="ph">Faça na sua máquina</h3>
       <p class="pgoal">Meta clara + tempo + "é seguro".</p>
       <div class="pcodewrap"><button class="pcopy" type="button">copiar</button><pre class="pcode">código colável e limpo</pre></div>
-      <ol class="psteps">
-        <li><label><input type="checkbox" data-ptask="1"> Passo verificável.</label></li>
-        <li><label><input type="checkbox" data-ptask="2"> Outro passo, e veja o resultado.</label></li>
+      <!-- texto de cada passo SEMPRE dentro de <span>: o label é flex, e <b>/<a> soltos viram itens lado a lado que não quebram no celular -->
+  <ol class="psteps">
+        <li><label><input type="checkbox" data-ptask="1"> <span>Passo verificável.</span></label></li>
+        <li><label><input type="checkbox" data-ptask="2"> <span>Outro passo, e veja o resultado.</span></label></li>
       </ol>
       <p class="pdone">✓ O que você acabou de provar na prática.</p>
     </section>

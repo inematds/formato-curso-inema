@@ -1,5 +1,6 @@
 ---
 name: formato-curso-v4
+disable-model-invocation: true
 description: curso INEMA v4 — PÁGINA ÚNICA (trilha + aulas como views, roteamento por hash), dark editorial COM movimento (cold-open que fisga + corpo de leitura calmo com trilho vivo na margem) e camada de aprendizagem nível 3 com RETENÇÃO. Self-contained, offline, um só estado em localStorage. Use SEMPRE que o usuário pedir para criar, editar ou revisar um curso HTML no estilo v4 — landing, trilha ou aula — e ao mencionar "pratique agora / mão na massa", reflexão/"explique com suas palavras", flashcards do grifo, revisão espaçada, "minha jornada", teste-se com feedback, mapa da aula, preferências de leitura (Aa), glossário, onboarding, temas dark/papel/sépia, "página única", "formato de curso v4". Rompe com o v1/v2 (dark âmbar) e com o papel-first do v3, costurando os dois.
 ---
 

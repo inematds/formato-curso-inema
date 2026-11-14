@@ -9,7 +9,7 @@ Campos de texto aceitam <b>, <code>, <a> e <br>; o resto é escapado na origem (
 """
 import argparse, html, json, pathlib, re, sys
 
-VERSAO = "7.14.19"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
+VERSAO = "7.15.23"    # versão do motor (CHANGELOG.md da skill formato-curso-v72)
 RAIZ = pathlib.Path(__file__).resolve().parent
 PREFIXO = "../../"  # caminho até a raiz a partir da página em geração (v7.2: foto do "Você" no diagrama)
 FOTO_VOCE = "assets/img/voce.jpg"
@@ -349,6 +349,7 @@ CONF_UI = {  # 7.9.12: textos do conferidor; ficam em curso.json → ui (mesmos 
     "conf_sem_duracao": "Plano {i}: falta a duração em segundos (ex.: 4 s).",
     "conf_duracao": "Os planos somam {s} s; o pedido é de {x} a {y} s.",
     "conf_termo": "Falta citar {g}.",
+    "conf_proibe": "{g}: troque \"{c}\" por algo que dê para conferir.",  # 7.14.21
     "conf_mais": "… e mais {n}.",
     "conf_rot": "Cole aqui o seu arquivo (ou carregue o .txt):",
     "conf_conferir": "Conferir", "conf_exemplo": "Exemplo que passa", "conf_errado": "Exemplo com erro",
@@ -392,7 +393,9 @@ def sec_conferidor(s, ui, conf_id, prefixo=""):
     dados = json.dumps({"regras": s["regras"], "ok": s["ok"], "exemplo": s["exemplo"], "exemplo_errado": s["exemplo_errado"],
                         "arquivo": s.get("arquivo", "arquivo.txt"), "txt": txt}, ensure_ascii=False).replace("</", "<\\/")
     tid = f"cf-{conf_id}"
-    return (f'<div class="confer" data-conf="{attr(conf_id)}" data-ok-prefixo="{attr(re.split(r"[{:]", s["ok"])[0])}">'
+    # 7.14.20: ficha só de campos/termos (sem lista de planos) quebra a linha na caixa; antes ficava cortada no celular
+    quebra = "" if any(r.get("tipo") in ("planos", "cada_plano", "duracao") for r in s["regras"]) else " quebra"
+    return (f'<div class="confer{quebra}" data-conf="{attr(conf_id)}" data-ok-prefixo="{attr(re.split(r"[{:]", s["ok"])[0])}">'
             f'<div class="cf-cab"><span class="cf-arquivo">{ic("arquivo")}{esc(s.get("arquivo", "arquivo.txt"))}</span>'
             f'<span class="cf-exs"><button type="button" class="btn neutro" data-cf-ex="ok">{ic("check")}{txt["conf_exemplo"]}</button>'
             f'<button type="button" class="btn neutro" data-cf-ex="errado">{ic("x")}{txt["conf_errado"]}</button></span></div>'
@@ -592,6 +595,7 @@ def pagina_aula(curso, aulas, a, idx, ui, lang):
         if x["tipo"] == "links": continue
         k += 1
         refs.setdefault(x["tipo"], (f"s{k}", re.sub("<[^>]+>", "", x["titulo"])))
+        refs[f"s{k}"] = (f"s{k}", re.sub("<[^>]+>", "", x["titulo"]))  # ref "sN" = N-ª seção (sem contar links)
     num = 0
     pt_terms = [x for x in PT_AULAS.get(a["slug"], a)["secoes"] if x["tipo"] == "simterm"]  # 7.14.19
     n_term = 0
@@ -683,6 +687,20 @@ def pagina_inicio(curso, aulas, ui, lang):
                             f'<span class="ia-txt"><span class="kicker">{c["rot"]}</span><span class="ia-t">{c["t"]}</span><span class="ia-l">{c["l"]}</span>'
                             f'<span class="ic-ir">{cs["abrir"]} {ic("seta")}</span></span></a></li>' for c in cs["itens"])
                   + '</ol></section>')
+    # 7.15.23: inicio.visao (opcional) — o sistema inteiro num diagrama clicável (um nó por aula) e, ao lado,
+    # o que o aluno tem no fim (pasta + saída real). Fica logo abaixo da abertura, antes da lista de aulas.
+    visao = ""
+    if p.get("visao"):
+        global PREFIXO
+        PREFIXO = ativo(prefixo)
+        v, r = p["visao"], p["visao"]["resultado"]
+        arqs = "".join(f'<li><code>{x["n"]}</code><span>{x["t"]}</span></li>' for x in r["arquivos"])
+        saida = (f'<div class="vs-saida"><p class="vs-rot">{ic("terminal")}{r["saida_rot"]}</p><pre>{r["saida"]}</pre></div>'
+                 if r.get("saida") else "")
+        visao = (f'<section class="secao ini-visao" id="visao"><div class="sec-cab"><div><h2>{v["titulo"]}</h2><p>{v["sub"]}</p></div></div>'
+                 + sec_diagrama(v["diagrama"], ui)
+                 + f'<div class="vs-fim"><div class="vs-pasta"><p class="vs-rot">{ic("check")}{r["titulo"]}</p>'
+                 + f'<p class="vs-raiz">{ic("pasta")}<code>{r["pasta"]}</code></p><ul>{arqs}</ul></div>{saida}</div></section>')
     return (cabeca(f'{curso["nome"]} · INEMA', p["lead"], prefixo, lang, curso["url"], id_curso(curso))
             + f'<body class="inicio" data-curso="{id_curso(curso)}" data-total="{len(aulas)}" data-total-ex="{total_ex(aulas)}">' + topo(curso, aulas, ui, prefixo)
             + '<div class="casca">' + lado(curso, aulas, ui, prefixo, "")
@@ -692,7 +710,7 @@ def pagina_inicio(curso, aulas, ui, lang):
             + f'<div class="ini-acoes"><a class="comecar" href="aulas/{aulas[0]["slug"]}/index.html">{p["cta"]} {ic("seta")}</a>'
             + f'<a class="ini-link" href="{p["cta2"]["href"]}">{p["cta2"]["t"]}</a></div></div>'
             + f'<figure class="ah-img"><img src="{ativo(prefixo)}{img_idioma('assets/img/hero/inicio.jpg')}" alt="{attr(p["capa_alt"])}" width="1536" height="1024"/></figure></div>'
-            + f'<ul class="ini-num">{numeros}</ul>' + cursos
+            + f'<ul class="ini-num">{numeros}</ul>' + visao + cursos
             + f'<section class="secao" id="aulas"><div class="sec-cab"><div><h2>{p["aulas_titulo"]}</h2><p>{p["aulas_sub"]}</p></div></div><ol class="ini-aulas">{lista}</ol></section>'
             + f'<section class="secao"><div class="ini-duas">{duas}</div></section>'
             + rodape(curso) + f'</div></main></div><script src="{ativo(prefixo)}assets/v71.js"></script><script src="{ativo(prefixo)}assets/v72.js"></script></body></html>\n')

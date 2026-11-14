@@ -110,6 +110,14 @@
     function ajusta() {
       fig.style.minHeight = "";
       sc.classList.add("fixo");
+      /* a legenda tem a altura do passo mais longo: nenhum texto fica cortado embaixo */
+      if (cap) {
+        var antes = cap.innerHTML, maior = 0;
+        cap.style.height = "auto";
+        passos.forEach(function (p) { cap.innerHTML = p.innerHTML; maior = Math.max(maior, cap.offsetHeight); });
+        cap.innerHTML = antes;
+        cap.style.height = maior ? maior + "px" : "";
+      }
       var col = sc.querySelector(".mp-col"); if (col) col.classList.add("aberto");
       var cabe = innerWidth > 900 && fig.offsetHeight <= innerHeight - 70;
       var alto = fig.offsetHeight;

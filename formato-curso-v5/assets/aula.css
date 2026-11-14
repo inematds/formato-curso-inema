@@ -455,3 +455,10 @@ html[data-theme="papel"] .next-action,html[data-theme="sepia"] .next-action{back
 .exactions{display:flex;gap:8px;flex-shrink:0}
 .exgo,.exreset{font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:var(--panel2);border:1px solid var(--line2);border-radius:99px;padding:8px 12px;cursor:pointer;transition:border-color .2s,color .2s}
 .exgo:hover,.exreset:hover{border-color:var(--accent);color:var(--ink)}
+
+/* ---- correção 2026-09-07: rolagem lateral no celular (balão do glossário fora do layout quando escondido; bloco colável com quebra de linha; coluna sem largura mínima) ---- */
+.layout .col{min-width:0}
+.pcodewrap .pcode{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.gterm:not(:hover):not(:focus)::after{display:none}
+html{overflow-x:clip}
+@media(max-width:940px){.gterm::after{max-width:min(280px,calc(100vw - 48px))}}

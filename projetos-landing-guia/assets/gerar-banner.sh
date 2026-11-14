@@ -46,7 +46,7 @@ command -v codex >/dev/null || { echo "[banner] codex não instalado — fallbac
 command -v ffmpeg >/dev/null || { echo "[banner] ffmpeg ausente"; exit 1; }
 PNG="$REPO/guia/assets/$SAIDA.png"; JPG="$REPO/guia/assets/$SAIDA.jpg"
 
-HEAD_TXT="Use sua ferramenta de geração de imagem (image_gen) para criar UM banner promocional 16:9 no maior formato horizontal disponível e salve o PNG em guia/assets/$SAIDA.png dentro deste diretório. Não edite nenhum outro arquivo."
+HEAD_TXT="Use sua ferramenta de geração de imagem (image_gen) para criar UM banner promocional 16:9 no maior formato horizontal disponível e salve o PNG em guia/assets/$SAIDA.png dentro deste diretório. Não edite nenhum outro arquivo. Se houver robô na cena: humanoide estilo Tesla Optimus ou realista, nunca cartoon; a frente da cabeça tem um visor preto (área de visão escura), nunca a cabeça toda branca."
 TAIL_TXT="Todo o texto da imagem em $IDIOMA, exatamente como dado acima (os textos já vêm traduzidos), sem erros de grafia, sem texto extra inventado. Ao terminar, responda só com o caminho do arquivo e o tamanho em pixels."
 if [ "$ESTILO" = live ]; then
   RESTO="$(printf '%s' "$TITLE" | sed "s/$(printf '%s' "$DESTAQUE" | sed 's/[][\\/.*^$]/\\&/g')//" | sed 's/  */ /g;s/^ //;s/ $//')"

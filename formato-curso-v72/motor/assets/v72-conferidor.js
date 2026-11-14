@@ -20,6 +20,15 @@
     });
   }
   // para cada grupo, as famílias citadas na linha; termo dentro de termo maior (de qualquer grupo) não conta
+  // 7.14.22: no aviso de termo proibido, cita a forma que a pessoa escreveu (não o 1º sinônimo, que pode ser de outro idioma)
+  function citado(texto, familia) {
+    var ln = norm(texto), alts = familia.split(" / ").map(function (a) { return a.trim(); }).filter(Boolean);
+    var ord = alts.slice().sort(function (a, b) { return b.length - a.length; });
+    for (var i = 0; i < ord.length; i++) {
+      if (new RegExp("(?<![a-z0-9])" + escRe(norm(ord[i])) + "(?![a-z0-9])").test(ln)) return ord[i];
+    }
+    return alts[0] || familia;
+  }
   function achados(linha, grupos) {
     var ln = norm(linha), cand = [];
     grupos.forEach(function (g, gi) {
@@ -109,7 +118,10 @@
             var pc = new RegExp("^\\s*[-*•]?\\s*" + escRe(norm(g.campo)) + "\\s*:(.*)$");
             alvo = linhas.map(function (l) { var m = pc.exec(norm(l)); return m ? m[1] : ""; }).join("\n");
           }
-          if (!achados(alvo, r.grupos)[gi].n) faltas.push(fmt(T.conf_termo, { g: g.rot }));
+          var ach = achados(alvo, r.grupos)[gi];
+          if (g.proibe) {  // 7.14.21: grupo de termos proibidos (vazio, adjetivo sem teste): citar reprova
+            if (ach.n) faltas.push(fmt(T.conf_proibe, { g: g.rot, c: citado(alvo, g.termos[Math.min.apply(null, Object.keys(ach.fams).map(Number))]) }));
+          } else if (!ach.n) faltas.push(fmt(T.conf_termo, { g: g.rot }));
         });
       }
     });

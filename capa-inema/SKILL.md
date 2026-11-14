@@ -39,7 +39,8 @@ chamam esta skill como passo final da criação da página.
 node <skill>/assets/gerar-capa.cjs --repo <caminho-do-repo> \
   [--title "Título do Curso"] [--cat "Categoria"] \
   [--layout split|fb] [--cena "descrição visual da imagem"] \
-  [--catalog /home/nmaldaner/projetos/inemapro-mono/apps/pro/data/catalog.json]
+  [--catalog /home/nmaldaner/projetos/inemapro-mono/apps/pro/data/catalog.json] \
+  [--gerador auto|codex|flux]
 ```
 
 - **`--repo`** (obrigatório) — pasta do repo; a capa vai em `<repo>/capa/capa.png`.
@@ -49,6 +50,11 @@ node <skill>/assets/gerar-capa.cjs --repo <caminho-do-repo> \
 - **`--layout`** — `split` (default) ou `fb`.
 - **`--cena`** — sobrescreve a descrição visual mandada pro gerador (por padrão vem de um
   mapa por categoria; temas desconhecidos usam o próprio título como assunto).
+- **`--gerador`** — de onde sai a ARTE. `flux` (**default**) = inemaimg local (flux2-klein,
+  comportamento historico — vale pras capas de curso e pro lote); `auto` = **Codex CLI
+  (`image_gen`)** e cai pro flux se o Codex falhar; `codex` = só Codex (falha dura).
+  A skill **`projetos-landing-guia` passa `--gerador auto`** desde 2026-09-21, a pedido do
+  usuário: a capa/hero do guia de PROJETO sai do Codex, flux só no fallback.
 - **`--save-raw <caminho>`** — também grava a imagem-base **sem texto** (a mesma usada na
   capa) nesse caminho. Use pra reaproveitar a mesma imagem como hero da página de guia
   (`guia/assets/hero.png`) sem gerar uma segunda vez — mantém a identidade visual
@@ -56,10 +62,14 @@ node <skill>/assets/gerar-capa.cjs --repo <caminho-do-repo> \
 
 ## Dependências (checar antes)
 
-1. **inemaimg no ar** — servidor de imagem local em `http://localhost:8000` (flux2-klein).
-   Confirme com `curl -s localhost:8000/health`. Configurável via env `IMG_API`.
-   O modelo de imagem padrão do ecossistema é **flux2-klein** (regra global do usuário).
-2. **Playwright/chromium** — a engine tenta `node_modules` local e depois o do
+1. **Codex CLI** (`codex`) — desde **2026-09-21** a arte da capa/hero sai do gerador de
+   imagem do Codex (`image_gen`) por padrão, a pedido do usuário. Roda com
+   `codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox` (o bwrap
+   do Codex não funciona neste host). Custo: uma geração de imagem na conta OpenAI do Codex.
+2. **inemaimg no ar** — servidor de imagem local em `http://localhost:8000` (flux2-klein).
+   Confirme com `curl -s localhost:8000/health`. Configurável via env `IMG_API`. É o
+   **default** da engine e também o fallback do caminho Codex.
+3. **Playwright/chromium** — a engine tenta `node_modules` local e depois o do
    `~/projetos/timesmkt3`. Se faltar: `npm i -D playwright && npx playwright install chromium`.
 
 ## Rodar em lote

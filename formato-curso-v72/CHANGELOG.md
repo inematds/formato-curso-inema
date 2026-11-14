@@ -137,3 +137,20 @@
 - `v71.js` (gerador de plano): data mm/dd quando `<html lang="en">` (dd/mm nas outras); `txt.ex1` = singular ("1 exercise" em vez de "1 exercises").
 - `traduzir.py`: `PULA` ganha `aceita`, `mostra`, `sufixo`, `sistema`, `arquivo`, `href_en`, `href_es` e `pagina` (URL da página do vídeo em `videos.*.idiomas`).
 - Regressão: os 5 cursos `do-chat-ao-agente*-v72` passaram para este motor; o HTML PT só muda no meta generator, nos arquivos do simterm/simportao e nas abas da rolagem (7.5.5). Achados das pendências de 19/10 da formação.
+
+## 7.14.20 — 24/10/2026
+- Conferidor: quando as regras são só `campos`/`termos` (ficha, sem lista de planos), a caixa ganha a classe `quebra` e quebra a linha (`white-space: pre-wrap`); no celular a ficha colada aparecia cortada à direita (revisor do curso `do-prompt-ao-papel-v72`). Lista de planos continua em `pre` com rolagem.
+
+## 7.14.21 — 24/10/2026
+- Conferidor: grupo de `termos` com `"proibe": true` reprova quando o termo aparece (no texto todo ou só na linha do `campo`), com a mensagem `conf_proibe` ("{g}: troque \"{c}\" por algo que dê para conferir."). Serve para recusar vazio e adjetivo sem teste ("nada", "quando der", "do seu jeito", "bom", "bonito") num campo como Medida ou Prazo. Mesmo comportamento em `conferir.py` e `v72-conferidor.js`; `traduzir.py` conhece a chave. Ponha cada grupo proibido numa regra `termos` própria (o casamento do termo mais longo vale entre grupos da mesma regra). Achado dos revisores do curso `do-prompt-ao-papel-v72`.
+
+## 7.14.22 — 26/10/2026
+- Conferidor: o aviso `conf_proibe` cita a forma que a pessoa escreveu (a variante da família que casou no texto), não o 1º sinônimo da família — antes o ES mostrava `cambia "algum dia"` (achado do revisor ES no curso `do-prompt-ao-papel-v72`). `conferir.py` e `v72-conferidor.js` (função `citado`).
+
+## 7.14.23 — 28/10/2026
+- Rolagem guiada (`v71.js`, `ajusta`): a legenda do painel fixo (`.sc-cap`) tinha altura fixa de 112 px com `overflow:hidden` e cortava a explicação do passo que passava de duas linhas (achado pelo Nei no curso `claude-gestor-de-agentes-v72`, aula 1). Agora mede todos os passos e fica com a altura do mais longo; o teste "cabe na tela" já usa essa altura (se não couber, cai no modo solto, sem corte).
+- `v71.css`: botão de etapa (`.sc-ir`) com até 320 px (antes 220), para o nome do passo não virar reticências tão cedo.
+- `gerar.py`: no quiz, `ref` aceita `"sN"` (N-ª seção da aula, sem contar `links`). Antes só o tipo, e numa aula com várias seções `passos` o "Rever" levava sempre à primeira (achado do revisor na aula 9 do `claude-gestor-de-agentes-v72`).
+
+## 7.15.23 — 14/11/2026
+- Página inicial: bloco opcional **`inicio.visao`** logo abaixo dos números — o sistema inteiro num diagrama clicável (`visao.diagrama`, mesmo formato da seção `diagrama`, um nó por aula, sem `rolagem`) e, embaixo, o que o aluno tem no fim: a pasta com os arquivos (`resultado.pasta`, `resultado.arquivos[{n,t}]`) e uma saída real capturada (`resultado.saida_rot`, `resultado.saida`, com `&lt;`/`&gt;` escapados). Pedido do Nei no `agentes-do-zero-v72`: a capa não mostrava o projeto inteiro nem o resultado. Estilos em `v72.css` (`.ini-visao`, `.vs-*`).

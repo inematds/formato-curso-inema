@@ -1,5 +1,6 @@
 ---
 name: formato-curso-v3
+disable-model-invocation: true
 description: curso INEMA v3 — pagina de LEITURA editorial, papel quente + serif + 1 acento azul-ardosia, profundidade na MARGEM via sidenotes, camada de aprendizagem minima, self-contained; rompe com o dark-ambar do v1/v2. Use SEMPRE que o usuario pedir para criar, editar ou revisar paginas HTML de curso no estilo v3 / editorial / reading-mode — landing, index de trilha, ou pagina de aula/modulo — e tambem ao mencionar sidenotes na margem, "indo mais fundo", marcar lido/duvida/nota na margem, "minha jornada", temas papel/sepia/escuro, ou quando disser "formato de curso v3", "reading-mode", "leitura editorial". Acione tambem quando o usuario quiser romper com o dark premium ambar/ciano do v1/v2 e ir para a pagina de leitura calma.
 ---
 

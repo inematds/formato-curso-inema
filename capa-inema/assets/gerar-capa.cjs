@@ -1,18 +1,24 @@
 #!/usr/bin/env node
 /* gerar-capa.cjs — capa INEMA 1280x720 pra um repo de curso/projeto.
- * Dois layouts: split (default) e fb (full-bleed). Imagem gerada no inemaimg
- * (flux2-klein) e título/marca renderizados por cima via Playwright.
+ * Dois layouts: split (default) e fb (full-bleed). A ARTE vem do gerador de
+ * imagem do Codex CLI (image_gen) por padrão desde 2026-09-21; o inemaimg local
+ * (flux2-klein) só entra como FALLBACK se o Codex falhar. Título/marca são
+ * renderizados por cima via Playwright.
  *
  * Uso:
  *   node gerar-capa.cjs --repo <caminho> [--title "..."] [--cat "..."] \
  *        [--layout split|fb] [--cena "descrição visual"] [--catalog <catalog.json>]
+ *        [--raw-in <arte.png>] [--gerador auto|codex|flux]
+ *
+ * --gerador: auto (default) = Codex e cai pro flux se falhar; codex = só Codex
+ * (falha dura); flux = só o inemaimg local (comportamento antigo).
  *
  * Resolução de título/categoria: --title/--cat vencem; senão tenta catalog.json
  * pelo slug (basename do repo); senão lê <title>/<h1> do index.html do repo.
  * Saída: <repo>/capa/capa.png
  *
- * Requer: inemaimg no ar (IMG_API, default http://localhost:8000/generate) e
- * Playwright/chromium (tenta node_modules local, depois o do timesmkt3). */
+ * Requer: codex CLI (arte) e Playwright/chromium; inemaimg no ar
+ * (IMG_API, default http://localhost:8000/generate) só pro fallback. Playwright (tenta node_modules local, depois o do timesmkt3). */
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -120,6 +126,47 @@ async function gerarImagem(cena, seed, w, h) {
   return (await r.json()).image; // base64 PNG
 }
 
+// ── arte via Codex CLI (image_gen) — DEFAULT desde 2026-09-21 ───────────────
+// O usuário pediu que a arte da capa/hero do guia saia do gerador de imagem do
+// Codex (a mesma via já usada pelo gerar-banner.sh do projetos-landing-guia), e
+// que o flux2-klein local só entre quando o Codex falhar.
+// Detalhes:
+// - --dangerously-bypass-approvals-and-sandbox: o bwrap do Codex não roda neste
+//   host (AppArmor restringe user namespaces) e a gravação do PNG falha mesmo
+//   com -s workspace-write (visto 2026-09-13 no gerar-banner.sh).
+// - O image_gen tem tamanhos fixos (não aceita 1024x768 arbitrário). Não é
+//   problema: htmlSplit e htmlFB usam object-fit:cover, então o corte é
+//   inofensivo. Só pedimos a ORIENTAÇÃO certa (paisagem).
+// - Sem seed: o image_gen não expõe seed. Capa do mesmo repo não é mais
+//   reprodutível byte a byte pelo caminho Codex (é pelo fallback flux).
+function gerarImagemCodex(cena, w, h) {
+  const { spawnSync } = require('child_process');
+  const which = spawnSync('bash', ['-c', 'command -v codex'], { encoding:'utf8' });
+  if (which.status !== 0) throw new Error('codex não instalado');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'capa-codex-'));
+  const orient = w >= h ? 'horizontal (paisagem, 3:2 ou 16:9)' : 'vertical (retrato)';
+  const prompt = `Use sua ferramenta de geração de imagem (image_gen) para criar UMA imagem `
+    + `${orient} e salve o PNG como arte.png neste diretório. Não crie nem edite nenhum outro arquivo.\n\n`
+    + `Conteúdo da imagem: ${cena}.\n`
+    + `Fotografada com lente prime clara, profundidade de campo rasa, o sujeito nítido em foco `
+    + `e o fundo suavemente desfocado.\n`
+    + `SEM TEXTO de qualquer tipo: sem palavras, sem letras, sem legendas, sem marca d'água, `
+    + `sem logo, sem interface de usuário, não é uma captura de tela.\n`
+    + `Ao terminar, responda só com o caminho do arquivo e o tamanho em pixels.`;
+  const png = path.join(dir, 'arte.png');
+  const r = spawnSync('codex', ['exec', '--skip-git-repo-check',
+    '--dangerously-bypass-approvals-and-sandbox', prompt],
+    { cwd: dir, encoding:'utf8', timeout: 600000 });
+  if (!fs.existsSync(png) || fs.statSync(png).size === 0) {
+    const log = path.join(dir, 'codex.log');
+    try { fs.writeFileSync(log, (r.stdout||'') + '\n' + (r.stderr||'')); } catch {}
+    throw new Error(`codex não gerou arte.png (log: ${log})`);
+  }
+  const b64 = fs.readFileSync(png).toString('base64');
+  fs.rmSync(dir, { recursive:true, force:true }); // /tmp é apertado neste host
+  return b64;
+}
+
 function htmlSplit(meta, b64){
   const {main,sub}=splitTitle(meta.title);
   const fsz = main.length>22 ? 58 : 72;
@@ -184,14 +231,59 @@ async function main(){
 
   console.log(`[capa] ${meta.slug} | layout=${layout} | cat=${meta.cat} | "${meta.title}"`);
   const [iw, ih] = layout === 'fb' ? [W, H] : [1024, 768];
-  const b64 = await gerarImagem(cena, seed, iw, ih);
+  // --raw-in: a arte ja existe (gerada por outro modelo/ferramenta) e so falta a
+  // camada de texto INEMA por cima. Sem a flag nada muda: gera no inemaimg.
+  const rawIn = args['raw-in'] && args['raw-in'] !== true ? path.resolve(String(args['raw-in'])) : null;
+  if (rawIn && !fs.existsSync(rawIn)) { console.error('--raw-in nao existe:', rawIn); process.exit(2); }
+  // Ordem da arte com --gerador auto: --raw-in > Codex (image_gen) > flux2-klein (fallback).
+  // Default = flux (comportamento historico), porque esta engine tambem faz as capas de
+  // CURSO em lote e cada chamada ao Codex custa uma geracao na conta OpenAI. Quem quer o
+  // Codex pede: a skill projetos-landing-guia passa --gerador auto desde 2026-09-21.
+  const gerador = (args.gerador && args.gerador !== true) ? String(args.gerador) : 'flux';
+  let b64, fonte;
+  if (rawIn) { b64 = fs.readFileSync(rawIn).toString('base64'); fonte = `raw-in (${rawIn})`; }
+  else if (gerador === 'flux') { b64 = await gerarImagem(cena, seed, iw, ih); fonte = 'flux2-klein'; }
+  else {
+    try { b64 = gerarImagemCodex(cena, iw, ih); fonte = 'codex/image_gen'; }
+    catch (e) {
+      if (gerador === 'codex') { console.error('[capa] codex falhou:', e.message); process.exit(1); }
+      console.warn(`[capa] codex falhou (${e.message}) — fallback pro flux2-klein local`);
+      b64 = await gerarImagem(cena, seed, iw, ih); fonte = 'flux2-klein (fallback)';
+    }
+  }
+  console.log(`[capa] arte: ${fonte}`);
 
   const chromium = loadChromium();
-  const browser = await chromium.launch({ headless:true, args:['--no-sandbox'] });
+  const browser = await chromium.launch({ headless:true, args:['--no-sandbox','--disable-dev-shm-usage'] });
   try {
     const page = await browser.newPage({ viewport:{ width:W, height:H }, deviceScaleFactor:1 });
     await page.setContent(layout === 'fb' ? htmlFB(meta,b64) : htmlSplit(meta,b64), { waitUntil:'networkidle' });
     await page.waitForTimeout(300);
+
+    // O tamanho do titulo era escolhido por CONTAGEM DE CARACTERES, sem saber a
+    // largura da coluna: "Bench Studio BR" (15 chars) ganhava 72px e quebrava em
+    // duas linhas num espaco de ~528px. Aqui a pagina MEDE e encolhe ate caber
+    // numa linha so — nunca aumenta, entao capa que ja cabia nao muda.
+    await page.evaluate(() => {
+      const el = document.querySelector('.main');
+      if (!el) return;
+      // A largura disponivel e medida ANTES do nowrap e virada em teto fixo. Sem
+      // isso a conta e circular: numa coluna `1fr`, o nowrap faz a propria
+      // coluna crescer, o texto "cabe" em qualquer tamanho e quem paga e a
+      // imagem ao lado, que sai empurrada para fora da capa.
+      const disponivel = el.parentElement.clientWidth;
+      el.style.maxWidth = disponivel + 'px';
+      el.style.whiteSpace = 'nowrap';
+      let px = parseFloat(getComputedStyle(el).fontSize);
+      while (px > 34 && el.scrollWidth > disponivel) {
+        px -= 2;
+        el.style.fontSize = px + 'px';
+      }
+      // Titulo longo demais para caber inteiro numa linha: solta a quebra de
+      // volta, porque duas linhas legiveis batem uma linha ilegivel.
+      if (el.scrollWidth > disponivel) el.style.whiteSpace = 'normal';
+    });
+    await page.waitForTimeout(120);
     const capaDir = path.join(repo, 'capa');
     fs.mkdirSync(capaDir, { recursive:true });
     const out = path.join(capaDir, 'capa.png');

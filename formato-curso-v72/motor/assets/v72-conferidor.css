@@ -20,3 +20,6 @@
 .cf-res ul{margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.5;color:var(--txt2)}
 .cf-res li{margin:2px 0;overflow-wrap:anywhere}
 @media (max-width:560px){.cf-exs{margin-left:0}.confer textarea{font-size:12.5px;min-height:200px}}
+
+/* 7.14.20: ficha de campos quebra a linha (a lista de planos continua em pre, com rolagem) */
+.confer.quebra textarea{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:hidden}

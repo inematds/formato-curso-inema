@@ -52,7 +52,7 @@ Tudo que o aluno vê sai de JSON. Campos de texto aceitam `<b>`, `<code>`, `<a>`
 
 **`video`** — `chave` de `curso.videos`.
 
-**`quiz`** — `perguntas [{p, opcoes[], certa (índice), explica, ref? (tipo de seção para "rever"), cert?}]`. 3–5 perguntas; `explica` comenta por que a certa é certa e o erro comum.
+**`quiz`** — `perguntas [{p, opcoes[], certa (índice), explica, ref? (tipo de seção para "rever": vai à 1ª desse tipo; "sN" vai à N-ª seção da aula, sem contar links, desde 7.14.23), cert?}]`. 3–5 perguntas; `explica` comenta por que a certa é certa e o erro comum.
 
 **`resumo`** — `itens [{t, texto}]`.
 

@@ -33,7 +33,7 @@
 ### 2.1 Princípios não-negociáveis
 
 1. **Dark mode primeiro** — toda decisão visual nasce em dark; light é override.
-2. **Zero imagens raster** — sem PNG/JPG. Tudo é texto, SVG inline, ou CSS.
+2. **Zero imagens raster (padrão)** — sem PNG/JPG. Tudo é texto, SVG inline, CSS ou animação em código. Raster só quando o usuário pedir explicitamente (ver seção inemaimg do `SKILL.md`).
 3. **Acentos de cor por contexto** — cada trilha tem sua cor; nunca misturar trilhas em uma página.
 4. **Bordas finas, cantos arredondados** — `border` (1px) + `rounded-xl` (12px). Sem sombras pesadas.
 5. **Tipografia generosa, sem decoração** — Inter, sem serifs, sem itálicos cosméticos.
@@ -44,7 +44,7 @@
 
 - ❌ Sombras pesadas (`shadow-2xl`) — quebra a estética flat
 - ❌ Gradientes sobre gradientes — usar só no hero da página
-- ❌ Animações exuberantes (rotate, bounce) — só transitions de cor
+- ❌ Animações exuberantes (rotate, bounce) na INTERFACE — só transitions de cor. (Exceção: animação DIDÁTICA dentro de um diagrama SVG/CSS, quando o movimento ensina — sempre respeitando `prefers-reduced-motion`.)
 - ❌ Ícones de Font Awesome / bibliotecas raster
 - ❌ Imagens stock genéricas
 - ❌ Cantos retos (`rounded-none`) — sempre arredondar

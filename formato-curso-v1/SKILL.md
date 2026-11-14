@@ -1,5 +1,6 @@
 ---
 name: formato-curso
+disable-model-invocation: true
 description: Template e padroes de design para criar paginas HTML de cursos no formato INEMA.CLUB. Use esta skill SEMPRE que o usuario pedir para criar, editar ou revisar paginas HTML de curso — incluindo index de trilhas, paginas de modulos, componentes como navegacao, cards, topicos expansiveis, modais e slides. Acione tambem quando o usuario mencionar trilhas, modulos, topicos, INEMA.CLUB, ou quando pedir para seguir o "formato de curso" ou "template de curso". Nao deixe de usar esta skill se o usuario mencionar qualquer coisa relacionada a paginas HTML de cursos ou ao projeto skillx.
 ---
 

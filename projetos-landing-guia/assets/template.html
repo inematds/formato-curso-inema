@@ -65,7 +65,7 @@
   .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
   .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
   .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
-  .hero figure img{width:100%;display:block}
+  .hero figure img{width:100%;height:auto;display:block}
   .resumo{padding:38px 0 34px;border-bottom:1px solid var(--line)}
   .resumo p{font-size:1.12rem;line-height:1.7;max-width:74ch;margin:.55em 0 0}
   @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
@@ -85,14 +85,16 @@
   .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
   pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
   pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
-  .step{display:grid;grid-template-columns:46px 1fr;gap:16px;margin-bottom:26px}
+  .step{display:grid;grid-template-columns:46px minmax(0,1fr);gap:16px;margin-bottom:26px}
+  .step>div,.card{min-width:0}
+  p code,li code,td code{overflow-wrap:anywhere}
   .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
   .step h3{font-size:1.12rem;margin-bottom:.3em}
   .step p{color:var(--mut);margin:.2em 0 .7em}
   .ex{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   @media(max-width:680px){.ex{grid-template-columns:1fr}}
   .ex figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
-  .ex figure img{width:100%;display:block}
+  .ex figure img{width:100%;height:auto;display:block}
   .ex figcaption{padding:12px 14px;font-size:.88rem;color:var(--mut);background:var(--card)}
   .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
   .phase:last-child{border:none}

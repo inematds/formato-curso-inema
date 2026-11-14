@@ -1,4 +1,5 @@
 ---
+disable-model-invocation: true
 name: formato-curso-v2
 description: Template e padroes de design para criar paginas HTML de cursos no formato INEMA.CLUB COM camada de aprendizagem por cima — progresso/marcar-lido, duvida, anotacoes/highlight no proprio texto, painel "minha jornada" (continuar de onde parei), export/import .json, sistema de temas trocavel (data-theme ortogonal ao .dark) + preferencias de leitura (tamanho/largura/entrelinha/fonte/acento). Tudo self-contained (HTML+Tailwind CDN+JS inline, sem build/backend, abre em file://), baseado no formato-curso v1 (dark premium ambar/ciano, SVG futurista, profundidade de modulos). Use esta skill SEMPRE que o usuario pedir para criar, editar ou revisar paginas HTML de curso — incluindo index de trilhas, paginas de modulos, componentes como navegacao, cards, topicos expansiveis, modais e slides — e tambem quando pedir os recursos de aprendizagem (progresso, marcar lido, duvida, anotacao, highlight, minha jornada, export/import, temas, modo leitura/sepia/foco/alto-contraste). Acione tambem quando o usuario mencionar trilhas, modulos, topicos, INEMA.CLUB, ou quando pedir para seguir o "formato de curso" ou "template de curso". Nao deixe de usar esta skill se o usuario mencionar qualquer coisa relacionada a paginas HTML de cursos ou ao projeto skillx.
 ---
@@ -66,13 +67,11 @@ Antes de entregar, percorra o checklist correspondente a pagina criada. Confirme
 
 ---
 
-## Imagens geradas com inemaimg (complementar)
+## Imagens geradas com inemaimg (opcional — so quando pedido)
 
-Para deixar os cursos mais ricos, voce PODE gerar imagens incriveis com o **inemaimg** — servidor de imagem local (FastAPI) que roda na maquina, em `http://localhost:8000` (server em `~/projetos/inemaimg`).
+**Padrao do v2: visual em CODIGO** (SVG inline, CSS/JS, animacao SVG, HyperFrames). Imagem raster gerada **nao e o caminho default** — so entra quando o usuario pedir explicitamente (ex.: um hero tematico). Quando pedir, o **inemaimg** e o servidor de imagem local (FastAPI) em `http://localhost:8000` (server em `~/projetos/inemaimg`).
 
-**Quando usar:** hero/banner de landing e index de trilha, ilustracoes tematicas de modulo, thumbnails de card, fundos/texturas, imagens de apoio conceitual.
-
-**NAO substitui o SVG inline obrigatorio (erro #17).** Cada modulo de conteudo continua precisando de **≥1 diagrama SVG futurista inline** e cada index de trilha de **1 hero SVG**. As imagens do inemaimg sao um EXTRA decorativo/tematico (PNG raster), nunca o diagrama conceitual do curso.
+**NAO substitui o SVG inline obrigatorio (erro #17)** e nunca e o material didatico do modulo — conceito, comparacao, exemplo anotado e exercicio visual sao desenhados em codigo.
 
 ### Modelos e licenca (importante)
 
@@ -84,7 +83,7 @@ Para deixar os cursos mais ricos, voce PODE gerar imagens incriveis com o **inem
 | `ernie` | 50 | T2I puro | Aberta |
 
 - **Default = `flux2-klein`** (regra global do usuario), salvo orientacao em contrario.
-- ⚠️ **Curso comercial?** FLUX.2 (klein/dev) e **non-commercial** — para uso comercial prefira `qwen-edit-2511` ou `ernie`. Ver `~/projetos/inemaimg/MODELOS.md`.
+- Conteudo do INEMA.CLUB e **aberto e gratuito** (cursos nao sao vendidos) — a licenca non-commercial do FLUX.2 nao e bloqueio. Detalhes dos modelos: `~/projetos/inemaimg/MODELOS.md`.
 
 ### Como chamar
 
@@ -111,13 +110,13 @@ Aspect ratios prontos (high): `1:1`=1024², `16:9`=1536×1024, `9:16`=1024×1536
 
 **Principio:** o curso ensina pelo OLHO e pela MAO, nao so pelo texto. Um aluno que aprende visual tem que conseguir entender o modulo pelos apoios visuais + legendas, sem ler todo o corpo; e um aluno pratico tem que conseguir COPIAR E RODAR um exemplo. Sao tres regras (viram os erros criticos #29-#31):
 
-### 1. Visual-first — ilustre cada conceito-chave (SVG / hyperframe / inemaimg, uso ILIMITADO)
+### 1. Visual-first — ilustre cada conceito-chave EM CODIGO (SVG / animacao / hyperframe, uso ILIMITADO)
 
 - O minimo do erro #17 (≥1 SVG por modulo de conteudo, 1 hero SVG por index) e **PISO, nao teto**. Em modulo profundo, ilustre **CADA conceito-chave** / cada secao que introduz uma ideia nova. Quantidade de visuais e **ilimitada** — use a vontade.
-- Tres meios, escolha o que melhor EXPLICA aquele ponto (pode misturar no mesmo modulo):
+- Meios em codigo, escolha o que melhor EXPLICA aquele ponto (pode misturar no mesmo modulo):
   - **SVG futurista inline** (backbone, sempre offline) — diagramas conceituais: ciclo, fan-out, escada, fluxo de decisao, comparacao, aninhamento. Continua sendo o meio **obrigatorio** do diagrama conceitual. Ver erro #17 + `references/SVG-FUTURISTA.md`.
-  - **inemaimg** (PNG raster, local, default `flux2-klein`) — heros, cenas tematicas, metaforas visuais, texturas. Pode usar **generosamente e de forma didatica** (nao so decorativo). Ver a secao acima.
   - **hyperframe** (visual animado) — quando o MOVIMENTO ensina (um ciclo girando, um antes/depois, um loop rodando passo a passo): um clipe curto renderizado via **HyperFrames (HTML->MP4)** embutido por caminho relativo com `<video muted loop playsinline class="w-full h-auto rounded-xl">`, OU uma mini-animacao **SVG/CSS inline** self-contained. Sempre sob `prefers-reduced-motion` (parar/estatico se o usuario pediu menos movimento).
+- **Raster (inemaimg) so quando o usuario pedir** — ver secao acima. O default e tudo em codigo: leve, editavel, traduzivel (rotulos em texto) e sem depender de servidor de imagem.
 - **Toda ilustracao precisa de legenda/`alt` que ENSINA** (uma frase dizendo o que olhar e o que aquilo significa), nunca decorativa-muda. O par **"visual + legenda"** e a unidade de aprendizado visual: o aluno visual segue o modulo so por esses pares.
 
 ### 2. Exemplos praticos copy-run em cada modulo pratico (prompt/codigo pronto)
@@ -182,7 +181,7 @@ Estes 3 erros sao a orientacao de **aprendizagem visual + base de fundamentos** 
 
 | # | Regra | Correto | Errado |
 |---|-------|---------|--------|
-| 29 | **Visual-first — ilustrar cada conceito-chave (uso ILIMITADO de SVG/inemaimg/hyperframe)** | O minimo do #17 e PISO: em modulo profundo, CADA conceito/secao que introduz ideia nova ganha apoio visual (SVG inline, PNG inemaimg, ou hyperframe animado), sem limite de quantidade. Toda ilustracao tem legenda/`alt` que ENSINA (diz o que olhar e o que significa). Aluno visual entende o modulo pelos pares visual+legenda. Hyperframe = clipe HTML->MP4 (`<video muted loop playsinline>`) ou animacao SVG/CSS inline, sob `prefers-reduced-motion`. | Um unico SVG no modulo inteiro tratado como teto; imagens decorativas-mudas sem legenda; blocos longos de texto sem apoio visual do conceito; video sem `prefers-reduced-motion` |
+| 29 | **Visual-first — ilustrar cada conceito-chave (uso ILIMITADO de SVG/animacao/hyperframe — raster so se pedido)** | O minimo do #17 e PISO: em modulo profundo, CADA conceito/secao que introduz ideia nova ganha apoio visual (SVG inline, animacao SVG/CSS ou hyperframe; PNG inemaimg so se o usuario pedir), sem limite de quantidade. Toda ilustracao tem legenda/`alt` que ENSINA (diz o que olhar e o que significa). Aluno visual entende o modulo pelos pares visual+legenda. Hyperframe = clipe HTML->MP4 (`<video muted loop playsinline>`) ou animacao SVG/CSS inline, sob `prefers-reduced-motion`. | Um unico SVG no modulo inteiro tratado como teto; imagens decorativas-mudas sem legenda; blocos longos de texto sem apoio visual do conceito; video sem `prefers-reduced-motion` |
 | 30 | **Exemplos praticos copy-run em cada modulo pratico (prompt/codigo pronto)** | ≥1 exemplo copia-e-cola REAL que o aluno roda (prompt pronto pro Claude Code, comando, codigo) em code box, com objetivo + bloco copiavel + como verificar. Partes variaveis marcadas (`<isto voce troca>`). | "Exemplo de prompt: voce poderia pedir..." (descrito, nao colavel); code box sem o que rodar nem como verificar; modulo pratico so com teoria |
 | 31 | **Fundamento define os termos inline (base de verdade)** | Modulo/topico de fundamento esclarece CADA termo tecnico na 1a vez que aparece, ali na explicacao, estilo "Novo aqui?": frase curta e concreta + glossario-inline (aside/tip "O que e X?") pra nao quebrar a leitura. Sem jargao orfao. | Usar "ReAct", "harness", "tool-calling", "ground truth" etc. sem definir; assumir que o aluno ja sabe; jogar a definicao so num glossario no fim |
 

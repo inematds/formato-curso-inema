@@ -1,6 +1,8 @@
 ---
 name: formato-curso-v5
-description: curso INEMA v5 — página única (trilha + até 9 aulas), dark editorial
+disable-model-invocation: true
+description: >-
+  curso INEMA v5 — página única (trilha + até 9 aulas), dark editorial
   com motor de retenção, feito para PÚBLICO ADULTO 40+ LEIGO, ocupado e
   profissional: promessa + tempo em toda aula, prática multi-modo SEM terminal
   (prompt/tarefa/análise/código), linguagem sem jargão de plataforma, quadros
