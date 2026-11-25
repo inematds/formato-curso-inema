@@ -65,7 +65,8 @@ texto numa secao `## O que é` logo depois do banner e do seletor de idioma.
 - **Nav:** O ganho · No seu dia · Como funciona · Como comecar · Base (fonte) · A prova (+ idiomas, tema, GitHub).
 - **Visual em toda secao** (cards com emoji, antes/depois, linha do tempo, numeros grandes); texto curto por card, frases curtas.
 - **Vídeo explicativo SEMPRE (Nei, 13/11/2026, D21)**: todo guia tem a seção `#video` com o explicavideo do projeto (explicavideos v2 + avatar do Nei pelo estúdio HeyGen; nunca a skill video-explicativo sem avatar) em embed 16:9 do YouTube, nos 3 idiomas (chip "Vídeo"/"Video", título "Entenda em N minutos"). Enquanto o vídeo não sai, deixar a marca `<!-- VIDEO: entra o explicavideo do projeto quando publicado -->` no lugar, e a fase 2 do vídeo (vigia `continua`) troca a marca pelo embed nos 3 idiomas + linha "🎬 Vídeo:" no README. **Um não tranca o outro (Nei, 13/11/2026):** o guia é publicado assim que o projeto está pronto, com a marca; quando o vídeo termina e é publicado, ele SEMPRE entra no guia depois (3 idiomas + README), pela fase 2 do vídeo. Guia antigo sem vídeo: está na lista de pendências do wifi (`pendencias.md`) para o Nei escolher quais ganham vídeo.
-- **Dois banners no topo**: `banner.jpg` (live) na hero e `banner-grade.jpg` abaixo do `#resumo`; os 6 cartoes do grade sao as secoes de orientacao (o problema, o que muda no seu dia, como funciona, como comecar…), nunca scripts.
+- **Topo = duas imagens (Nei, 25/11/2026):** ao lado da manchete (hero) vai uma FOTO/ilustração do projeto SEM texto (o `hero.png` cru da capa serve), nunca o banner com o título, que repete o h1; ao lado do texto do `#resumo` (duas colunas) vai o `banner.jpg`. O `banner-grade` desce para o topo de `#como`.
+- **Dois banners no topo** (substituído pela regra acima na posição): `banner.jpg` (live) na hero e `banner-grade.jpg` abaixo do `#resumo`; os 6 cartoes do grade sao as secoes de orientacao (o problema, o que muda no seu dia, como funciona, como comecar…), nunca scripts.
 - **README** abre com o mesmo texto simples + o pedido para colar na IA, e so depois um `---` e a parte tecnica.
 - Referencia: `inematds/ia-sem-estrago` (guia/index.html + README, 17/11/2026). Guia antigo: so muda quando o Nei pedir ou quando for mexido por outro motivo.
 
@@ -122,6 +123,19 @@ Todo guia sai em **portugues, ingles e espanhol**, e o README tambem. Nao espere
 6. **Salve** o guia em **`guia/index.html`** no repo do PROPRIO projeto (e `guia/assets/` ao lado) — ver "Regra de repositorio" acima. Nunca num repo separado so pro guia.
 7. **Traduza** o guia para `guia/en/` e `guia/es/` (veja "Tres idiomas" acima) — obrigatorio.
 8. **Referencie o guia no README** (veja "Referencia no README" abaixo), nos 3 READMEs — obrigatorio.
+8a. **Pronto para revisar (Nei, 20/11/2026): o autor confere antes de gastar o revisor.** 34 de 48 reprovações com persona tinham causa que o autor via sozinho.
+   - Rode `python3 ~/projetos/wifi/scripts/pronto-para-revisar.py <repo>`. Ele barra link que não responde, EN/ES faltando, `#video` só com título, aspa que some com o parágrafo e `{{…}}`. Saiu 1 → corrija antes; não chame o revisor.
+   - Escreva no seu rascunho (não no pedido do revisor) um trecho da página que prove cada item, ou o item não está pronto:
+     1. o teste da chamada: hero + título fazem a persona parar, pela dor ou pelo desejo, e dizem o nome do método;
+     2. cada termo explicado no 1º uso;
+     3. antes do passo 1, o que precisa ter, o custo (valor e data) e o sistema testado;
+     4. cada promessa da hero aponta o passo que a cumpre.
+   - Percorra o "Como começar" como a persona, do primeiro clique ao resultado prometido.
+   - Teste rápido do que a página promete:
+     - **app:** clique em cada botão principal: abrir → usar → fechar, concluir → desmarcar, em 360 px e pelo teclado;
+     - **kit:** rode a suíte e diga no README os casos que ela cobre;
+     - **vídeo:** um quadro por cena contra a fala.
+   - Rolagem horizontal: confira em 360 e 390 px.
 8b. **Revisor independente antes de publicar (21/10/2026; regra em `~/.claude/runbooks/revisor-independente.md`).** Um `Agent` `general-purpose` NOVO (nunca `fork`, nunca quem escreveu) recebe só o modelo do runbook: persona (alguém que nunca viu o projeto e quer usá-lo hoje), a especificação (o que o projeto faz, 1–3 linhas do README), o caminho `guia/index.html` + captura em 390 px, e esta lista fixa: (1) em 10 s dá para dizer o que o projeto faz?; (2) dá para entender o que se ganha e como começar sem saber programar, e não sobrou nenhum comando ou termo técnico na página (os comandos do README rodam do zero)?; (3) recurso descrito que não está no repo; (4) termo sem explicação; (5) link quebrado ou placeholder `{{…}}`. Sem notas do autor no pedido. Defeito → corrige e um revisor novo revisa. Registre: `python3 ~/projetos/wifi/scripts/revisor-nota.py registra --fluxo guia --item <repo> --quem revisor --veredito … --nota …` (e `--quem dono` quando o Nei julgar).
 9. **Publique no GitHub Pages** (veja "Publicar" abaixo).
 10. **Verifique** que as 3 URLs (`/guia/`, `/guia/en/`, `/guia/es/`) respondem 200 e que o nav tem o link INEMA.CLUB.
@@ -212,14 +226,19 @@ on:
 permissions: { contents: read, pages: write, id-token: write }
 concurrency: { group: pages, cancel-in-progress: false }
 jobs:
-  deploy:
-    environment: { name: github-pages, url: "${{ steps.deployment.outputs.page_url }}" }
+  # build e deploy SEPARADOS (25/11/2026): num job só, em repo novo, o deploy-pages não achava o artefato
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with: { path: '.' }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: "${{ steps.deployment.outputs.page_url }}" }
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
 YML
