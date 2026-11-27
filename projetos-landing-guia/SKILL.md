@@ -13,6 +13,16 @@ Gera uma **pagina unica** (`guia/index.html` self-contained, sem build) que serv
 
 O ponto desta skill: o usuario tem um projeto (engine, CLI, ferramenta, repo) e quer **uma pagina que explica o que e + ensina a usar**, rapida de publicar. Voce nao reinventa o design — parte do template provado e so troca o conteudo.
 
+## PADRAO DE GUIA v2 — vale a partir de 27/11/2026 (Nei: "gostei, agora documente o padrao"; "vale a partir de agora")
+
+**Leia `references/padrao-guia-v2.md` antes de escrever qualquer guia.** Ele manda na ordem das secoes, no topo
+(nome forte + titulo de 3 batidas + resumo; banner ao lado do titulo, foto ao lado dos botoes; botao = "Copiar o
+pedido e comecar"), nos rotulos grandes por secao (EM UMA FRASE, PARA QUEM, COMO FUNCIONA, OS N JEITOS, QUESTOES
+IMPORTANTES, ANTES DE INSTALAR, NA PRATICA, VIDEOS, MEDIDO, PERGUNTAS), nas partes com animacao a esquerda + tabela
+no fim, e no que sai (O ganho, No seu dia, dia por horario). Quando conflitar com as secoes abaixo (ordem de 17/11,
+nav, `#explicado`, `#dia`, `#base`), **vale o padrao v2**. Referencia viva: `inematds/espera-sem-voce/guia/`
+(o `template.html` esta desatualizado; parta da referencia). Decisao D31 no `inema-design/DECISOES.md`.
+
 ## Chamada da hero: dor/desejo + nome do metodo (D20, Nei 12/11/2026)
 
 "Nao adianta estar claro e correto se nao chama atencao, nao mexe na dor ou desejo." Regra unica:
