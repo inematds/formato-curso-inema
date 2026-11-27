@@ -23,7 +23,8 @@ Lendo só o topo, a pessoa sabe: o que é, se é para ela, o que ganha, o que fa
    - esquerda em cima: **nome forte** (ex.: `VIGIA` grande na cor do banner + nome do kit menor ao lado),
      **título de 3 batidas** (frases curtas de quem faz o quê; a última em amarelo — ex.: "Você sai da tela. A IA
      termina. O aviso chega."), e o **resumo** (≤ 60 palavras: a dor, o que você faz, o que ele faz, o resultado);
-   - direita em cima: **`banner.jpg`** (a imagem padrão com o nome), alinhado ao título + resumo;
+   - direita em cima: **`banner.jpg`** (a imagem padrão com o nome), com o **topo alinhado ao topo do nome** (CSS `.hero .f2{align-self:start}`, nunca `center`; Nei, 27/11/2026, apps-do-claude: "a imagem da direita ao lado tem alinhar no topo");
+   - **título de 3 batidas = frases completas** que se entendem sozinhas (sujeito + o quê + sobre o quê). Reprovado: "O Claude virou app. Você não precisa de trinta. O filtro deixa os que trabalham por você." (Nei: "o q quer dizer"). Aprovado no lugar: "As páginas que o Claude faz agora viram app no seu computador. Criar app para tudo vira bagunça. O filtro do app mostra quais valem a pena criar."
    - esquerda embaixo: botão principal = **a ação** ("Copiar o pedido e começar" → `#comecar`) + secundário
      ("Ver os vídeos"), e 3 fatos curtos com ✓ (grátis/sem programar; o que precisa; um número medido);
    - direita embaixo: **`hero.jpg`** (foto sem texto), com o topo alinhado aos botões.
