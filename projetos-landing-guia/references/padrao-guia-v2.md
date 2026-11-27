@@ -34,12 +34,12 @@ Lendo só o topo, a pessoa sabe: o que é, se é para ela, o que ganha, o que fa
 2. **EM UMA FRASE** (`#resumo`): ~60 palavras que explicam o projeto — o desejo em negrito, o que o kit traz,
    as partes que o definem numa lista curta (uma linha cada), a condição de uso ("o computador fica ligado;
    quem sai é você").
-3. **PARA QUEM** (`#quem`): "É para você se…" — 3 cartões com foto (regra das imagens de perfil), 2–3 linhas
+3. **PARA QUEM** (`#quem`): "É para você se…" — 2 a 4 cartões com foto (um por público real) (regra das imagens de perfil), 2–3 linhas
    cada e "Usa: <qual parte>".
 4. **COMO FUNCIONA** (`#passos`): abre com `banner-grade.jpg` largo + uma **linha divisória com respiro**; os
-   passos **um abaixo do outro**, todos com a mesma forma (número, título, quem faz — etiquetas Você / A IA /
+   passos **um abaixo do outro** (quantos o processo tiver, de 2 a 7), todos com a mesma forma (número, título, quem faz — etiquetas Você / A IA /
    O programa —, "Por quê"). Sem animação aqui se a mesma animação aparece na seção seguinte.
-5. **AS PARTES / OS N JEITOS** (`#jeitos`): **cada parte numa faixa própria, animação à esquerda e texto à
+5. **AS PARTES / OS N JEITOS** (`#jeitos`; o rótulo diz o que o projeto tem: OS 3 JEITOS, AS 3 PERGUNTAS, AS 5 REGRAS…): **cada parte numa faixa própria, animação à esquerda e texto à
    direita** (número, nome, "para quê" em negrito, explicação, analogia "Como no dia a dia", prazos em chips,
    de onde vem). Espaço e linha entre as faixas. **Tabela de comparação no fim**, com pista de arrastar no
    celular. Cada animação aparece **uma vez só** na página.
@@ -47,7 +47,7 @@ Lendo só o topo, a pessoa sabe: o que é, se é para ela, o que ganha, o que fa
    uma seção só, cada uma com imagem, os blocos de resposta e a analogia (ex.: "E se o trabalho nunca voltar?",
    "Como a IA nova sabe o que já foi feito?").
 7. **ANTES DE INSTALAR** (`#precisa`): "Você precisa de" × "O kit não promete".
-8. **NA PRÁTICA** (`#comecar`): 3 passos curtos + o **pedido para copiar** (botão Copiar) + 3 cartões:
+8. **NA PRÁTICA** (`#comecar`): os passos curtos que a pessoa faz (2 a 4) + o **pedido para copiar** (botão Copiar) + 3 cartões:
    "Quer só entender, sem instalar?", "Onde baixar?", "É técnico?" (→ README).
 9. **VÍDEOS** (`#video`): capas dos vídeos com play (abrem o YouTube).
 10. **MEDIDO** (`#prova`): números grandes com a fonte e a data; nada sem medição.
@@ -61,6 +61,7 @@ Lendo só o topo, a pessoa sabe: o que é, se é para ela, o que ganha, o que fa
   PERGUNTAS — e o `h2` com a frase logo abaixo. Dividir bem as partes.
 - **Imagens padrão do projeto nunca saem:** `banner.jpg` e `hero.jpg` no topo, `banner-grade.jpg` em Como
   funciona, fotos dos perfis, imagens das questões.
+- **A quantidade segue o projeto, nunca a referência (Nei, 27/11/2026: "o como funciona pode variar (hoje é fixo 4), mesma coisa triagem").** Passos do Como funciona, partes/jeitos, perfis, questões importantes e passos do Na prática: conte o que o projeto tem de verdade e use esse número (o h2 diz o número certo). Nunca esticar para 4 nem cortar para 3 só porque o guia de referência tem assim; nunca inventar passo ou parte para fechar a grade. A forma de cada item (número, título, quem faz, por quê; faixa com animação) é que é fixa.
 - **As partes que definem o projeto nunca saem** (ex.: os 3 jeitos); o topo vende uma, o meio explica todas.
 - **Animação/fluxo:** os diagramas animados do projeto (um loop rAF, pausa fora da tela, botão Pausar/Repetir,
   `prefers-reduced-motion` = estado final parado). Fluxo em diagrama é bem-vindo onde ilustra melhor que texto
